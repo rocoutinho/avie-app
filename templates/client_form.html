@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}{{ "Editar cliente" if client else "Novo cliente" }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h1 class="h3 mb-4">{{ "Editar cliente" if client else "Novo cliente" }}</h1>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.full_name) }}
+      {{ render_field(form.email) }}
+      {{ render_field(form.phone) }}
+      {{ render_field(form.instagram) }}
+      {{ render_field(form.source) }}
+      {{ render_field(form.status) }}
+      {{ render_field(form.notes) }}
+      <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

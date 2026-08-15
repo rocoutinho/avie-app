@@ -1,0 +1,58 @@
+:root {
+  --avie-brand: #a56b6b;
+  --avie-brand-dark: #7c4a4a;
+  --avie-bg: #faf7f5;
+  --avie-text: #33282a;
+}
+
+body {
+  background: var(--avie-bg);
+  color: var(--avie-text);
+  font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: "Playfair Display", serif;
+}
+
+.navbar-brand {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  color: var(--avie-brand-dark) !important;
+}
+
+.btn-brand {
+  background-color: var(--avie-brand);
+  border-color: var(--avie-brand);
+  color: #fff;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+  background-color: var(--avie-brand-dark);
+  border-color: var(--avie-brand-dark);
+  color: #fff;
+}
+
+.hero {
+  background: linear-gradient(135deg, #f3e7e4 0%, var(--avie-bg) 70%);
+  border-radius: 1rem;
+  padding: 4rem 2rem;
+}
+
+.kanban-col {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  min-height: 200px;
+  height: 100%;
+}
+
+.card {
+  border-color: #eee0dc;
+}
+
+.card-header {
+  background: #fff;
+  font-weight: 600;
+}

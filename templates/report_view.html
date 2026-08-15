@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ report.title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <h1 class="h3 mb-1">{{ report.title }}</h1>
+        <p class="text-muted mb-0">Cliente: {{ client.full_name }}</p>
+      </div>
+      <span class="badge {{ 'bg-success' if report.status=='enviado' else 'bg-secondary' }}">
+        {{ label_for(REPORT_STATUSES, report.status) }}
+      </span>
+    </div>
+    <div class="card mb-3">
+      <div class="card-body">
+        <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">{{ report.content }}</pre>
+      </div>
+    </div>
+    <a href="{{ url_for('reports.edit_report', client_id=client.id, report_id=report.id) }}" class="btn btn-outline-secondary">Editar</a>
+    <a href="{{ url_for('clients.detail', client_id=client.id) }}" class="btn btn-link">Voltar ao cliente</a>
+  </div>
+</div>
+{% endblock %}

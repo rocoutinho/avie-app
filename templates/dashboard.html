@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Painel{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 mb-0">Painel</h1>
+  <a href="{{ url_for('clients.new_client') }}" class="btn btn-brand btn-sm">+ Novo cliente</a>
+</div>
+
+<div class="d-flex gap-3 overflow-auto pb-2 mb-5">
+  {% for key, label in CLIENT_STATUSES %}
+  <div style="min-width:260px; max-width:260px;">
+    <div class="kanban-col">
+      <h6 class="text-uppercase text-muted small mb-3">
+        {{ label }} <span class="badge bg-light text-dark">{{ clients_by_status[key]|length }}</span>
+      </h6>
+      {% for c in clients_by_status[key] %}
+      <a href="{{ url_for('clients.detail', client_id=c.id) }}" class="card mb-2 text-decoration-none text-dark">
+        <div class="card-body py-2 px-3">
+          <div class="fw-semibold small">{{ c.full_name }}</div>
+          <div class="text-muted" style="font-size:.75rem;">{{ c.email }}</div>
+        </div>
+      </a>
+      {% else %}
+      <p class="text-muted small">Nenhum cliente aqui.</p>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <h2 class="h5">Próximas consultas</h2>
+    <ul class="list-group">
+      {% for con in upcoming %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>
+          <a href="{{ url_for('clients.detail', client_id=con.client_id) }}">{{ con.client.full_name }}</a>
+          — {{ label_for(CONSULTATION_TYPES, con.tipo) }}
+        </span>
+        <span class="text-muted small">{{ con.scheduled_at.strftime('%d/%m %H:%M') }}</span>
+      </li>
+      {% else %}
+      <li class="list-group-item text-muted">Nenhuma consulta agendada.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <h2 class="h5">Pagamentos pendentes</h2>
+    <ul class="list-group">
+      {% for p in pending_payments %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>
+          <a href="{{ url_for('clients.detail', client_id=p.client_id) }}">{{ p.client.full_name }}</a>
+          — {{ p.description }}
+        </span>
+        <span class="text-muted small">R$ {{ "%.2f"|format(p.amount) }}</span>
+      </li>
+      {% else %}
+      <li class="list-group-item text-muted">Nenhum pagamento pendente.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
