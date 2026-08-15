@@ -1,10 +1,12 @@
 import os
+import shutil
+from datetime import datetime
 
 import click
 from flask import Flask
 
-from config import Config
-from extensions import db, login_manager
+from config import Config, IS_PRODUCTION
+from extensions import db, limiter, login_manager, migrate
 from models import (
     CLIENT_STATUSES,
     CONSULTATION_STATUSES,
@@ -14,6 +16,8 @@ from models import (
     User,
 )
 
+MIN_PASSWORD_LENGTH = 10
+
 
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
@@ -21,6 +25,9 @@ def create_app(config_class=Config):
     os.makedirs(app.instance_path, exist_ok=True)
 
     db.init_app(app)
+    migrate.init_app(app, db)
+    limiter.init_app(app)
+
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Faça login para acessar o painel."
@@ -53,23 +60,30 @@ def create_app(config_class=Config):
             label_for=lambda choices, key: dict(choices).get(key, key),
         )
 
+    @app.after_request
+    def set_security_headers(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        if IS_PRODUCTION:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
     register_cli(app)
     return app
 
 
 def register_cli(app):
-    @app.cli.command("init-db")
-    def init_db():
-        """Cria as tabelas do banco de dados."""
-        db.create_all()
-        click.echo("Banco de dados inicializado.")
-
     @app.cli.command("create-admin")
     def create_admin():
         """Cria o primeiro usuário (staff) do sistema."""
         name = click.prompt("Nome")
         email = click.prompt("E-mail").strip().lower()
         password = click.prompt("Senha", hide_input=True, confirmation_prompt=True)
+
+        if len(password) < MIN_PASSWORD_LENGTH:
+            click.echo(f"A senha precisa ter pelo menos {MIN_PASSWORD_LENGTH} caracteres.")
+            return
 
         if User.query.filter_by(email=email).first():
             click.echo("Já existe um usuário com esse e-mail.")
@@ -80,6 +94,21 @@ def register_cli(app):
         db.session.add(user)
         db.session.commit()
         click.echo(f"Usuário '{name}' criado com sucesso.")
+
+    @app.cli.command("backup-db")
+    def backup_db():
+        """Copia o banco SQLite atual para instance/backups com timestamp."""
+        db_path = os.path.join(app.instance_path, "avie.db")
+        if not os.path.exists(db_path):
+            click.echo(f"Banco de dados não encontrado em: {db_path}")
+            return
+
+        backups_dir = os.path.join(app.instance_path, "backups")
+        os.makedirs(backups_dir, exist_ok=True)
+        stamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+        dest = os.path.join(backups_dir, f"avie-{stamp}.db")
+        shutil.copy2(db_path, dest)
+        click.echo(f"Backup criado em {dest}")
 
 
 app = create_app()

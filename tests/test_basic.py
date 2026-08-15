@@ -45,6 +45,8 @@ def test_diagnostic_form_creates_lead(app, client):
             "cores_preferidas": "Azul e branco",
             "referencias_estilo": "",
             "orcamento_faixa": "nao_sei",
+            "consent": "y",
+            "website": "",
         },
         follow_redirects=True,
     )
@@ -56,6 +58,49 @@ def test_diagnostic_form_creates_lead(app, client):
         assert created.status == "lead"
         assert created.profile is not None
         assert created.profile.objetivo_profissional == "Crescer na carreira"
+        assert created.profile.consent_at is not None
+
+
+def _diagnostic_payload(**overrides):
+    payload = {
+        "full_name": "Ana Teste",
+        "email": "ana@example.com",
+        "phone": "11999999999",
+        "instagram": "",
+        "source": "instagram",
+        "objetivo_profissional": "Crescer na carreira",
+        "momento_carreira": "Transição de área",
+        "como_quer_ser_percebida": "Confiante e competente",
+        "desafios_imagem": "Não sei combinar looks para reuniões",
+        "ambiente_trabalho": "Corporativo",
+        "estilo_atual": "Casual",
+        "cores_preferidas": "Azul e branco",
+        "referencias_estilo": "",
+        "orcamento_faixa": "nao_sei",
+        "consent": "y",
+        "website": "",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_diagnostic_form_requires_consent(app, client):
+    payload = _diagnostic_payload()
+    del payload["consent"]
+    response = client.post("/diagnostico", data=payload)
+    assert response.status_code == 200  # re-renders the form with an error
+
+    with app.app_context():
+        assert Client.query.filter_by(email="ana@example.com").first() is None
+
+
+def test_diagnostic_form_rejects_honeypot(app, client):
+    payload = _diagnostic_payload(website="http://spam.example.com")
+    response = client.post("/diagnostico", data=payload)
+    assert response.status_code == 200
+
+    with app.app_context():
+        assert Client.query.filter_by(email="ana@example.com").first() is None
 
 
 def test_dashboard_requires_login(client):

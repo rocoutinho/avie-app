@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from flask import Blueprint, redirect, render_template, url_for
 
-from extensions import db
+from extensions import db, limiter
 from forms import DiagnosticForm
 from models import Client, StyleProfile
 
@@ -12,7 +14,13 @@ def landing():
     return render_template("landing.html")
 
 
+@public_bp.route("/privacidade")
+def privacy():
+    return render_template("privacy.html")
+
+
 @public_bp.route("/diagnostico", methods=["GET", "POST"])
+@limiter.limit("5 per hour", methods=["POST"])
 def diagnostic():
     form = DiagnosticForm()
     if form.validate_on_submit():
@@ -39,6 +47,7 @@ def diagnostic():
         profile.cores_preferidas = form.cores_preferidas.data
         profile.referencias_estilo = form.referencias_estilo.data
         profile.orcamento_faixa = form.orcamento_faixa.data
+        profile.consent_at = datetime.utcnow()
         db.session.add(profile)
 
         if not is_new and client.status == "lead":

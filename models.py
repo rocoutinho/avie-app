@@ -122,6 +122,7 @@ class StyleProfile(db.Model):
     cores_preferidas = db.Column(db.String(255))
     referencias_estilo = db.Column(db.String(255))
     orcamento_faixa = db.Column(db.String(30))
+    consent_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 

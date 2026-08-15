@@ -33,10 +33,18 @@ pip install -r requirements.txt
 
 cp .env.example .env            # ajuste SECRET_KEY para um valor aleatório
 
-flask init-db                   # cria as tabelas do banco
+flask db upgrade                # cria/atualiza as tabelas do banco (via migrações)
 flask create-admin              # cria o primeiro usuário (Fabiana ou o suporte)
 
 flask run                       # abre em http://127.0.0.1:5000
+```
+
+Sempre que `models.py` mudar, gere uma nova migração em vez de mexer no
+banco na mão:
+
+```bash
+flask db migrate -m "descrição da mudança"
+flask db upgrade
 ```
 
 - Página pública: `/` (landing) e `/diagnostico` (formulário de
@@ -64,17 +72,40 @@ flask run                       # abre em http://127.0.0.1:5000
 ## Estrutura de pastas
 
 ```
-app.py              # application factory + comandos flask (init-db, create-admin)
-config.py           # configuração (lê .env)
-extensions.py       # instâncias do SQLAlchemy e do Flask-Login
+app.py              # application factory + comandos flask (create-admin, backup-db)
+config.py           # configuração (lê .env; exige SECRET_KEY em produção)
+extensions.py       # instâncias do SQLAlchemy, Flask-Login, Flask-Migrate, Flask-Limiter
 models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleReport, Payment
 forms.py            # formulários (Flask-WTF)
 reports_engine.py   # gera o rascunho do relatório personalizado
 blueprints/          # rotas: auth, public, dashboard, clients, reports
 templates/           # HTML (Jinja + Bootstrap)
 static/css/          # estilo visual da marca
+migrations/          # histórico de mudanças no banco (Flask-Migrate/Alembic)
 tests/               # testes automatizados (pytest)
 ```
+
+## Segurança e dados pessoais (LGPD)
+
+O sistema coleta dados pessoais sensíveis no diagnóstico público (objetivos
+de carreira, autopercepção, orçamento). Antes de captar clientes reais:
+
+- **`SECRET_KEY`**: obrigatório via variável de ambiente quando
+  `AVIE_ENV=production`; a aplicação recusa subir sem ela.
+- **Consentimento**: o formulário de diagnóstico exige aceite explícito de
+  uma [Política de Privacidade](templates/privacy.html) (`/privacidade`)
+  antes de enviar, com data/hora do consentimento salva junto ao perfil.
+- **Anti-spam**: campo honeypot invisível + limite de 5 envios por hora por
+  IP no formulário público, e 10 tentativas por minuto no login.
+- **Cookies de sessão**: `HttpOnly` sempre; `Secure` (só via HTTPS) quando
+  `AVIE_ENV=production`.
+- **Backup do banco**: `flask backup-db` copia o SQLite atual para
+  `instance/backups/` com timestamp. Agende isso (cron/Task Scheduler)
+  enquanto o banco for um arquivo local — é o item de maior risco de perda
+  de dados do sistema hoje.
+- **Rate limiting em memória**: funciona bem para um único processo/servidor
+  (o cenário atual). Se o sistema crescer para múltiplas instâncias, trocar
+  o `storage_uri` do `Limiter` (em `extensions.py`) para Redis.
 
 ## Roadmap de evolução
 

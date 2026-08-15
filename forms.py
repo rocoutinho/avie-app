@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (
+    BooleanField,
     DateField,
     DateTimeLocalField,
     DecimalField,
@@ -59,6 +60,12 @@ class DiagnosticForm(FlaskForm):
         "Referências de estilo que te inspiram", validators=[Optional(), Length(max=255)]
     )
     orcamento_faixa = SelectField("Faixa de investimento pretendida", choices=BUDGET_RANGES)
+    consent = BooleanField(
+        "Li e concordo com o uso dos meus dados conforme a Política de Privacidade",
+        validators=[DataRequired(message="É necessário aceitar para continuar.")],
+    )
+    # Honeypot: campo invisível para humanos, atrai bots de spam. Deve ficar vazio.
+    website = StringField("Deixe este campo em branco", validators=[Optional(), Length(max=0)])
     submit = SubmitField("Enviar diagnóstico")
 
 
