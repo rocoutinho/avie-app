@@ -19,10 +19,22 @@ if not _secret_key:
     _secret_key = "dev-chave-insegura-troque-em-producao"
 
 
+def _normalize_database_url(url):
+    # Render, Heroku e Railway entregam a connection string do Postgres com
+    # o esquema antigo "postgres://" — o SQLAlchemy 2.x só aceita
+    # "postgresql://". Sem isso, a conexão falha em produção mesmo com a
+    # URL "certa" copiada do provedor.
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql://", 1)
+    return url
+
+
 class Config:
     SECRET_KEY = _secret_key
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", f"sqlite:///{os.path.join(basedir, 'instance', 'avie.db')}"
+    SQLALCHEMY_DATABASE_URI = _normalize_database_url(
+        os.environ.get(
+            "DATABASE_URL", f"sqlite:///{os.path.join(basedir, 'instance', 'avie.db')}"
+        )
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
