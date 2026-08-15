@@ -56,6 +56,12 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER", "contato@fabianamontemor.com.br")
 
+    # Contato público exibido na landing (WhatsApp/Instagram/LinkedIn reais
+    # da consultoria) — configurável por env var caso mude no futuro.
+    WHATSAPP_NUMBER = os.environ.get("WHATSAPP_NUMBER", "5512991825224")
+    INSTAGRAM_URL = os.environ.get("INSTAGRAM_URL", "https://www.instagram.com/fabianamontemor/")
+    LINKEDIN_URL = os.environ.get("LINKEDIN_URL", "https://www.linkedin.com/in/fabianamontemor/")
+
     # URL pública do site, usada para gerar links absolutos (og:url, og:image)
     # nos cartões de compartilhamento no Instagram, LinkedIn, WhatsApp etc.
     # Sem isso definido, cai para o host da própria requisição (funciona bem

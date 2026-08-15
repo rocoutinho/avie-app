@@ -7,27 +7,73 @@
 
   <section class="lp-hero full-bleed">
     <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="lp-hero-watermark" alt="" aria-hidden="true">
-    <div class="container lp-hero-inner text-center">
-      <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark-lg" alt="">
-      <p class="eyebrow mb-3">Consultoria de imagem e estilo</p>
-      <h1 class="display-4 mb-3">Posicionamento profissional através da imagem e do autoconhecimento</h1>
-      <p class="lead mb-4 mx-auto" style="max-width: 620px;">
-        Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
-        se comunicar com mais consistência, clareza e confiança.
-      </p>
-      <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4">Fazer meu diagnóstico</a>
-        <a href="#como-funciona" class="btn btn-outline-light-lp btn-lg px-4">Como funciona</a>
+    <div class="container lp-hero-inner">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6 text-center text-lg-start">
+          <p class="eyebrow mb-3">Consultoria de imagem e estilo</p>
+          <h1 class="display-4 mb-3">Seja sua própria <span class="lp-hero-highlight">inspiração</span></h1>
+          <p class="lead mb-4 mx-auto mx-lg-0" style="max-width: 520px;">
+            Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
+            se comunicar com mais consistência, clareza e confiança.
+          </p>
+          <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4">Agende sua consultoria</a>
+            <a href="#como-funciona" class="btn btn-outline-light-lp btn-lg px-4">Como funciona</a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="lp-hero-photo-card">
+            <img src="{{ url_for('static', filename='img/fabiana-hero.jpg') }}" alt="Fabiana Montemor">
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="lp-manifesto full-bleed">
     <div class="container text-center">
+      <img src="{{ url_for('static', filename='img/fabiana-logo-full.png') }}" alt="Fabiana Montemor" class="lp-manifesto-logo">
       <p class="lp-manifesto-text mx-auto">
-        Imagem não é vaidade — é <span class="lp-manifesto-highlight">linguagem</span>.
-        A forma como você se apresenta é a primeira frase de uma conversa que ainda vai começar.
+        “Se sua imagem ainda não reflete todo o seu potencial,
+        <span class="lp-manifesto-highlight">chegou o momento de mudar isso</span>.”
       </p>
+    </div>
+  </section>
+
+  <section id="sobre" class="lp-about full-bleed">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5">
+          <div class="lp-about-photo">
+            <img src="{{ url_for('static', filename='img/fabiana-sobre.jpg') }}" alt="Fabiana Montemor">
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <p class="eyebrow mb-3">Sobre mim</p>
+          <h2 class="h1 mb-4">Estrategista de imagem profissional</h2>
+          <p class="lp-about-text">
+            Criadora do <strong>Método I.M.P.A.C.T.O.</strong>: um caminho entre imagem e
+            autoridade. Com sólida formação em consultoria de imagem — incluindo
+            especializações em Estilo Pessoal, Coloração Pessoal e Imagem Masculina —
+            e uma trajetória de mais de 15 anos em liderança corporativa e 7 anos no
+            varejo de moda.
+          </p>
+          <p class="lp-about-text lp-about-text-muted">
+            Meu trabalho é estratégico: ajudo profissionais a alinharem sua imagem ao
+            posicionamento desejado, potencializando sua presença, influência e impacto
+            nos negócios.
+          </p>
+          <div class="lp-stat-grid">
+            <div class="lp-stat"><span class="lp-stat-number">15+</span><span class="lp-stat-label">Anos de liderança</span></div>
+            <div class="lp-stat"><span class="lp-stat-number">7</span><span class="lp-stat-label">Anos no varejo</span></div>
+            <div class="lp-stat"><span class="lp-stat-number">500+</span><span class="lp-stat-label">Clientes atendidos</span></div>
+          </div>
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand">Fale comigo</a>
+            <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" class="btn btn-outline-light-lp">@fabianamontemor</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -71,29 +117,81 @@
     </div>
   </section>
 
-  <section class="lp-band lp-band-tint full-bleed">
+  <section id="metodo" class="lp-band lp-band-tint full-bleed">
     <div class="container">
-      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">Para quem é</p>
-      <h2 class="h1 text-center mb-5">Feito para momentos de virada</h2>
+      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">Metodologia exclusiva</p>
+      <h2 class="h1 text-center mb-3">Método I.M.P.A.C.T.O.</h2>
+      <p class="text-center text-muted mx-auto mb-5" style="max-width: 560px;">
+        Uma jornada estruturada de 7 etapas para transformar sua imagem em uma
+        ferramenta estratégica de comunicação e autoridade.
+      </p>
+
+      <div class="lp-method-letters">
+        {% for letter in "IMPACTO" %}<span class="lp-method-letter">{{ letter }}</span>{% endfor %}
+      </div>
+
       <div class="row g-4">
-        <div class="col-md-4">
-          <div class="lp-value-card">
-            <h3 class="h5 mb-2">Nova posição, novo cargo</h3>
-            <p class="text-muted mb-0">Para quem assumiu — ou está prestes a assumir — mais responsabilidade e quer que a imagem acompanhe o novo momento.</p>
+        {% set steps = [
+          ("I", "Imagem", "Análise completa da sua imagem atual e objetivos profissionais."),
+          ("M", "Mapeamento", "Identificação do seu estilo pessoal e das cores que valorizam."),
+          ("P", "Planejamento", "Estratégia personalizada para alcançar seus objetivos."),
+          ("A", "Alinhamento", "Conexão entre sua essência e a imagem que deseja projetar."),
+          ("C", "Construção", "Desenvolvimento do guarda-roupa funcional e elegante."),
+          ("T", "Transformação", "Implementação das mudanças e ajustes necessários."),
+          ("O", "Otimização", "Refinamento contínuo e manutenção da nova imagem."),
+        ] %}
+        {% for letter, title, desc in steps %}
+        <div class="col-md-6 col-lg-3">
+          <div class="lp-method-card">
+            <span class="lp-method-card-letter">{{ letter }}</span>
+            <h3 class="h6 mb-2">{{ title }}</h3>
+            <p class="text-muted small mb-0">{{ desc }}</p>
           </div>
         </div>
-        <div class="col-md-4">
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section id="servicos" class="lp-band full-bleed">
+    <div class="container">
+      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">Serviços</p>
+      <h2 class="h1 text-center mb-5">Soluções em consultoria de imagem</h2>
+
+      <p class="lp-services-group-label">Para você</p>
+      <div class="row g-4 mb-5">
+        {% set individual = [
+          ("Coloração Pessoal", "Descubra as cores que mais valorizam seu tom de pele, olhos e cabelos."),
+          ("Análise de Biotipo", "Aprenda a destacar seus pontos fortes através das proporções corporais."),
+          ("Análise de Estilo", "Desenvolvemos seu estilo pessoal autêntico, alinhado às suas preferências."),
+          ("Personal Stylist", "Acompanhamento especializado em compras e desenvolvimento contínuo do estilo."),
+        ] %}
+        {% for title, desc in individual %}
+        <div class="col-md-6 col-lg-3">
           <div class="lp-value-card">
-            <h3 class="h5 mb-2">Presença profissional</h3>
-            <p class="text-muted mb-0">Para quem precisa se comunicar com mais clareza em reuniões, apresentações e no dia a dia de trabalho.</p>
+            <h3 class="h6 mb-2">{{ title }}</h3>
+            <p class="text-muted small mb-0">{{ desc }}</p>
           </div>
         </div>
-        <div class="col-md-4">
+        {% endfor %}
+      </div>
+
+      <p class="lp-services-group-label">Para empresas</p>
+      <div class="row g-4">
+        {% set corporate = [
+          ("Dress Code Corporativo", "Políticas de vestimenta que refletem a cultura e os valores da organização."),
+          ("Palestras e Workshops", "Treinamentos sobre imagem profissional e etiqueta corporativa."),
+          ("Consultoria para Equipes", "Programas de transformação de imagem para times e lideranças."),
+          ("Treinamento para Lojistas", "Capacitação de equipes de varejo em atendimento e apresentação pessoal."),
+        ] %}
+        {% for title, desc in corporate %}
+        <div class="col-md-6 col-lg-3">
           <div class="lp-value-card">
-            <h3 class="h5 mb-2">Autoconhecimento</h3>
-            <p class="text-muted mb-0">Para quem quer entender por que certas roupas e posturas não combinam mais com quem se tornou.</p>
+            <h3 class="h6 mb-2">{{ title }}</h3>
+            <p class="text-muted small mb-0">{{ desc }}</p>
           </div>
         </div>
+        {% endfor %}
       </div>
     </div>
   </section>
@@ -110,6 +208,13 @@
   </section>
 
 </div>
+
+<a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar uma consultoria' | urlencode }}"
+   target="_blank" rel="noopener" class="lp-whatsapp-float" aria-label="Conversar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26" aria-hidden="true">
+    <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9s-4.44-9.94-9.91-9.94zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.15-4.9-4.34-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/>
+  </svg>
+</a>
 {% endblock %}
 
 {% block footer %}
@@ -121,11 +226,25 @@
           <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark" alt="">
           <span>Fabiana Montemor</span>
         </div>
-        <p class="lp-footer-tagline">Consultoria de imagem e estilo — posicionamento profissional através do autoconhecimento.</p>
+        <p class="lp-footer-tagline">Transformando profissionais através da consultoria de imagem estratégica. Sua imagem é seu cartão de visitas mais poderoso.</p>
+        <div class="lp-footer-social">
+          <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+          </a>
+          <a href="{{ config.LINKEDIN_URL }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.25h4.5V23h-4.5V8.25zM8.5 8.25h4.31v2.02h.06c.6-1.13 2.06-2.32 4.25-2.32 4.55 0 5.39 3 5.39 6.9V23h-4.5v-6.98c0-1.66-.03-3.8-2.32-3.8-2.32 0-2.68 1.81-2.68 3.68V23h-4.5V8.25z"/></svg>
+          </a>
+          <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9s-4.44-9.94-9.91-9.94zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.15-4.9-4.34-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/></svg>
+          </a>
+        </div>
       </div>
       <div class="col-md-3">
-        <p class="lp-footer-heading">Navegação</p>
+        <p class="lp-footer-heading">Links rápidos</p>
         <ul class="lp-footer-links">
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#metodo">Método I.M.P.A.C.T.O.</a></li>
           <li><a href="{{ url_for('public.diagnostic') }}">Fazer diagnóstico</a></li>
           <li><a href="{{ url_for('public.privacy') }}">Política de Privacidade</a></li>
           <li><a href="{{ url_for('auth.login') }}">Área da equipe</a></li>
@@ -133,9 +252,11 @@
       </div>
       <div class="col-md-4">
         <p class="lp-footer-heading">Contato</p>
-        <p class="lp-footer-links mb-0">
-          <a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">{{ config.MAIL_DEFAULT_SENDER }}</a>
-        </p>
+        <ul class="lp-footer-links">
+          <li><a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">{{ config.MAIL_DEFAULT_SENDER }}</a></li>
+          <li><a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li>São Paulo, SP</li>
+        </ul>
       </div>
     </div>
     <hr class="lp-footer-divider">

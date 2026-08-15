@@ -223,12 +223,6 @@ footer a {
   z-index: 1;
 }
 
-.lp-hero .brand-mark-lg {
-  width: 56px;
-  height: 56px;
-  margin-bottom: 1.25rem;
-}
-
 .lp-hero .display-4 {
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -301,12 +295,13 @@ footer a {
 
 .lp-step-number {
   flex-shrink: 0;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Inter", sans-serif;
   font-weight: 700;
-  font-size: 3.5rem;
+  font-size: 2.1rem;
   line-height: 1;
   color: var(--avie-gold);
   width: 90px;
+  font-variant-numeric: tabular-nums;
 }
 
 .lp-step-reverse .lp-step-number {
@@ -414,6 +409,220 @@ footer a {
   color: rgba(241, 239, 233, 0.5);
 }
 
+.lp-hero-highlight {
+  color: var(--avie-gold-light);
+}
+
+.lp-hero-photo-card {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(245, 216, 134, 0.25);
+  aspect-ratio: 4 / 5;
+}
+
+.lp-hero-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lp-manifesto-logo {
+  height: 64px;
+  width: auto;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+}
+
+/* Sobre */
+.lp-about {
+  background: var(--avie-navy-deep);
+  color: #f1efe9;
+  padding: 5.5rem 1.5rem;
+}
+
+.lp-about .eyebrow {
+  color: var(--avie-gold-light);
+}
+
+.lp-about h2 {
+  color: #fff;
+}
+
+.lp-about-photo {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(245, 216, 134, 0.25);
+}
+
+.lp-about-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 560px;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.lp-about-text {
+  color: #cfd3de;
+  line-height: 1.7;
+  margin-bottom: 1.1rem;
+}
+
+.lp-about-text strong {
+  color: var(--avie-gold-light);
+}
+
+.lp-about-text-muted {
+  color: #a8adbd;
+}
+
+.lp-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.lp-stat {
+  text-align: center;
+  background: rgba(245, 216, 134, 0.06);
+  border: 1px solid rgba(245, 216, 134, 0.15);
+  border-radius: 12px;
+  padding: 1rem 0.5rem;
+}
+
+.lp-stat-number {
+  display: block;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 2.1rem;
+  color: var(--avie-gold-light);
+  line-height: 1.1;
+}
+
+.lp-stat-label {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a8adbd;
+}
+
+.lp-about .btn-outline-light-lp {
+  color: #f1efe9;
+}
+
+/* Método I.M.P.A.C.T.O. */
+.lp-method-letters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+
+.lp-method-letter {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, var(--avie-gold-light), var(--avie-gold));
+  color: var(--avie-navy-deep);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(189, 151, 80, 0.35);
+}
+
+.lp-method-card {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 1.5rem 1.4rem;
+  height: 100%;
+}
+
+.lp-method-card-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--avie-navy-deep);
+  color: var(--avie-gold-light);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Serviços */
+.lp-services-group-label {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--avie-navy);
+  margin-bottom: 1.5rem;
+}
+
+/* WhatsApp flutuante */
+.lp-whatsapp-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 60;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lp-whatsapp-float:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 14px 30px rgba(37, 211, 102, 0.55);
+  color: #fff;
+}
+
+.lp-footer-social {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.lp-footer-social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(245, 216, 134, 0.1);
+  color: rgba(241, 239, 233, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.lp-footer-social a:hover {
+  background: var(--avie-gold);
+  color: var(--avie-navy-deep);
+}
+
 @media (max-width: 767.98px) {
   .lp-step,
   .lp-step-reverse {
@@ -428,5 +637,26 @@ footer a {
 
   .lp-manifesto-text {
     font-size: 1.5rem;
+  }
+
+  .lp-stat-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+
+  .lp-stat-number {
+    font-size: 1.6rem;
+  }
+
+  .lp-whatsapp-float {
+    width: 52px;
+    height: 52px;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .lp-hero-photo-card {
+    max-width: 340px;
+    margin: 2rem auto 0;
   }
 }
