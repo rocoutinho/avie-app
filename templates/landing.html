@@ -1,32 +1,144 @@
 {% extends "base.html" %}
 {% block title %}Consultoria de Imagem e Estilo{% endblock %}
-{% block content %}
-<div class="hero text-center mb-5">
-  <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark-lg" alt="">
-  <p class="eyebrow mb-3">Consultoria de imagem e estilo</p>
-  <h1 class="display-5 mb-3">Posicionamento profissional através da imagem e do autoconhecimento</h1>
-  <p class="lead mb-4 mx-auto" style="max-width: 640px;">
-    Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
-    se comunicar com mais consistência, clareza e confiança.
-  </p>
-  <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4">Fazer meu diagnóstico</a>
-</div>
 
-<div class="row g-4 text-center mb-4">
-  <div class="col-md-4">
-    <p class="eyebrow mb-2" style="color: var(--avie-gold);">01</p>
-    <h3 class="h5">Diagnóstico</h3>
-    <p class="text-muted">Um formulário guiado para entender seu momento profissional e seu estilo hoje.</p>
-  </div>
-  <div class="col-md-4">
-    <p class="eyebrow mb-2" style="color: var(--avie-gold);">02</p>
-    <h3 class="h5">Consultoria</h3>
-    <p class="text-muted">Uma sessão individual, 100% adaptada aos seus objetivos e desafios.</p>
-  </div>
-  <div class="col-md-4">
-    <p class="eyebrow mb-2" style="color: var(--avie-gold);">03</p>
-    <h3 class="h5">Plano personalizado</h3>
-    <p class="text-muted">Um relatório com recomendações práticas de posicionamento e estilo.</p>
-  </div>
+{% block content %}
+<div class="lp">
+
+  <section class="lp-hero full-bleed">
+    <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="lp-hero-watermark" alt="" aria-hidden="true">
+    <div class="container lp-hero-inner text-center">
+      <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark-lg" alt="">
+      <p class="eyebrow mb-3">Consultoria de imagem e estilo</p>
+      <h1 class="display-4 mb-3">Posicionamento profissional através da imagem e do autoconhecimento</h1>
+      <p class="lead mb-4 mx-auto" style="max-width: 620px;">
+        Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
+        se comunicar com mais consistência, clareza e confiança.
+      </p>
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4">Fazer meu diagnóstico</a>
+        <a href="#como-funciona" class="btn btn-outline-light-lp btn-lg px-4">Como funciona</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-manifesto full-bleed">
+    <div class="container text-center">
+      <p class="lp-manifesto-text mx-auto">
+        Imagem não é vaidade — é <span class="lp-manifesto-highlight">linguagem</span>.
+        A forma como você se apresenta é a primeira frase de uma conversa que ainda vai começar.
+      </p>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="lp-band full-bleed">
+    <div class="container">
+      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">O processo</p>
+      <h2 class="h1 text-center mb-5">Como funciona a consultoria</h2>
+
+      <div class="lp-step">
+        <div class="lp-step-number">01</div>
+        <div class="lp-step-body">
+          <h3 class="h4 mb-2">Diagnóstico</h3>
+          <p class="text-muted mb-0">
+            Um formulário guiado, em 3 etapas rápidas, para entender seu momento
+            profissional, como você quer ser percebida e seu estilo hoje.
+          </p>
+        </div>
+      </div>
+
+      <div class="lp-step lp-step-reverse">
+        <div class="lp-step-number">02</div>
+        <div class="lp-step-body">
+          <h3 class="h4 mb-2">Consultoria</h3>
+          <p class="text-muted mb-0">
+            Uma sessão individual com Fabiana, 100% adaptada aos seus objetivos,
+            desafios de imagem e ao ambiente em que você circula profissionalmente.
+          </p>
+        </div>
+      </div>
+
+      <div class="lp-step">
+        <div class="lp-step-number">03</div>
+        <div class="lp-step-body">
+          <h3 class="h4 mb-2">Plano personalizado</h3>
+          <p class="text-muted mb-0">
+            Um relatório com leitura de estilo e recomendações práticas de
+            posicionamento — seu, para consultar sempre que precisar.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-band lp-band-tint full-bleed">
+    <div class="container">
+      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">Para quem é</p>
+      <h2 class="h1 text-center mb-5">Feito para momentos de virada</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="lp-value-card">
+            <h3 class="h5 mb-2">Nova posição, novo cargo</h3>
+            <p class="text-muted mb-0">Para quem assumiu — ou está prestes a assumir — mais responsabilidade e quer que a imagem acompanhe o novo momento.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="lp-value-card">
+            <h3 class="h5 mb-2">Presença profissional</h3>
+            <p class="text-muted mb-0">Para quem precisa se comunicar com mais clareza em reuniões, apresentações e no dia a dia de trabalho.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="lp-value-card">
+            <h3 class="h5 mb-2">Autoconhecimento</h3>
+            <p class="text-muted mb-0">Para quem quer entender por que certas roupas e posturas não combinam mais com quem se tornou.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-cta-banner full-bleed">
+    <div class="container text-center">
+      <h2 class="h2 mb-3">Pronta para dar o primeiro passo?</h2>
+      <p class="mb-4 mx-auto" style="max-width: 560px; color: var(--avie-navy-deep);">
+        O diagnóstico é gratuito e leva poucos minutos. A partir dele, Fabiana
+        entra em contato para conversar sobre os próximos passos.
+      </p>
+      <a href="{{ url_for('public.diagnostic') }}" class="btn btn-lg px-4 lp-cta-banner-btn">Fazer meu diagnóstico</a>
+    </div>
+  </section>
+
 </div>
+{% endblock %}
+
+{% block footer %}
+<footer class="lp-footer">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-md-5">
+        <div class="lp-footer-brand">
+          <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark" alt="">
+          <span>Fabiana Montemor</span>
+        </div>
+        <p class="lp-footer-tagline">Consultoria de imagem e estilo — posicionamento profissional através do autoconhecimento.</p>
+      </div>
+      <div class="col-md-3">
+        <p class="lp-footer-heading">Navegação</p>
+        <ul class="lp-footer-links">
+          <li><a href="{{ url_for('public.diagnostic') }}">Fazer diagnóstico</a></li>
+          <li><a href="{{ url_for('public.privacy') }}">Política de Privacidade</a></li>
+          <li><a href="{{ url_for('auth.login') }}">Área da equipe</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <p class="lp-footer-heading">Contato</p>
+        <p class="lp-footer-links mb-0">
+          <a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">{{ config.MAIL_DEFAULT_SENDER }}</a>
+        </p>
+      </div>
+    </div>
+    <hr class="lp-footer-divider">
+    <p class="lp-footer-copy mb-0">© {{ current_year }} Fabiana Montemor · Todos os direitos reservados.</p>
+  </div>
+</footer>
 {% endblock %}

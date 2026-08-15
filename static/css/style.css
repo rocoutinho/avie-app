@@ -86,37 +86,12 @@ h1, h2, h3, .font-serif {
   border-radius: 999px;
 }
 
-/* Hero da landing — mesma combinação de alta legibilidade indicada no
-   manual da marca: azul marinho profundo com dourado. */
-.hero {
-  background: var(--avie-navy-deep);
-  color: #f1efe9;
-  border-radius: 24px;
-  padding: 5rem 2rem;
-}
-
-.hero .display-5 {
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #fff;
-}
-
-.hero .lead {
-  color: #cfd3de !important;
-}
-
-.hero .eyebrow {
+.eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--avie-gold-light);
-}
-
-.hero .brand-mark-lg {
-  width: 56px;
-  height: 56px;
-  margin-bottom: 1.25rem;
 }
 
 /* Cards e componentes internos */
@@ -204,4 +179,254 @@ h1, h2, h3, .font-serif {
 
 footer a {
   color: var(--avie-navy);
+}
+
+/* ==========================================================================
+   Landing page — seções full-bleed inspiradas no ritmo editorial de sites
+   premium de consultoria de imagem: faixas alternadas, blocos numerados
+   repetindo foto/texto/CTA, rodapé rico. Sem fotos ou depoimentos fabricados
+   — só a identidade real da marca (arquétipo "O Amante": elegância,
+   contraste tipográfico, curvas sinuosas).
+   ========================================================================== */
+
+.full-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.lp-hero {
+  background: radial-gradient(120% 140% at 50% -10%, #1c2440 0%, var(--avie-navy-deep) 55%, #0c1120 100%);
+  color: #f1efe9;
+  padding: 5.5rem 1.5rem 5rem;
+  margin-top: -1.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.lp-hero-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  max-width: none;
+  transform: translate(-50%, -50%);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.lp-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.lp-hero .brand-mark-lg {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.25rem;
+}
+
+.lp-hero .display-4 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.lp-hero .lead {
+  color: #cfd3de;
+}
+
+.btn-outline-light-lp {
+  border: 1px solid rgba(241, 239, 233, 0.4);
+  color: #f1efe9;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-outline-light-lp:hover {
+  border-color: var(--avie-gold-light);
+  background: rgba(245, 216, 134, 0.08);
+  color: var(--avie-gold-light);
+}
+
+.lp-manifesto {
+  background: var(--avie-bg);
+  padding: 4rem 1.5rem;
+}
+
+.lp-manifesto-text {
+  max-width: 720px;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 1.9rem;
+  line-height: 1.4;
+  color: var(--avie-navy);
+}
+
+.lp-manifesto-highlight {
+  color: var(--avie-gold);
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lp-band {
+  background: #fff;
+  padding: 5rem 1.5rem;
+}
+
+.lp-band-tint {
+  background: linear-gradient(180deg, #f4f0e6 0%, #efe9db 100%);
+}
+
+.lp-step {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  max-width: 720px;
+  margin: 0 auto 3rem;
+}
+
+.lp-step:last-child {
+  margin-bottom: 0;
+}
+
+.lp-step-reverse {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.lp-step-number {
+  flex-shrink: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--avie-gold);
+  width: 90px;
+}
+
+.lp-step-reverse .lp-step-number {
+  text-align: right;
+}
+
+.lp-value-card {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 2rem 1.75rem;
+  height: 100%;
+}
+
+.lp-cta-banner {
+  background: linear-gradient(135deg, var(--avie-gold-light) 0%, var(--avie-gold) 100%);
+  padding: 4.5rem 1.5rem;
+}
+
+.lp-cta-banner h2 {
+  color: var(--avie-navy-deep);
+}
+
+.lp-cta-banner-btn {
+  background-color: var(--avie-navy-deep);
+  border-color: var(--avie-navy-deep);
+  color: var(--avie-gold-light);
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lp-cta-banner-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--avie-shadow);
+  color: #fff;
+}
+
+.lp-footer {
+  background: var(--avie-navy-deep);
+  color: rgba(241, 239, 233, 0.75);
+  padding: 4rem 0 2rem;
+}
+
+.lp-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--avie-gold-light);
+  margin-bottom: 0.75rem;
+}
+
+.lp-footer-brand .brand-mark {
+  width: 26px;
+  height: 26px;
+}
+
+.lp-footer-tagline {
+  max-width: 340px;
+  font-size: 0.9rem;
+  color: rgba(241, 239, 233, 0.6);
+}
+
+.lp-footer-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--avie-gold-light);
+  margin-bottom: 0.9rem;
+}
+
+.lp-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.lp-footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.lp-footer-links a {
+  color: rgba(241, 239, 233, 0.75);
+  text-decoration: none;
+}
+
+.lp-footer-links a:hover {
+  color: var(--avie-gold-light);
+  text-decoration: underline;
+}
+
+.lp-footer-divider {
+  border-color: rgba(241, 239, 233, 0.15);
+  margin: 2rem 0 1.5rem;
+}
+
+.lp-footer-copy {
+  font-size: 0.8rem;
+  color: rgba(241, 239, 233, 0.5);
+}
+
+@media (max-width: 767.98px) {
+  .lp-step,
+  .lp-step-reverse {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .lp-step-reverse .lp-step-number {
+    text-align: center;
+  }
+
+  .lp-manifesto-text {
+    font-size: 1.5rem;
+  }
 }

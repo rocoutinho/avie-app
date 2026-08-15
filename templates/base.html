@@ -42,10 +42,12 @@
     {% block content %}{% endblock %}
   </main>
 
+  {% block footer %}
   <footer class="text-center text-muted py-4 small">
     Avie · Sistema interno de consultoria de imagem e estilo ·
     <a href="{{ url_for('public.privacy') }}">Política de Privacidade</a>
   </footer>
+  {% endblock %}
 
   <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   {% block scripts %}{% endblock %}

@@ -61,6 +61,7 @@ def create_app(config_class=Config):
             REPORT_STATUSES=REPORT_STATUSES,
             PAYMENT_STATUSES=PAYMENT_STATUSES,
             label_for=lambda choices, key: dict(choices).get(key, key),
+            current_year=datetime.utcnow().year,
         )
 
     @app.after_request
