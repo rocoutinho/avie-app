@@ -336,3 +336,154 @@ def test_payment_creation(app, logged_in_client):
         assert payment is not None
         assert payment.status == "pendente"
         assert float(payment.amount) == 1500.00
+
+
+def test_full_client_journey_from_instagram_ad_to_delivered_dossier(app, client):
+    """Ponta a ponta com uma cliente fictícia: chega por um anúncio no
+    Instagram, abandona o formulário na 1ª etapa (e ainda vira lead),
+    volta e completa o diagnóstico, é qualificada e agendada pela equipe,
+    e recebe o dossiê (relatório personalizado) ao final."""
+    persona_email = "marina.duarte@example.com"
+
+    # 1. Clica no anúncio do Instagram e chega na landing com atribuição de campanha.
+    response = client.get(
+        "/?utm_source=instagram&utm_medium=paid_social&utm_campaign=setembro_lideranca"
+    )
+    assert response.status_code == 200
+
+    # 2. Abre o diagnóstico, preenche só a etapa 1 (dados de contato) e abandona.
+    #    Isso já precisa criar um lead mínimo, sem nenhuma resposta sensível.
+    response = client.post(
+        "/diagnostico/lead-parcial",
+        json={
+            "full_name": "Marina Duarte",
+            "email": persona_email,
+            "phone": "11955554444",
+            "source": "instagram",
+            "utm_source": "instagram",
+            "utm_medium": "paid_social",
+            "utm_campaign": "setembro_lideranca",
+        },
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        partial = Client.query.filter_by(email=persona_email).first()
+        assert partial is not None
+        assert partial.status == "lead"
+        assert partial.profile is None
+        assert partial.utm_campaign == "setembro_lideranca"
+        partial_id = partial.id
+
+    # 3. No dia seguinte, ela volta pelo mesmo link e termina o diagnóstico completo.
+    response = client.post(
+        "/diagnostico",
+        data=_diagnostic_payload(
+            full_name="Marina Duarte",
+            email=persona_email,
+            phone="11955554444",
+            source="instagram",
+            objetivo_profissional="Ser vista como uma liderança natural na nova gerência, sem perder minha essência",
+            momento_carreira="Fui promovida a gerente há um mês e ainda estou me adaptando ao peso da nova posição",
+            como_quer_ser_percebida="Confiante, estratégica e acessível para o time",
+            desafios_imagem="Meu guarda-roupa é do cargo anterior — mais despojado — e não reflete a nova posição",
+            ambiente_trabalho="Escritório híbrido, reuniões de diretoria semanais",
+            estilo_atual="Casual com toques criativos",
+            cores_preferidas="Verde petróleo, off-white e tons terrosos",
+            referencias_estilo="Executivas com estilo minimalista e atemporal",
+            orcamento_faixa="3000_6000",
+            utm_source="instagram",
+            utm_medium="paid_social",
+            utm_campaign="setembro_lideranca",
+        ),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        after_diagnostic = Client.query.filter_by(email=persona_email).first()
+        assert after_diagnostic.id == partial_id  # não duplicou: mesmo lead, agora completo
+        assert after_diagnostic.status == "diagnostico_concluido"
+        assert after_diagnostic.profile is not None
+        assert after_diagnostic.profile.consent_at is not None
+        assert after_diagnostic.utm_campaign == "setembro_lideranca"
+
+    # 4. A equipe (Fabiana) entra no painel e vê o lead qualificado.
+    with app.app_context():
+        staff = User(name="Fabiana", email="fabiana.staff@example.com", role="owner")
+        staff.set_password("senha-forte-123")
+        db.session.add(staff)
+        db.session.commit()
+    client.post(
+        "/login",
+        data={"email": "fabiana.staff@example.com", "password": "senha-forte-123"},
+        follow_redirects=True,
+    )
+
+    response = client.get(f"/painel/clientes/{partial_id}")
+    assert response.status_code == 200
+    assert "Marina Duarte".encode() in response.data
+    assert "Instagram".encode() in response.data
+    assert "setembro_lideranca".encode() in response.data
+
+    # 5. Fabiana liga, qualifica e marca como "Contatado".
+    client.post(
+        f"/painel/clientes/{partial_id}/status",
+        data={"status": "contatado"},
+        follow_redirects=True,
+    )
+
+    # 6. Agenda a sessão de consultoria — o funil avança sozinho.
+    response = client.post(
+        f"/painel/clientes/{partial_id}/consultas/nova",
+        data={
+            "tipo": "consultoria_imagem",
+            "scheduled_at": "2026-09-10T15:00",
+            "duration_minutes": "90",
+            "status": "agendada",
+            "notes": "Primeira sessão — trazer peças-chave do guarda-roupa atual.",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        qualified = Client.query.filter_by(email=persona_email).first()
+        assert qualified.status == "diagnostico_agendado"
+        assert Consultation.query.filter_by(client_id=partial_id).count() == 1
+
+    # 7. Depois da consulta, Fabiana gera o rascunho do dossiê a partir do
+    #    diagnóstico, personaliza as recomendações e envia para a cliente.
+    response = client.get(f"/painel/clientes/{partial_id}/relatorios/novo")
+    assert response.status_code == 200
+    draft_html = response.get_data(as_text=True)
+    assert "liderança natural" in draft_html  # rascunho puxou as respostas do diagnóstico
+
+    response = client.post(
+        f"/painel/clientes/{partial_id}/relatorios/novo",
+        data={
+            "title": "Dossiê de Posicionamento Profissional e Estilo — Marina Duarte",
+            "content": (
+                "Relatório de Posicionamento Profissional e Estilo\n"
+                "Preparado especialmente para Marina Duarte\n\n"
+                "1. Seu momento atual\nRecém-promovida a gerente...\n\n"
+                "6. Recomendações e próximos passos\n"
+                "Paleta em verde petróleo e off-white para transmitir autoridade "
+                "com leveza; 5 peças-chave para reuniões de diretoria;"
+                " comunicação não-verbal para liderar com presença."
+            ),
+            "status": "enviado",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    # 8. Dossiê entregue: relatório marcado como enviado e cliente em "Proposta Enviada".
+    with app.app_context():
+        delivered = Client.query.filter_by(email=persona_email).first()
+        report = StyleReport.query.filter_by(client_id=partial_id).first()
+        assert report is not None
+        assert report.status == "enviado"
+        assert report.sent_at is not None
+        assert "Paleta em verde petróleo" in report.content
+        assert delivered.status == "proposta_enviada"
