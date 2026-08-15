@@ -8,6 +8,15 @@
       {{ client.email }} · {{ client.phone or "sem telefone" }}
       {% if client.instagram %} · @{{ client.instagram }}{% endif %}
     </div>
+    <div class="mt-1">
+      <span class="badge text-bg-light border">Origem: {{ label_for(LEAD_SOURCES, client.source) }}</span>
+      {% if client.utm_campaign %}
+      <span class="badge text-bg-light border">Campanha: {{ client.utm_campaign }}</span>
+      {% endif %}
+      {% if client.utm_medium %}
+      <span class="badge text-bg-light border">Mídia: {{ client.utm_medium }}</span>
+      {% endif %}
+    </div>
   </div>
   <div class="d-flex gap-2 align-items-center">
     <form method="post" action="{{ url_for('clients.update_status', client_id=client.id) }}" class="d-flex gap-2">

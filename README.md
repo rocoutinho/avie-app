@@ -73,6 +73,43 @@ flask db upgrade
    vencimento) ficam vinculados ao cliente; segue sendo o contador
    terceirizado quem cuida da contabilidade formal.
 
+## Captação de leads via Instagram, Google e LinkedIn
+
+O sistema foi preparado para receber tráfego de anúncios/links desses três
+canais com o mínimo de atrito possível:
+
+- **Atribuição automática**: links de campanha com parâmetros `utm_source`,
+  `utm_medium` e `utm_campaign` (ex.: `?utm_source=instagram&utm_medium=paid_social&utm_campaign=lancamento_agosto`)
+  são guardados assim que a pessoa chega — tanto pela landing (`/`) quanto
+  clicando direto num link para `/diagnostico`. O campo "Como você conheceu
+  o trabalho?" do formulário já vem pré-selecionado a partir disso (a pessoa
+  pode corrigir). Sem `utm_source` explícito, um `gclid` na URL (padrão do
+  Google Ads) é lido como Google, e um `fbclid` (padrão do Meta Ads) como
+  Instagram. A ficha do cliente no painel mostra a origem e a campanha.
+- **Nenhum lead se perde por abandono**: o formulário de diagnóstico é um
+  wizard de 3 etapas. Assim que a pessoa termina a 1ª etapa (nome, e-mail,
+  telefone), esse contato mínimo já é salvo como Lead no CRM — mesmo que
+  ela feche a aba antes de terminar as etapas seguintes. Isso é
+  especialmente importante em tráfego pago frio, onde a maior parte do
+  abandono acontece. Nenhuma resposta sensível do diagnóstico (objetivos,
+  autopercepção, orçamento) é salva antes do consentimento explícito na
+  última etapa — só o contato para retomada.
+- **Cartão de compartilhamento**: ao colar o link do site no bio do
+  Instagram, num post do LinkedIn ou num anúncio, aparece um cartão com
+  título, descrição e imagem de marca (Open Graph / Twitter Card,
+  configurados em `templates/base.html`).
+- **Mensuração (opcional)**: `GA4_MEASUREMENT_ID`, `META_PIXEL_ID` e
+  `LINKEDIN_PARTNER_ID` no `.env` ativam Google Analytics 4, Meta Pixel e
+  LinkedIn Insight Tag, respectivamente — nenhum é carregado sem essas
+  variáveis. Ao ativar, atualize a Política de Privacidade (`/privacidade`)
+  para mencionar cookies de conversão/retargeting.
+
+Ao montar um link de campanha, use sempre `utm_source` com um destes
+valores para a atribuição automática funcionar: `instagram`, `google` ou
+`linkedin`. Exemplo para um anúncio no Instagram apontando direto para o
+diagnóstico:
+`https://SEUDOMINIO/diagnostico?utm_source=instagram&utm_medium=paid_social&utm_campaign=NOME_DA_CAMPANHA`.
+
 ## Estrutura de pastas
 
 ```
@@ -143,7 +180,7 @@ projeto começou:
 | Frente | Como opera hoje (v1) | Próximo passo de crescimento |
 |---|---|---|
 | Estratégia e Entrega | Painel único, 100% conduzido pela consultora | Automatizar lembretes de status/relatório pendente |
-| Marketing e Vendas | Formulário de diagnóstico + landing simples | Integrar rastreamento de campanhas (UTM) por origem de lead |
+| Marketing e Vendas | Landing + diagnóstico com atribuição UTM e captura de lead parcial (Instagram, Google, LinkedIn) | Página de agradecimento com eventos de conversão por canal; testes A/B de headline |
 | Operações e Suporte | Painel manual (Kanban, agendamento, relatórios) | Sincronizar consultas com Google Calendar; lembretes automáticos por e-mail/WhatsApp |
 | Financeiro | Registro manual de pagamentos no CRM | Cobrança online (Pix/cartão) integrada ao cadastro do cliente |
 | Relatórios | Rascunho gerado por template a partir do diagnóstico | Assistente com IA para enriquecer o rascunho antes da revisão da consultora |

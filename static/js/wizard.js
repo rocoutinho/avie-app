@@ -41,8 +41,41 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
+  function saveParcialLead() {
+    // Assim que a pessoa termina a etapa de contato, salva um lead mínimo
+    // no CRM — se ela abandonar o formulário nas etapas seguintes (comum em
+    // cliques de anúncio), a equipe ainda tem um contato para retomar.
+    const get = (name) => {
+      const field = form.querySelector('[name="' + name + '"]');
+      return field ? field.value : "";
+    };
+    const payload = {
+      csrf_token: get("csrf_token"),
+      full_name: get("full_name"),
+      email: get("email"),
+      phone: get("phone"),
+      instagram: get("instagram"),
+      source: get("source"),
+      utm_source: get("utm_source"),
+      utm_medium: get("utm_medium"),
+      utm_campaign: get("utm_campaign"),
+      utm_content: get("utm_content"),
+      utm_term: get("utm_term"),
+    };
+    if (!payload.full_name || !payload.email) return;
+    fetch("/diagnostico/lead-parcial", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(function () {
+      // Melhor esforço — se falhar, o envio final do formulário ainda salva tudo.
+    });
+  }
+
   nextBtn.addEventListener("click", function () {
     if (!currentStepIsValid()) return;
+    if (current === 0) saveParcialLead();
     current = Math.min(current + 1, steps.length - 1);
     render();
     form.scrollIntoView({ behavior: "smooth", block: "start" });

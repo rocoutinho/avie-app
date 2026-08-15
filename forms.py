@@ -4,6 +4,7 @@ from wtforms import (
     DateField,
     DateTimeLocalField,
     DecimalField,
+    HiddenField,
     IntegerField,
     PasswordField,
     SelectField,
@@ -31,11 +32,35 @@ class LoginForm(FlaskForm):
 
 
 class DiagnosticForm(FlaskForm):
-    full_name = StringField("Nome completo", validators=[DataRequired(), Length(max=150)])
-    email = StringField("E-mail", validators=[DataRequired(), Email(), Length(max=150)])
-    phone = StringField("WhatsApp / Telefone", validators=[DataRequired(), Length(max=30)])
-    instagram = StringField("Instagram (opcional)", validators=[Optional(), Length(max=100)])
+    full_name = StringField(
+        "Nome completo",
+        validators=[DataRequired(), Length(max=150)],
+        render_kw={"autocomplete": "name"},
+    )
+    email = StringField(
+        "E-mail",
+        validators=[DataRequired(), Email(), Length(max=150)],
+        render_kw={"type": "email", "inputmode": "email", "autocomplete": "email"},
+    )
+    phone = StringField(
+        "WhatsApp / Telefone",
+        validators=[DataRequired(), Length(max=30)],
+        render_kw={"type": "tel", "inputmode": "tel", "autocomplete": "tel"},
+    )
+    instagram = StringField(
+        "Instagram (opcional)",
+        validators=[Optional(), Length(max=100)],
+        render_kw={"autocomplete": "off"},
+    )
     source = SelectField("Como você conheceu o trabalho?", choices=LEAD_SOURCES)
+
+    # Atribuição de campanha — preenchidos via JS a partir de utm_* na URL
+    # ou da sessão (capturados na primeira visita, ver blueprints/public.py).
+    utm_source = HiddenField()
+    utm_medium = HiddenField()
+    utm_campaign = HiddenField()
+    utm_content = HiddenField()
+    utm_term = HiddenField()
 
     objetivo_profissional = TextAreaField(
         "Qual é o seu principal objetivo profissional hoje?", validators=[DataRequired()]

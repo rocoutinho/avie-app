@@ -27,7 +27,7 @@
         <td>{{ c.full_name }}</td>
         <td>{{ c.email }}</td>
         <td>{{ label_for(CLIENT_STATUSES, c.status) }}</td>
-        <td>{{ c.source }}</td>
+        <td>{{ label_for(LEAD_SOURCES, c.source) }}</td>
         <td>{{ c.created_at.strftime('%d/%m/%Y') }}</td>
       </tr>
       {% else %}

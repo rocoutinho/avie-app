@@ -231,6 +231,87 @@ def test_report_draft_prefills_from_profile_and_send_advances_pipeline(app, logg
         assert db.session.get(Client, client_id).status == "proposta_enviada"
 
 
+def test_utm_attribution_prefills_source_and_survives_redirect(app, client):
+    client.get("/?utm_source=instagram&utm_medium=paid_social&utm_campaign=lancamento_agosto")
+    response = client.get("/diagnostico")
+    html = response.get_data(as_text=True)
+    assert '<option selected value="instagram">' in html
+    assert "lancamento_agosto" in html
+
+
+def test_gclid_and_fbclid_infer_source_without_explicit_utm(app):
+    with app.test_client() as google_client:
+        google_client.get("/diagnostico?gclid=abc123")
+        html = google_client.get("/diagnostico").get_data(as_text=True)
+        assert '<option selected value="google">' in html
+
+    with app.test_client() as meta_client:
+        meta_client.get("/diagnostico?fbclid=xyz789")
+        html = meta_client.get("/diagnostico").get_data(as_text=True)
+        assert '<option selected value="instagram">' in html
+
+
+def test_partial_lead_saves_contact_without_sensitive_profile(app, client):
+    response = client.post(
+        "/diagnostico/lead-parcial",
+        json={
+            "full_name": "Camila Parcial",
+            "email": "camila.parcial@example.com",
+            "phone": "11988887777",
+            "source": "instagram",
+            "utm_source": "instagram",
+            "utm_campaign": "lancamento_agosto",
+        },
+    )
+    assert response.status_code == 200
+    assert response.get_json() == {"ok": True}
+
+    with app.app_context():
+        created = Client.query.filter_by(email="camila.parcial@example.com").first()
+        assert created is not None
+        assert created.status == "lead"
+        assert created.profile is None
+        assert created.utm_campaign == "lancamento_agosto"
+
+
+def test_partial_lead_and_full_submit_converge_on_same_client(app, client):
+    client.get("/?utm_source=instagram&utm_campaign=lancamento_agosto")
+    client.post(
+        "/diagnostico/lead-parcial",
+        json={
+            "full_name": "Bia Completa",
+            "email": "bia.completa@example.com",
+            "phone": "11977776666",
+            "source": "instagram",
+            "utm_source": "instagram",
+            "utm_campaign": "lancamento_agosto",
+        },
+    )
+    with app.app_context():
+        partial = Client.query.filter_by(email="bia.completa@example.com").first()
+        partial_id = partial.id
+        assert partial.profile is None
+
+    client.post(
+        "/diagnostico",
+        data=_diagnostic_payload(
+            full_name="Bia Completa",
+            email="bia.completa@example.com",
+            utm_source="instagram",
+            utm_campaign="lancamento_agosto",
+        ),
+        follow_redirects=True,
+    )
+
+    with app.app_context():
+        clients_with_email = Client.query.filter_by(email="bia.completa@example.com").all()
+        assert len(clients_with_email) == 1
+        final = clients_with_email[0]
+        assert final.id == partial_id
+        assert final.profile is not None
+        assert final.utm_campaign == "lancamento_agosto"
+
+
 def test_payment_creation(app, logged_in_client):
     with app.app_context():
         c = Client(full_name="Diana Alves", email="diana@example.com", status="cliente_ativo")

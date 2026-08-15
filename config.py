@@ -44,6 +44,19 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER", "contato@fabianamontemor.com.br")
 
+    # URL pública do site, usada para gerar links absolutos (og:url, og:image)
+    # nos cartões de compartilhamento no Instagram, LinkedIn, WhatsApp etc.
+    # Sem isso definido, cai para o host da própria requisição (funciona bem
+    # localmente; configure a URL real assim que o site tiver um domínio).
+    SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
+
+    # Tags de mensuração opcionais — só são inseridas se configuradas.
+    # Ativar rastreamento de terceiros (cookies de conversão/retargeting)
+    # deve vir acompanhado de uma atualização da Política de Privacidade.
+    GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID")
+    META_PIXEL_ID = os.environ.get("META_PIXEL_ID")
+    LINKEDIN_PARTNER_ID = os.environ.get("LINKEDIN_PARTNER_ID")
+
 
 class TestConfig(Config):
     TESTING = True

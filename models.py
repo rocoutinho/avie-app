@@ -44,6 +44,8 @@ PAYMENT_STATUSES = [
 
 LEAD_SOURCES = [
     ("instagram", "Instagram"),
+    ("google", "Google"),
+    ("linkedin", "LinkedIn"),
     ("indicacao", "Indicação"),
     ("site", "Site"),
     ("evento", "Evento / Palestra"),
@@ -83,6 +85,13 @@ class Client(db.Model):
     source = db.Column(db.String(30), default="outro")
     status = db.Column(db.String(30), default="lead")
     notes = db.Column(db.Text)
+    # Atribuição técnica de campanha (parâmetros utm_* capturados na primeira
+    # visita) — complementa "source", que é a origem autodeclarada pelo lead.
+    utm_source = db.Column(db.String(150))
+    utm_medium = db.Column(db.String(150))
+    utm_campaign = db.Column(db.String(150))
+    utm_content = db.Column(db.String(150))
+    utm_term = db.Column(db.String(150))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

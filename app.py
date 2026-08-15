@@ -12,6 +12,7 @@ from models import (
     CLIENT_STATUSES,
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
+    LEAD_SOURCES,
     PAYMENT_STATUSES,
     REPORT_STATUSES,
     User,
@@ -60,6 +61,7 @@ def create_app(config_class=Config):
             CONSULTATION_STATUSES=CONSULTATION_STATUSES,
             REPORT_STATUSES=REPORT_STATUSES,
             PAYMENT_STATUSES=PAYMENT_STATUSES,
+            LEAD_SOURCES=LEAD_SOURCES,
             label_for=lambda choices, key: dict(choices).get(key, key),
             current_year=datetime.utcnow().year,
         )
