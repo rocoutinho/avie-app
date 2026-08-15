@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import Blueprint, redirect, render_template, url_for
 
+from emails import send_diagnostic_confirmation
 from extensions import db, limiter
 from forms import DiagnosticForm
 from models import Client, StyleProfile
@@ -54,6 +55,7 @@ def diagnostic():
             client.status = "diagnostico_concluido"
 
         db.session.commit()
+        send_diagnostic_confirmation(client)
         return redirect(url_for("public.diagnostic_success"))
 
     return render_template("diagnostic_form.html", form=form)

@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 from datetime import datetime
@@ -6,7 +7,7 @@ import click
 from flask import Flask
 
 from config import Config, IS_PRODUCTION
-from extensions import db, limiter, login_manager, migrate
+from extensions import db, limiter, login_manager, mail, migrate
 from models import (
     CLIENT_STATUSES,
     CONSULTATION_STATUSES,
@@ -23,10 +24,12 @@ def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
     os.makedirs(app.instance_path, exist_ok=True)
+    app.logger.setLevel(logging.INFO)
 
     db.init_app(app)
     migrate.init_app(app, db)
     limiter.init_app(app)
+    mail.init_app(app)
 
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"

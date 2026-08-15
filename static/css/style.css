@@ -1,8 +1,20 @@
+/*
+  Paleta oficial da marca Fabiana Montemor (Manual da Marca V1.2024,
+  StudioBin): azul índigo, azul marinho acinzentado (fundos escuros) e
+  dourado. Ícone: "leque de cores" multicolorido — nunca muda de cor,
+  mesmo em fundos escuros (só o logotipo alterna para branco).
+*/
 :root {
-  --avie-brand: #a56b6b;
-  --avie-brand-dark: #7c4a4a;
-  --avie-bg: #faf7f5;
-  --avie-text: #33282a;
+  --avie-navy: #36405b;       /* Azul Índigo — texto, logotipo, título */
+  --avie-navy-deep: #131a2e;  /* Azul Marinho Acinzentado — fundos escuros */
+  --avie-gold: #bd9750;       /* Dourado — CTAs, destaque */
+  --avie-gold-light: #f5d886; /* Dourado claro — texto sobre fundo escuro */
+  --avie-bg: #faf8f4;
+  --avie-text: #2a3145;
+  --avie-text-muted: #6b7186;
+  --avie-border: #e7e2d8;
+  --avie-radius: 12px;
+  --avie-shadow: 0 8px 24px rgba(19, 26, 46, 0.12);
 }
 
 body {
@@ -12,47 +24,184 @@ body {
 }
 
 h1, h2, h3, .font-serif {
-  font-family: "Playfair Display", serif;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+}
+
+/* Navbar: sempre em azul marinho, a aplicação de marca mais consistente
+   em qualquer página (interna ou pública). */
+.navbar {
+  background: var(--avie-navy-deep) !important;
+  border-bottom: none !important;
 }
 
 .navbar-brand {
-  font-family: "Playfair Display", serif;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: "Cormorant Garamond", serif;
   font-weight: 700;
-  color: var(--avie-brand-dark) !important;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
+  color: var(--avie-gold-light) !important;
+}
+
+.navbar-brand .brand-mark {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.navbar .btn-outline-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.navbar .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
 .btn-brand {
-  background-color: var(--avie-brand);
-  border-color: var(--avie-brand);
-  color: #fff;
+  background-color: var(--avie-gold);
+  border-color: var(--avie-gold);
+  color: var(--avie-navy-deep);
+  border-radius: 999px;
+  padding: 0.6rem 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .btn-brand:hover,
 .btn-brand:focus {
-  background-color: var(--avie-brand-dark);
-  border-color: var(--avie-brand-dark);
+  background-color: var(--avie-navy-deep);
+  border-color: var(--avie-navy-deep);
+  color: var(--avie-gold-light);
+  transform: translateY(-1px);
+  box-shadow: var(--avie-shadow);
+}
+
+.btn-outline-secondary {
+  border-radius: 999px;
+}
+
+/* Hero da landing — mesma combinação de alta legibilidade indicada no
+   manual da marca: azul marinho profundo com dourado. */
+.hero {
+  background: var(--avie-navy-deep);
+  color: #f1efe9;
+  border-radius: 24px;
+  padding: 5rem 2rem;
+}
+
+.hero .display-5 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: #fff;
 }
 
-.hero {
-  background: linear-gradient(135deg, #f3e7e4 0%, var(--avie-bg) 70%);
-  border-radius: 1rem;
-  padding: 4rem 2rem;
+.hero .lead {
+  color: #cfd3de !important;
 }
 
-.kanban-col {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  min-height: 200px;
-  height: 100%;
+.hero .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--avie-gold-light);
 }
 
+.hero .brand-mark-lg {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.25rem;
+}
+
+/* Cards e componentes internos */
 .card {
-  border-color: #eee0dc;
+  border-color: var(--avie-border);
+  border-radius: var(--avie-radius);
 }
 
 .card-header {
   background: #fff;
   font-weight: 600;
+  border-bottom-color: var(--avie-border);
+  color: var(--avie-navy);
+}
+
+.kanban-col {
+  background: #fff;
+  border-radius: var(--avie-radius);
+  padding: 1rem;
+  min-height: 200px;
+  height: 100%;
+}
+
+/* Formulários */
+.form-label {
+  font-size: 0.85rem;
+  color: var(--avie-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+  border-color: var(--avie-border);
+  padding: 0.65rem 0.9rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--avie-gold);
+  box-shadow: 0 0 0 0.2rem rgba(189, 151, 80, 0.2);
+}
+
+/* Wizard do formulário de diagnóstico */
+.wizard-progress {
+  height: 4px;
+  background: var(--avie-border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.wizard-progress-bar {
+  height: 100%;
+  background: var(--avie-gold);
+  transition: width 0.3s ease;
+}
+
+.wizard-step-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--avie-text-muted);
+}
+
+.wizard-step {
+  animation: avie-fade-in 0.25s ease;
+}
+
+.wizard-step[hidden] {
+  display: none !important;
+}
+
+@keyframes avie-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+footer a {
+  color: var(--avie-navy);
 }

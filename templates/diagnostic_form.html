@@ -8,47 +8,69 @@
     <p class="text-muted mb-4">
       Responda com calma — quanto mais sincero, mais personalizada será sua consultoria.
     </p>
-    <form method="post" novalidate>
+
+    <form method="post" novalidate data-wizard>
       {{ form.hidden_tag() }}
 
-      <h2 class="h6 text-uppercase text-muted mt-4">Seus dados</h2>
-      {{ render_field(form.full_name) }}
-      {{ render_field(form.email) }}
-      {{ render_field(form.phone) }}
-      {{ render_field(form.instagram) }}
-      {{ render_field(form.source) }}
-
-      <h2 class="h6 text-uppercase text-muted mt-4">Seu momento profissional</h2>
-      {{ render_field(form.objetivo_profissional) }}
-      {{ render_field(form.momento_carreira) }}
-      {{ render_field(form.como_quer_ser_percebida) }}
-      {{ render_field(form.desafios_imagem) }}
-      {{ render_field(form.ambiente_trabalho) }}
-
-      <h2 class="h6 text-uppercase text-muted mt-4">Seu estilo</h2>
-      {{ render_field(form.estilo_atual) }}
-      {{ render_field(form.cores_preferidas) }}
-      {{ render_field(form.referencias_estilo) }}
-      {{ render_field(form.orcamento_faixa) }}
-
-      <div style="position:absolute; left:-9999px;" aria-hidden="true" tabindex="-1">
-        {{ form.website.label }}
-        {{ form.website(autocomplete="off", tabindex="-1") }}
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="wizard-step-label">Etapa 1 de 3</span>
+      </div>
+      <div class="wizard-progress">
+        <div class="wizard-progress-bar" style="width: 33%;"></div>
       </div>
 
-      <div class="form-check my-3">
-        {{ form.consent(class_="form-check-input" + (" is-invalid" if form.consent.errors else "")) }}
-        <label class="form-check-label small" for="consent">
-          Li e concordo com o uso dos meus dados conforme a
-          <a href="{{ url_for('public.privacy') }}" target="_blank">Política de Privacidade</a>.
-        </label>
-        {% for error in form.consent.errors %}
-          <div class="text-danger small mt-1">{{ error }}</div>
-        {% endfor %}
+      <div class="wizard-step" data-step="1">
+        <h2 class="h6 text-uppercase text-muted mt-4">Seus dados</h2>
+        {{ render_field(form.full_name) }}
+        {{ render_field(form.email) }}
+        {{ render_field(form.phone) }}
+        {{ render_field(form.instagram) }}
+        {{ render_field(form.source) }}
       </div>
 
-      <button type="submit" class="btn btn-brand w-100 mt-3">{{ form.submit.label.text }}</button>
+      <div class="wizard-step" data-step="2">
+        <h2 class="h6 text-uppercase text-muted mt-4">Seu momento profissional</h2>
+        {{ render_field(form.objetivo_profissional) }}
+        {{ render_field(form.momento_carreira) }}
+        {{ render_field(form.como_quer_ser_percebida) }}
+        {{ render_field(form.desafios_imagem) }}
+        {{ render_field(form.ambiente_trabalho) }}
+      </div>
+
+      <div class="wizard-step" data-step="3">
+        <h2 class="h6 text-uppercase text-muted mt-4">Seu estilo</h2>
+        {{ render_field(form.estilo_atual) }}
+        {{ render_field(form.cores_preferidas) }}
+        {{ render_field(form.referencias_estilo) }}
+        {{ render_field(form.orcamento_faixa) }}
+
+        <div style="position:absolute; left:-9999px;" aria-hidden="true" tabindex="-1">
+          {{ form.website.label }}
+          {{ form.website(autocomplete="off", tabindex="-1") }}
+        </div>
+
+        <div class="form-check my-3">
+          {{ form.consent(class_="form-check-input" + (" is-invalid" if form.consent.errors else "")) }}
+          <label class="form-check-label small" for="consent">
+            Li e concordo com o uso dos meus dados conforme a
+            <a href="{{ url_for('public.privacy') }}" target="_blank">Política de Privacidade</a>.
+          </label>
+          {% for error in form.consent.errors %}
+            <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-outline-secondary" data-wizard-prev>Anterior</button>
+        <button type="button" class="btn btn-brand" data-wizard-next>Próximo</button>
+        <button type="submit" class="btn btn-brand d-none" data-wizard-submit>{{ form.submit.label.text }}</button>
+      </div>
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/wizard.js') }}"></script>
 {% endblock %}

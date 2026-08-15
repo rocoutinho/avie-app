@@ -13,9 +13,13 @@ tudo rodando com `python`/`flask` a partir da linha de comando.
 
 ## Por que essa stack
 
-- **Flask + Jinja + Bootstrap (via CDN)**: sem Node, sem bundler, sem
-  passo de compilação. Editar um `.html` e dar refresh já mostra o
-  resultado — curva de aprendizado baixa.
+- **Flask + Jinja + Bootstrap (vendorizado localmente, sem CDN)**: sem
+  Node, sem bundler, sem passo de compilação. Editar um `.html` e dar
+  refresh já mostra o resultado — curva de aprendizado baixa. Bootstrap,
+  fontes e o ícone da marca ficam em `static/`, então o site funciona
+  mesmo se o Google Fonts ou o jsDelivr estiverem fora do ar ou
+  bloqueados na rede de quem visita (isso já aconteceu durante o
+  desenvolvimento — ver `static/vendor/` e `static/fonts/`).
 - **SQLite**: banco de dados é um arquivo só (`instance/avie.db`), sem
   servidor de banco para instalar/manter. Cresce com o negócio; quando
   fizer sentido, trocar para Postgres é só mudar a variável
@@ -80,10 +84,34 @@ forms.py            # formulários (Flask-WTF)
 reports_engine.py   # gera o rascunho do relatório personalizado
 blueprints/          # rotas: auth, public, dashboard, clients, reports
 templates/           # HTML (Jinja + Bootstrap)
-static/css/          # estilo visual da marca
+static/vendor/        # Bootstrap CSS/JS vendorizado (sem CDN)
+static/fonts/         # fontes auto-hospedadas (Inter, Cormorant Garamond)
+static/css/           # tokens de cor/tipografia da marca + estilos
+static/img/           # ícone da marca (leque de cores)
 migrations/          # histórico de mudanças no banco (Flask-Migrate/Alembic)
 tests/               # testes automatizados (pytest)
 ```
+
+## Identidade visual
+
+A partir do `Manual da Marca V1.2024` (StudioBin), o sistema usa:
+
+- **Cores**: azul índigo `#36405b` (texto, logotipo), azul marinho
+  acinzentado `#131a2e` (fundos escuros — navbar e hero) e dourado
+  `#bd9750` / `#f5d886` (CTAs e destaques). Definidas como variáveis CSS
+  em `static/css/style.css` — trocar a marca inteira é editar esse bloco.
+- **Ícone**: o "leque de cores" multicolorido do logotipo, recriado como
+  SVG em `static/img/brand-mark.svg` (o sistema não tinha acesso ao
+  arquivo vetorial original). Por regra do manual, o ícone nunca muda de
+  cor — só o logotipo alterna para branco/dourado em fundos escuros.
+- **Tipografia**: título em "Cormorant Garamond" (Google Fonts/OFL), como
+  aproximação livre da fonte oficial da marca, "Edensor" — uma serifada
+  humanista de baixo contraste licenciada pela StudioBin. Não
+  redistribuímos a Edensor aqui por não termos os arquivos de fonte com
+  licença de uso web. **Se a Fabiana tiver a licença webfont da Edensor**,
+  basta trocar os arquivos `.woff2` em `static/fonts/` e o
+  `font-family` em `static/css/fonts.css` — nada mais no sistema precisa
+  mudar.
 
 ## Segurança e dados pessoais (LGPD)
 

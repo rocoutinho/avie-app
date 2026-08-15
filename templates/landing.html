@@ -2,25 +2,30 @@
 {% block title %}Consultoria de Imagem e Estilo{% endblock %}
 {% block content %}
 <div class="hero text-center mb-5">
+  <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark-lg" alt="">
+  <p class="eyebrow mb-3">Consultoria de imagem e estilo</p>
   <h1 class="display-5 mb-3">Posicionamento profissional através da imagem e do autoconhecimento</h1>
-  <p class="lead text-muted mb-4">
-    Consultoria de imagem e estilo 100% personalizada com Fabiana Montemor,
-    para quem quer se comunicar com mais consistência e confiança.
+  <p class="lead mb-4 mx-auto" style="max-width: 640px;">
+    Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
+    se comunicar com mais consistência, clareza e confiança.
   </p>
   <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4">Fazer meu diagnóstico</a>
 </div>
 
-<div class="row g-4 text-center">
+<div class="row g-4 text-center mb-4">
   <div class="col-md-4">
-    <h3 class="h5">1. Diagnóstico</h3>
-    <p class="text-muted">Um formulário rápido para entender seu momento profissional e seu estilo hoje.</p>
+    <p class="eyebrow mb-2" style="color: var(--avie-gold);">01</p>
+    <h3 class="h5">Diagnóstico</h3>
+    <p class="text-muted">Um formulário guiado para entender seu momento profissional e seu estilo hoje.</p>
   </div>
   <div class="col-md-4">
-    <h3 class="h5">2. Consultoria</h3>
+    <p class="eyebrow mb-2" style="color: var(--avie-gold);">02</p>
+    <h3 class="h5">Consultoria</h3>
     <p class="text-muted">Uma sessão individual, 100% adaptada aos seus objetivos e desafios.</p>
   </div>
   <div class="col-md-4">
-    <h3 class="h5">3. Plano personalizado</h3>
+    <p class="eyebrow mb-2" style="color: var(--avie-gold);">03</p>
+    <h3 class="h5">Plano personalizado</h3>
     <p class="text-muted">Um relatório com recomendações práticas de posicionamento e estilo.</p>
   </div>
 </div>
