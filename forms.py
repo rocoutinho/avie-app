@@ -12,7 +12,7 @@ from wtforms import (
     SubmitField,
     TextAreaField,
 )
-from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional
+from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional, Regexp
 
 from models import (
     BUDGET_RANGES,
@@ -123,6 +123,50 @@ class ReportForm(FlaskForm):
     content = TextAreaField("Conteúdo", validators=[DataRequired()])
     status = SelectField("Status", choices=REPORT_STATUSES)
     submit = SubmitField("Salvar relatório")
+
+
+class CampaignForm(FlaskForm):
+    slug = StringField(
+        "Slug (define a URL: /lp/o-que-voce-escrever-aqui)",
+        validators=[
+            DataRequired(),
+            Length(max=80),
+            Regexp(
+                r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+                message="Use apenas letras minúsculas, números e hífens (ex: black-friday-2026).",
+            ),
+        ],
+    )
+    internal_name = StringField(
+        "Nome interno (só para identificar no painel)", validators=[DataRequired(), Length(max=150)]
+    )
+    hero_eyebrow = StringField("Selo acima do título (opcional)", validators=[Optional(), Length(max=150)])
+    hero_title = StringField("Título principal", validators=[DataRequired(), Length(max=255)])
+    hero_highlight = StringField(
+        "Trecho em destaque (opcional, aparece em dourado no fim do título)",
+        validators=[Optional(), Length(max=100)],
+    )
+    hero_subtitle = TextAreaField("Texto de apoio abaixo do título", validators=[Optional()])
+    hero_cta_text = StringField(
+        "Texto do botão principal", validators=[Optional(), Length(max=80)]
+    )
+    hero_image_url = StringField(
+        "URL da imagem de destaque (opcional — cole o link de uma imagem já publicada)",
+        validators=[Optional(), Length(max=500)],
+    )
+    theme_color = StringField(
+        "Cor de destaque em hex (opcional, ex: #C9A227)",
+        validators=[
+            Optional(),
+            Regexp(r"^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$", message="Use um código hex válido, ex: #C9A227."),
+        ],
+    )
+    submit = SubmitField("Salvar rascunho")
+
+
+class CampaignReviewForm(FlaskForm):
+    review_note = TextAreaField("Motivo da recusa (opcional)", validators=[Optional(), Length(max=2000)])
+    submit = SubmitField("Recusar")
 
 
 class PaymentForm(FlaskForm):

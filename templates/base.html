@@ -78,6 +78,7 @@
         {% if current_user.is_authenticated %}
           <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('dashboard.index') }}">Painel</a>
           <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('clients.list_clients') }}">Clientes</a>
+          <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
           <a class="btn btn-sm btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
         {% else %}
           <a class="btn btn-sm btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>

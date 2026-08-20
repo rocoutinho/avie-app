@@ -9,6 +9,7 @@ from flask import Flask
 from config import Config, IS_PRODUCTION
 from extensions import db, limiter, login_manager, mail, migrate
 from models import (
+    CAMPAIGN_STATUSES,
     CLIENT_STATUSES,
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
@@ -42,6 +43,7 @@ def create_app(config_class=Config):
         return User.query.get(int(user_id))
 
     from blueprints.auth import auth_bp
+    from blueprints.campaigns import campaigns_bp
     from blueprints.clients import clients_bp
     from blueprints.dashboard import dashboard_bp
     from blueprints.public import public_bp
@@ -52,6 +54,7 @@ def create_app(config_class=Config):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(campaigns_bp)
 
     @app.context_processor
     def inject_globals():
@@ -62,6 +65,7 @@ def create_app(config_class=Config):
             REPORT_STATUSES=REPORT_STATUSES,
             PAYMENT_STATUSES=PAYMENT_STATUSES,
             LEAD_SOURCES=LEAD_SOURCES,
+            CAMPAIGN_STATUSES=CAMPAIGN_STATUSES,
             label_for=lambda choices, key: dict(choices).get(key, key),
             current_year=datetime.utcnow().year,
         )
@@ -82,10 +86,15 @@ def create_app(config_class=Config):
 def register_cli(app):
     @app.cli.command("create-admin")
     def create_admin():
-        """Cria o primeiro usuário (staff) do sistema."""
+        """Cria um usuário (staff) do sistema, com papel owner ou marketing."""
         name = click.prompt("Nome")
         email = click.prompt("E-mail").strip().lower()
         password = click.prompt("Senha", hide_input=True, confirmation_prompt=True)
+        role = click.prompt(
+            "Papel (owner = acesso total e aprova campanhas / marketing = cria e edita campanhas)",
+            default="owner",
+            type=click.Choice(["owner", "marketing"]),
+        )
 
         if len(password) < MIN_PASSWORD_LENGTH:
             click.echo(f"A senha precisa ter pelo menos {MIN_PASSWORD_LENGTH} caracteres.")
@@ -95,11 +104,11 @@ def register_cli(app):
             click.echo("Já existe um usuário com esse e-mail.")
             return
 
-        user = User(name=name, email=email, role="owner")
+        user = User(name=name, email=email, role=role)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        click.echo(f"Usuário '{name}' criado com sucesso.")
+        click.echo(f"Usuário '{name}' criado com sucesso (papel: {role}).")
 
     @app.cli.command("backup-db")
     def backup_db():

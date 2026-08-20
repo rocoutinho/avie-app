@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}{{ "Editar criativo" if campaign else "Novo criativo" }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h1 class="h3 mb-4">{{ "Editar criativo" if campaign else "Novo criativo" }}</h1>
+    {% if campaign and campaign.status != "rascunho" %}
+    <div class="alert alert-warning">
+      Este criativo está com status "{{ label_for(CAMPAIGN_STATUSES, campaign.status) }}". Salvar uma
+      alteração aqui volta o status para rascunho e ele precisará ser enviado para revisão de novo.
+    </div>
+    {% endif %}
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.internal_name) }}
+      {{ render_field(form.slug) }}
+      <p class="text-muted small mt-n2 mb-3">Quando publicado, fica em <code>/lp/{{ form.slug.data or "seu-slug" }}</code></p>
+      {{ render_field(form.hero_eyebrow) }}
+      {{ render_field(form.hero_title) }}
+      {{ render_field(form.hero_highlight) }}
+      {{ render_field(form.hero_subtitle) }}
+      {{ render_field(form.hero_cta_text) }}
+      {{ render_field(form.hero_image_url) }}
+      {{ render_field(form.theme_color) }}
+      <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

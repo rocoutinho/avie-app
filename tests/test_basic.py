@@ -3,7 +3,7 @@ import pytest
 from app import create_app
 from config import TestConfig
 from extensions import db
-from models import Client, Consultation, Payment, StyleProfile, StyleReport, User
+from models import Campaign, Client, Consultation, Payment, StyleProfile, StyleReport, User
 
 
 @pytest.fixture
@@ -35,6 +35,38 @@ def logged_in_client(app, client):
         follow_redirects=True,
     )
     return client
+
+
+@pytest.fixture
+def marketing_client(app, client):
+    with app.app_context():
+        user = User(name="Fabiana Marketing", email="marketing@example.com", role="marketing")
+        user.set_password("senha-forte-123")
+        db.session.add(user)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "marketing@example.com", "password": "senha-forte-123"},
+        follow_redirects=True,
+    )
+    return client
+
+
+def _campaign_payload(**overrides):
+    payload = {
+        "internal_name": "Instagram Agosto",
+        "slug": "instagram-agosto",
+        "hero_eyebrow": "",
+        "hero_title": "Título de teste",
+        "hero_highlight": "",
+        "hero_subtitle": "",
+        "hero_cta_text": "",
+        "hero_image_url": "",
+        "theme_color": "",
+    }
+    payload.update(overrides)
+    return payload
 
 
 def test_landing_page_loads(client):
@@ -487,3 +519,97 @@ def test_full_client_journey_from_instagram_ad_to_delivered_dossier(app, client)
         assert report.sent_at is not None
         assert "Paleta em verde petróleo" in report.content
         assert delivered.status == "proposta_enviada"
+
+
+def test_marketing_creates_campaign_but_cannot_approve_it(app, marketing_client):
+    response = marketing_client.post(
+        "/painel/campanhas/novo", data=_campaign_payload(), follow_redirects=True
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        campaign = Campaign.query.filter_by(slug="instagram-agosto").first()
+        assert campaign is not None
+        assert campaign.status == "rascunho"
+        campaign_id = campaign.id
+
+    response = marketing_client.post(
+        f"/painel/campanhas/{campaign_id}/enviar-revisao", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(Campaign, campaign_id).status == "em_revisao"
+
+    # Marketing não pode aprovar — só o owner.
+    response = marketing_client.post(f"/painel/campanhas/{campaign_id}/aprovar")
+    assert response.status_code == 403
+
+    # A página pública ainda não existe, porque não foi aprovada.
+    response = marketing_client.get("/lp/instagram-agosto")
+    assert response.status_code == 404
+
+
+def test_owner_approves_campaign_and_it_goes_live(app, logged_in_client):
+    with app.app_context():
+        marketing_user = User(name="Fabiana Marketing", email="mkt2@example.com", role="marketing")
+        marketing_user.set_password("senha-forte-123")
+        db.session.add(marketing_user)
+        db.session.commit()
+        campaign = Campaign(
+            slug="black-friday",
+            internal_name="Black Friday",
+            hero_title="Título Black Friday",
+            status="em_revisao",
+            created_by_id=marketing_user.id,
+        )
+        db.session.add(campaign)
+        db.session.commit()
+        campaign_id = campaign.id
+
+    response = logged_in_client.post(
+        f"/painel/campanhas/{campaign_id}/aprovar", follow_redirects=True
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        approved = db.session.get(Campaign, campaign_id)
+        assert approved.status == "publicado"
+        assert approved.published_at is not None
+        assert approved.reviewed_by_id is not None
+
+    response = logged_in_client.get("/lp/black-friday")
+    assert response.status_code == 200
+    assert "Título Black Friday".encode() in response.data
+
+
+def test_owner_rejects_campaign_back_to_draft_with_note(app, logged_in_client):
+    with app.app_context():
+        marketing_user = User(name="Fabiana Marketing", email="mkt3@example.com", role="marketing")
+        marketing_user.set_password("senha-forte-123")
+        db.session.add(marketing_user)
+        db.session.commit()
+        campaign = Campaign(
+            slug="natal",
+            internal_name="Natal",
+            hero_title="Título Natal",
+            status="em_revisao",
+            created_by_id=marketing_user.id,
+        )
+        db.session.add(campaign)
+        db.session.commit()
+        campaign_id = campaign.id
+
+    response = logged_in_client.post(
+        f"/painel/campanhas/{campaign_id}/recusar",
+        data={"review_note": "Trocar a imagem do topo"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        rejected = db.session.get(Campaign, campaign_id)
+        assert rejected.status == "rascunho"
+        assert rejected.review_note == "Trocar a imagem do topo"
+
+    response = logged_in_client.get("/lp/natal")
+    assert response.status_code == 404

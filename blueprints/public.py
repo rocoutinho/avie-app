@@ -17,7 +17,7 @@ from flask_wtf.csrf import ValidationError, validate_csrf
 from emails import send_diagnostic_confirmation
 from extensions import db, limiter
 from forms import DiagnosticForm
-from models import LEAD_SOURCES, Client, StyleProfile
+from models import LEAD_SOURCES, Campaign, Client, StyleProfile
 
 public_bp = Blueprint("public", __name__)
 
@@ -81,6 +81,17 @@ def favicon():
 @public_bp.route("/")
 def landing():
     return render_template("landing.html")
+
+
+@public_bp.route("/lp/<slug>")
+def landing_campaign(slug):
+    campaign = Campaign.query.filter_by(slug=slug, status="publicado").first_or_404()
+    # Se a visita não trouxe utm_campaign explícito (ex: link direto pro
+    # criativo), usa o slug como atribuição — assim os leads dessa página
+    # ficam rastreados até essa campanha mesmo sem parâmetros na URL.
+    if "utm_campaign" not in session and "utm_campaign" not in request.args:
+        session["utm_campaign"] = campaign.slug
+    return render_template("landing.html", campaign=campaign)
 
 
 @public_bp.route("/privacidade")
