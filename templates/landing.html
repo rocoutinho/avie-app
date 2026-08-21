@@ -2,6 +2,33 @@
 {% block title %}Consultoria de Imagem e Estilo{% endblock %}
 {% block meta_description %}Consultoria de imagem 100% personalizada com Fabiana Montemor. Faça o diagnóstico gratuito e descubra como comunicar mais confiança e clareza através da sua imagem.{% endblock %}
 
+{% macro arrow_icon() %}<svg class="lp-btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endmacro %}
+
+{% macro service_icon(key) %}
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  {%- if key == "palette" %}
+  <path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.2 0-.9.7-1.5 1.5-1.5H16a4 4 0 0 0 4-4c0-4.4-3.6-8-8-8Z"/>
+  <circle cx="7.5" cy="10.5" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>
+  {%- elif key == "ruler" %}
+  <rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M7 8v3M11 8v3M15 8v3"/>
+  {%- elif key == "hanger" %}
+  <path d="M12 4.2a1.7 1.7 0 1 1 1.7 1.7"/><path d="M12 5.9v1.9"/>
+  <path d="M12 7.8 3.6 13.9a2 2 0 0 0 1.1 3.6h14.6a2 2 0 0 0 1.1-3.6L12 7.8Z"/>
+  {%- elif key == "sparkle" %}
+  <path d="M12 3c.7 3.4 2.2 4.9 5.5 5.5-3.3.6-4.8 2.1-5.5 5.5-.7-3.4-2.2-4.9-5.5-5.5C9.8 7.9 11.3 6.4 12 3Z"/>
+  <path d="M18.5 15c.4 1.7 1.1 2.4 2.5 2.5-1.4.1-2.1.8-2.5 2.5-.4-1.7-1.1-2.4-2.5-2.5 1.4-.1 2.1-.8 2.5-2.5Z"/>
+  {%- elif key == "briefcase" %}
+  <rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>
+  {%- elif key == "presentation" %}
+  <rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 21h8M12 16v5"/><path d="M7 12l3-3 2.5 2.5L17 7"/>
+  {%- elif key == "users" %}
+  <circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 19a4.3 4.3 0 0 1 6.7-3.6"/>
+  {%- elif key == "bag" %}
+  <path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+  {%- endif %}
+</svg>
+{% endmacro %}
+
 {% block content %}
 {% if preview %}
 <div class="alert alert-warning mb-4" role="alert">
@@ -24,9 +51,13 @@
             {% if campaign and campaign.hero_subtitle %}{{ campaign.hero_subtitle }}{% else %}Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
             se comunicar com mais consistência, clareza e confiança.{% endif %}
           </p>
-          <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4">{{ campaign.hero_cta_text if campaign and campaign.hero_cta_text else "Agende sua consultoria" }}</a>
+          <div class="lp-hero-ctas d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">{{ campaign.hero_cta_text if campaign and campaign.hero_cta_text else "Agende sua consultoria" }}{{ arrow_icon() }}</a>
             <a href="#como-funciona" class="btn btn-outline-light-lp btn-lg px-4">Como funciona</a>
+          </div>
+          <div class="lp-hero-trust d-flex flex-wrap gap-4 justify-content-center justify-content-lg-start mt-4">
+            <span class="lp-hero-trust-item"><strong>15+</strong> anos de experiência</span>
+            <span class="lp-hero-trust-item"><strong>500+</strong> clientes atendidos</span>
           </div>
         </div>
         <div class="col-lg-6">
@@ -39,7 +70,7 @@
   </section>
 
   <section class="lp-manifesto full-bleed">
-    <div class="container text-center">
+    <div class="container text-center reveal">
       <img src="{{ url_for('static', filename='img/fabiana-logo-full.png') }}" alt="Fabiana Montemor" class="lp-manifesto-logo">
       <p class="lp-manifesto-text mx-auto">
         “Se sua imagem ainda não reflete todo o seu potencial,
@@ -50,7 +81,7 @@
 
   <section id="sobre" class="lp-about full-bleed">
     <div class="container">
-      <div class="row align-items-center g-5">
+      <div class="row align-items-center g-5 reveal">
         <div class="col-lg-5">
           <div class="lp-about-photo">
             <img src="{{ url_for('static', filename='img/fabiana-sobre.jpg') }}" alt="Fabiana Montemor">
@@ -90,7 +121,7 @@
       <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">O processo</p>
       <h2 class="h1 text-center mb-5">Como funciona a consultoria</h2>
 
-      <div class="lp-step">
+      <div class="lp-step reveal">
         <div class="lp-step-number">01</div>
         <div class="lp-step-body">
           <h3 class="h4 mb-2">Diagnóstico</h3>
@@ -101,7 +132,7 @@
         </div>
       </div>
 
-      <div class="lp-step lp-step-reverse">
+      <div class="lp-step lp-step-reverse reveal">
         <div class="lp-step-number">02</div>
         <div class="lp-step-body">
           <h3 class="h4 mb-2">Consultoria</h3>
@@ -112,7 +143,7 @@
         </div>
       </div>
 
-      <div class="lp-step">
+      <div class="lp-step reveal">
         <div class="lp-step-number">03</div>
         <div class="lp-step-body">
           <h3 class="h4 mb-2">Plano personalizado</h3>
@@ -134,11 +165,11 @@
         ferramenta estratégica de comunicação e autoridade.
       </p>
 
-      <div class="lp-method-letters">
+      <div class="lp-method-letters reveal">
         {% for letter in "IMPACTO" %}<span class="lp-method-letter">{{ letter }}</span>{% endfor %}
       </div>
 
-      <div class="row g-4">
+      <div class="row g-4 reveal">
         {% set steps = [
           ("I", "Imagem", "Análise completa da sua imagem atual e objetivos profissionais."),
           ("M", "Mapeamento", "Identificação do seu estilo pessoal e das cores que valorizam."),
@@ -167,16 +198,17 @@
       <h2 class="h1 text-center mb-5">Soluções em consultoria de imagem</h2>
 
       <p class="lp-services-group-label">Para você</p>
-      <div class="row g-4 mb-5">
+      <div class="row g-4 mb-5 reveal">
         {% set individual = [
-          ("Coloração Pessoal", "Descubra as cores que mais valorizam seu tom de pele, olhos e cabelos."),
-          ("Análise de Biotipo", "Aprenda a destacar seus pontos fortes através das proporções corporais."),
-          ("Análise de Estilo", "Desenvolvemos seu estilo pessoal autêntico, alinhado às suas preferências."),
-          ("Personal Stylist", "Acompanhamento especializado em compras e desenvolvimento contínuo do estilo."),
+          ("palette", "Coloração Pessoal", "Descubra as cores que mais valorizam seu tom de pele, olhos e cabelos."),
+          ("ruler", "Análise de Biotipo", "Aprenda a destacar seus pontos fortes através das proporções corporais."),
+          ("hanger", "Análise de Estilo", "Desenvolvemos seu estilo pessoal autêntico, alinhado às suas preferências."),
+          ("sparkle", "Personal Stylist", "Acompanhamento especializado em compras e desenvolvimento contínuo do estilo."),
         ] %}
-        {% for title, desc in individual %}
+        {% for icon_key, title, desc in individual %}
         <div class="col-md-6 col-lg-3">
           <div class="lp-value-card">
+            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
             <h3 class="h6 mb-2">{{ title }}</h3>
             <p class="text-muted small mb-0">{{ desc }}</p>
           </div>
@@ -185,16 +217,17 @@
       </div>
 
       <p class="lp-services-group-label">Para empresas</p>
-      <div class="row g-4">
+      <div class="row g-4 reveal">
         {% set corporate = [
-          ("Dress Code Corporativo", "Políticas de vestimenta que refletem a cultura e os valores da organização."),
-          ("Palestras e Workshops", "Treinamentos sobre imagem profissional e etiqueta corporativa."),
-          ("Consultoria para Equipes", "Programas de transformação de imagem para times e lideranças."),
-          ("Treinamento para Lojistas", "Capacitação de equipes de varejo em atendimento e apresentação pessoal."),
+          ("briefcase", "Dress Code Corporativo", "Políticas de vestimenta que refletem a cultura e os valores da organização."),
+          ("presentation", "Palestras e Workshops", "Treinamentos sobre imagem profissional e etiqueta corporativa."),
+          ("users", "Consultoria para Equipes", "Programas de transformação de imagem para times e lideranças."),
+          ("bag", "Treinamento para Lojistas", "Capacitação de equipes de varejo em atendimento e apresentação pessoal."),
         ] %}
-        {% for title, desc in corporate %}
+        {% for icon_key, title, desc in corporate %}
         <div class="col-md-6 col-lg-3">
           <div class="lp-value-card">
+            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
             <h3 class="h6 mb-2">{{ title }}</h3>
             <p class="text-muted small mb-0">{{ desc }}</p>
           </div>
@@ -205,13 +238,13 @@
   </section>
 
   <section class="lp-cta-banner full-bleed">
-    <div class="container text-center">
+    <div class="container text-center reveal">
       <h2 class="h2 mb-3">Pronta para dar o primeiro passo?</h2>
       <p class="mb-4 mx-auto" style="max-width: 560px; color: var(--avie-navy-deep);">
         O diagnóstico é gratuito e leva poucos minutos. A partir dele, Fabiana
         entra em contato para conversar sobre os próximos passos.
       </p>
-      <a href="{{ url_for('public.diagnostic') }}" class="btn btn-lg px-4 lp-cta-banner-btn">Fazer meu diagnóstico</a>
+      <a href="{{ url_for('public.diagnostic') }}" class="btn btn-lg px-4 lp-cta-banner-btn d-inline-flex align-items-center justify-content-center gap-2">Fazer meu diagnóstico{{ arrow_icon() }}</a>
     </div>
   </section>
 
@@ -271,4 +304,8 @@
     <p class="lp-footer-copy mb-0">© {{ current_year }} Fabiana Montemor · Todos os direitos reservados.</p>
   </div>
 </footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/landing.js') }}"></script>
 {% endblock %}
