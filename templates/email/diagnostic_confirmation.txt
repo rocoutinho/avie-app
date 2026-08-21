@@ -1,0 +1,11 @@
+Olá, {{ client.full_name.split(' ')[0] }}!
+
+Recebemos seu diagnóstico de autoconhecimento e estilo. Obrigada por
+compartilhar tudo isso com tanta sinceridade — é exatamente esse tipo de
+reflexão que torna a consultoria verdadeiramente sua.
+
+Em breve entraremos em contato para combinarmos os próximos passos.
+
+Um abraço,
+Fabiana Montemor
+Consultoria de Imagem e Estilo

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="h3 mb-0">Clientes</h1>
+  <a href="{{ url_for('clients.new_client') }}" class="btn btn-brand btn-sm">+ Novo cliente</a>
+</div>
+
+<form method="get" class="mb-4">
+  <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar por nome ou e-mail...">
+</form>
+
+<div class="table-responsive">
+  <table class="table bg-white">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Status</th>
+        <th>Origem</th>
+        <th>Desde</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in clients %}
+      <tr class="cursor-pointer" onclick="window.location='{{ url_for('clients.detail', client_id=c.id) }}'" style="cursor:pointer;">
+        <td>{{ c.full_name }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ label_for(CLIENT_STATUSES, c.status) }}</td>
+        <td>{{ label_for(LEAD_SOURCES, c.source) }}</td>
+        <td>{{ c.created_at.strftime('%d/%m/%Y') }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum cliente encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

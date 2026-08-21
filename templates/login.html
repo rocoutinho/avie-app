@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}Entrar{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <h1 class="h3 mb-4">Área da equipe</h1>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.email) }}
+      {{ render_field(form.password) }}
+      <button type="submit" class="btn btn-brand w-100">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

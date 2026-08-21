@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}{{ "Editar relatório" if report else "Novo relatório" }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="h3 mb-1">{{ "Editar relatório" if report else "Gerar relatório personalizado" }}</h1>
+    <p class="text-muted mb-4">Cliente: {{ client.full_name }}</p>
+    {% if not report %}
+    <p class="alert alert-info small">
+      O texto abaixo é um rascunho gerado a partir do diagnóstico da cliente. Revise e personalize
+      antes de salvar.
+    </p>
+    {% endif %}
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.title) }}
+      <div class="mb-3">
+        {{ form.content.label(class_="form-label fw-semibold") }}
+        {{ form.content(class_="form-control" + (" is-invalid" if form.content.errors else ""), rows=20) }}
+        {% for error in form.content.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+        {% endfor %}
+      </div>
+      {{ render_field(form.status) }}
+      <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
