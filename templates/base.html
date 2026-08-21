@@ -68,22 +68,27 @@
   {% endif %}
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg">
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="{{ url_for('public.landing') }}">
         <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark" alt="">
         Fabiana Montemor
       </a>
-      <div class="d-flex gap-2">
-        {% if current_user.is_authenticated %}
-          <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('dashboard.index') }}">Painel</a>
-          <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('clients.list_clients') }}">Clientes</a>
-          <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
-          <a class="btn btn-sm btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
-        {% else %}
-          <a class="btn btn-sm btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
-        {% endif %}
-      </div>
+      {% if current_user.is_authenticated %}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+          <div class="d-flex flex-wrap gap-2 mt-3 mt-lg-0">
+            <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('dashboard.index') }}">Painel</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('clients.list_clients') }}">Clientes</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
+            <a class="btn btn-sm btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
+          </div>
+        </div>
+      {% else %}
+        <a class="btn btn-sm btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
+      {% endif %}
     </div>
   </nav>
 

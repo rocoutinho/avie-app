@@ -659,4 +659,110 @@ footer a {
     max-width: 340px;
     margin: 2rem auto 0;
   }
+
+  .lp-hero {
+    padding: 3.5rem 1.25rem 3rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .lp-hero-ctas .btn {
+    width: 100%;
+  }
+}
+
+/* Ícones dos cards de serviço — mesmo tratamento visual dos badges do
+   Método I.M.P.A.C.T.O., pra reforçar a identidade sem introduzir uma
+   nova linguagem visual. */
+.lp-value-card {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.lp-value-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--avie-shadow);
+  border-color: rgba(189, 151, 80, 0.35);
+}
+
+.lp-value-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(189, 151, 80, 0.16), rgba(189, 151, 80, 0.06));
+  color: var(--avie-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.lp-value-card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Botões com seta — micro-interação sutil no hover/focus, reforça o
+   convite à ação sem exagerar. */
+.lp-btn-arrow {
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn:hover .lp-btn-arrow,
+.btn:focus .lp-btn-arrow {
+  transform: translateX(3px);
+}
+
+.lp-hero-trust-item {
+  font-size: 0.85rem;
+  color: #cfd3de;
+}
+
+.lp-hero-trust-item strong {
+  color: var(--avie-gold-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.15rem;
+  margin-right: 0.3rem;
+}
+
+/* Revelação suave ao rolar a página — só ativa via JS (progressive
+   enhancement: sem JS ou com "prefers-reduced-motion", tudo já aparece
+   visível por padrão, ver static/js/landing.js). */
+.js-reveal-enabled .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.js-reveal-enabled .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-enabled .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Navbar responsiva — some no navbar-toggler de dentro do navy escuro. */
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.35);
+  padding: 0.35rem 0.55rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(245, 216, 134, 0.35);
+}
+
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+  }
 }
