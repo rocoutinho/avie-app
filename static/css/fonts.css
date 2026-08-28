@@ -1,14 +1,11 @@
 /* Fontes auto-hospedadas, subconjuntos latin e latin-ext (cobre
    acentuação do português). Sem dependência de CDN externo.
 
-   "Cormorant Garamond" é usada aqui como aproximação livre (Google
-   Fonts/OFL) da tipografia oficial da marca, "Edensor" — um serifado
-   humanista/veneziano de baixo contraste com o mesmo espírito elegante e
-   delicado. Edensor é uma fonte comercial licenciada pela StudioBin para
-   o material da marca; não a redistribuímos aqui por não termos os
-   arquivos de fonte licenciados para uso web. Se a Fabiana tiver a
-   licença webfont da Edensor, é só trocar os arquivos em
-   /static/fonts/ e o font-family abaixo — o resto do sistema não muda. */
+   "Edensor" (título/serif) e "News Gothic Condensed" (rótulos em
+   caixa-alta) são as tipografias oficiais da marca (Manual da Marca
+   V1.2024) — uso web autorizado pela Fabiana/StudioBin. "Cormorant
+   Garamond" e "Inter" seguem carregadas como fallback caso os arquivos
+   de fonte licenciados sejam removidos por algum motivo. */
 
 @font-face {
   font-family: "Inter";
@@ -44,4 +41,20 @@
   font-display: swap;
   src: url("/static/fonts/cormorant-garamond-latin-ext.woff2") format("woff2");
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Edensor";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/static/fonts/edensor.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "News Gothic Condensed";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/static/fonts/news-gothic-condensed.woff2") format("woff2");
 }
