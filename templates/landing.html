@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Consultoria de Imagem e Estilo{% endblock %}
-{% block meta_description %}Consultoria de imagem 100% personalizada com Fabiana Montemor. Faça o diagnóstico gratuito e descubra como comunicar mais confiança e clareza através da sua imagem.{% endblock %}
+{% block title %}Consultoria de Imagem e Posicionamento Profissional{% endblock %}
+{% block meta_description %}Estratégia de imagem para empresários, líderes e profissionais que querem alinhar presença, posicionamento e resultados. Faça o diagnóstico gratuito com Fabiana Montemor.{% endblock %}
 
 {% macro arrow_icon() %}<svg class="lp-btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endmacro %}
 
@@ -25,6 +25,12 @@
   <circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 19a4.3 4.3 0 0 1 6.7-3.6"/>
   {%- elif key == "bag" %}
   <path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+  {%- elif key == "check" %}
+  <path d="M5 13l4 4L19 7"/>
+  {%- elif key == "eye" %}
+  <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+  {%- elif key == "compass" %}
+  <circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.8 13.8 8.5 15.5l1.7-5.3 5.3-1.7Z"/>
   {%- endif %}
 </svg>
 {% endmacro %}
@@ -39,21 +45,20 @@
 <div class="lp">
 
   <section class="lp-hero full-bleed"{% if campaign and campaign.theme_color %} style="--avie-gold: {{ campaign.theme_color }}; --avie-gold-light: {{ campaign.theme_color }};"{% endif %}>
-    <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="lp-hero-watermark" alt="" aria-hidden="true">
+    <img src="{{ url_for('static', filename='img/logo-watermark.png') }}" class="lp-hero-watermark" alt="" aria-hidden="true">
     <div class="container lp-hero-inner">
       <div class="row align-items-center g-5">
         <div class="col-lg-6 text-center text-lg-start">
-          <p class="eyebrow mb-3">{{ campaign.hero_eyebrow if campaign and campaign.hero_eyebrow else "Consultoria de imagem e estilo" }}</p>
+          {% if campaign and campaign.hero_eyebrow %}<p class="eyebrow mb-3">{{ campaign.hero_eyebrow }}</p>{% endif %}
           <h1 class="display-4 mb-3">
-            {% if campaign and campaign.hero_title %}{{ campaign.hero_title }}{% if campaign.hero_highlight %} <span class="lp-hero-highlight">{{ campaign.hero_highlight }}</span>{% endif %}{% else %}Seja sua própria <span class="lp-hero-highlight">inspiração</span>{% endif %}
+            {% if campaign and campaign.hero_title %}{{ campaign.hero_title }}{% if campaign.hero_highlight %} <span class="lp-hero-highlight">{{ campaign.hero_highlight }}</span>{% endif %}{% else %}Sua imagem comunica a <span class="lp-hero-highlight">autoridade</span> que você já conquistou?{% endif %}
           </h1>
           <p class="lead mb-4 mx-auto mx-lg-0" style="max-width: 520px;">
-            {% if campaign and campaign.hero_subtitle %}{{ campaign.hero_subtitle }}{% else %}Uma consultoria 100% personalizada com Fabiana Montemor, para quem quer
-            se comunicar com mais consistência, clareza e confiança.{% endif %}
+            {% if campaign and campaign.hero_subtitle %}{{ campaign.hero_subtitle }}{% else %}Estratégia de imagem para empresários, líderes e profissionais que
+            querem alinhar presença, posicionamento e resultados.{% endif %}
           </p>
           <div class="lp-hero-ctas d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">{{ campaign.hero_cta_text if campaign and campaign.hero_cta_text else "Agende sua consultoria" }}{{ arrow_icon() }}</a>
-            <a href="#como-funciona" class="btn btn-outline-light-lp btn-lg px-4">Como funciona</a>
+            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">{{ campaign.hero_cta_text if campaign and campaign.hero_cta_text else "Quero descobrir o que minha imagem comunica" }}{{ arrow_icon() }}</a>
           </div>
           <div class="lp-hero-trust d-flex flex-wrap gap-4 justify-content-center justify-content-lg-start mt-4">
             <span class="lp-hero-trust-item"><strong>15+</strong> anos de experiência</span>
@@ -69,13 +74,145 @@
     </div>
   </section>
 
-  <section class="lp-manifesto full-bleed">
-    <div class="container text-center reveal">
-      <img src="{{ url_for('static', filename='img/fabiana-logo-full.png') }}" alt="Fabiana Montemor" class="lp-manifesto-logo">
-      <p class="lp-manifesto-text mx-auto">
-        “Se sua imagem ainda não reflete todo o seu potencial,
-        <span class="lp-manifesto-highlight">chegou o momento de mudar isso</span>.”
+  <section class="lp-band full-bleed">
+    <div class="container reveal">
+      <h2 class="h1 text-center mb-4 mx-auto" style="max-width: 760px;">Talvez sua carreira tenha evoluído mais rápido que a sua imagem.</h2>
+      <p class="text-center text-muted mx-auto mb-5" style="max-width: 640px;">
+        Você cresceu profissionalmente. Assumiu novas responsabilidades. Conquistou
+        experiência, reconhecimento e resultados. Mas ainda sente que sua imagem
+        não representa exatamente quem você se tornou.
       </p>
+
+      <div class="row g-4 mb-5">
+        {% set symptoms = [
+          ("eye", "É comum sentir que a imagem não acompanhou a evolução na carreira."),
+          ("compass", "Nem sempre é fácil perceber com clareza como você está sendo visto."),
+          ("sparkle", "Isso não é sobre vaidade — é sobre comunicação estratégica e presença."),
+          ("check", "Por isso existe um caminho estruturado para realinhar isso com precisão."),
+        ] %}
+        {% for icon_key, text in symptoms %}
+        <div class="col-md-6 col-lg-3">
+          <div class="lp-value-card">
+            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
+            <p class="text-muted small mb-0">{{ text }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <p class="lp-manifesto-text text-center mx-auto mb-0">
+        O problema pode não estar nas suas roupas.
+        <span class="lp-manifesto-highlight">Pode estar na estratégia por trás delas.</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="lp-photo-band full-bleed">
+    <img src="{{ url_for('static', filename='img/fabiana-estrategia.jpg') }}" alt="">
+  </section>
+
+  <section class="lp-band full-bleed">
+    <div class="container reveal">
+      <h2 class="h1 text-center mb-4 mx-auto" style="max-width: 700px;">Imagem não é apenas estética. É percepção.</h2>
+      <div class="mx-auto text-center" style="max-width: 640px;">
+        <p class="lp-about-text">
+          Antes de alguém conhecer sua competência, já percebe como você chega, como
+          se apresenta, como ocupa o espaço e o que sua imagem comunica. Minha
+          consultoria não começa perguntando qual roupa fica bonita em você — ela
+          começa com outra pergunta:
+        </p>
+        <p class="lp-manifesto-text mb-4" style="font-size: 1.5rem;">
+          <span class="lp-manifesto-highlight">Como você pretende, nas próximas etapas da sua carreira, ser percebida?</span>
+        </p>
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero fazer meu diagnóstico{{ arrow_icon() }}</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="consultoria" class="lp-band lp-band-tint full-bleed">
+    <div class="container">
+      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">A consultoria</p>
+      <h2 class="h1 text-center mb-3">Sua imagem, construída para gerar resultados.</h2>
+      <p class="text-center text-muted mx-auto mb-5" style="max-width: 640px;">
+        A Consultoria de Imagem e Posicionamento Profissional é um processo
+        personalizado para transformar sua imagem em uma ferramenta estratégica,
+        através de pilares fundamentais.
+      </p>
+
+      <div class="row g-4 reveal">
+        {% set pillars = [
+          ("hanger", "Estilo Pessoal", "Como suas escolhas comunicam quem você é."),
+          ("ruler", "Proporções", "Cortes e proporções que valorizam seu biotipo."),
+          ("palette", "Cores", "A paleta que reforça sua presença e credibilidade."),
+          ("sparkle", "Visagismo", "Ajustes que harmonizam rosto, cabelo e expressão."),
+          ("users", "Comportamento e Posicionamento", "Como sua postura reforça sua autoridade."),
+        ] %}
+        {% for icon_key, title, desc in pillars %}
+        <div class="col-md-6 col-lg-4">
+          <div class="lp-value-card">
+            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
+            <h3 class="h6 mb-2">{{ title }}</h3>
+            <p class="text-muted small mb-0">{{ desc }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <p class="lp-manifesto-text text-center mx-auto mt-5 mb-0" style="font-size: 1.5rem;">
+        O objetivo não é simplesmente se vestir melhor.
+        <span class="lp-manifesto-highlight">É comunicar, com clareza, exatamente onde você quer chegar.</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="lp-about full-bleed">
+    <div class="container">
+      <p class="eyebrow text-center mb-2">O que muda depois da consultoria?</p>
+      <h2 class="h1 text-center mb-5" style="color: #fff;">Resultados que você sente no dia a dia</h2>
+
+      <div class="row g-4 reveal">
+        {% set benefits = [
+          ("Clareza", "Você entra em qualquer ambiente sabendo exatamente o que representa."),
+          ("Praticidade", "Menos tempo se vestindo, mais clareza sobre o que vestir."),
+          ("Segurança", "Você deixa de duvidar do que veste em ocasiões importantes."),
+          ("Intencionalidade", "Cada escolha passa a ter um propósito."),
+          ("Autoridade", "Sua presença passa a acompanhar sua posição profissional."),
+          ("Coerência", "Imagem, carreira e objetivos comunicam a mesma direção."),
+        ] %}
+        {% for title, desc in benefits %}
+        <div class="col-md-6 col-lg-4">
+          <div class="lp-benefit-item">
+            <div class="lp-benefit-icon">{{ service_icon("check") }}</div>
+            <div>
+              <h3 class="h6 mb-1">{{ title }}</h3>
+              <p class="lp-about-text-muted small mb-0">{{ desc }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-band full-bleed">
+    <div class="container reveal">
+      <h2 class="h1 text-center mb-5">Essa consultoria é para você que...</h2>
+
+      <ul class="lp-bullet-list mx-auto mb-5" style="max-width: 640px;">
+        <li>{{ service_icon("check") }}<span>É empresária/o e percebe que sua imagem representa sua empresa.</span></li>
+        <li>{{ service_icon("check") }}<span>Ocupa uma posição de liderança e quer fortalecer sua presença.</span></li>
+        <li>{{ service_icon("check") }}<span>É profissional liberal e sabe que a confiança influencia a decisão do cliente.</span></li>
+        <li>{{ service_icon("check") }}<span>Passou por uma mudança de carreira e sente que sua imagem ainda pertence à fase anterior.</span></li>
+        <li>{{ service_icon("check") }}<span>Tem pouco tempo e precisa de um guarda-roupa mais inteligente e funcional.</span></li>
+      </ul>
+
+      <div class="text-center">
+        <p class="text-muted mb-1">Ou simplesmente chegou a um momento em que sente:</p>
+        <p class="lp-manifesto-text mb-4" style="font-size: 1.6rem;">
+          <span class="lp-manifesto-highlight">Eu mudei. Minha imagem também precisa mudar.</span>
+        </p>
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero conhecer a consultoria{{ arrow_icon() }}</a>
+      </div>
     </div>
   </section>
 
@@ -89,18 +226,17 @@
         </div>
         <div class="col-lg-7">
           <p class="eyebrow mb-3">Sobre mim</p>
-          <h2 class="h1 mb-4">Estrategista de imagem profissional</h2>
+          <h2 class="h1 mb-4">Consultora de Imagem e Posicionamento Profissional</h2>
           <p class="lp-about-text">
-            Criadora do <strong>Método I.M.P.A.C.T.O.</strong>: um caminho entre imagem e
-            autoridade. Com sólida formação em consultoria de imagem — incluindo
-            especializações em Estilo Pessoal, Coloração Pessoal e Imagem Masculina —
-            e uma trajetória de mais de 15 anos em liderança corporativa e 7 anos no
-            varejo de moda.
+            Antes da consultoria de imagem, construí minha trajetória profissional em
+            ambientes de gestão, liderança e varejo. Essa experiência mudou a forma
+            como enxergo a imagem: <strong>roupa nunca é apenas roupa</strong>.
           </p>
           <p class="lp-about-text lp-about-text-muted">
-            Meu trabalho é estratégico: ajudo profissionais a alinharem sua imagem ao
-            posicionamento desejado, potencializando sua presença, influência e impacto
-            nos negócios.
+            Ela participa da construção de percepção, confiança, presença e
+            posicionamento. Hoje, meu trabalho é ajudar profissionais a construírem
+            uma imagem que represente não apenas quem são — mas também onde querem
+            chegar.
           </p>
           <div class="lp-stat-grid">
             <div class="lp-stat"><span class="lp-stat-number">15+</span><span class="lp-stat-label">Anos de liderança</span></div>
@@ -116,75 +252,26 @@
     </div>
   </section>
 
-  <section id="como-funciona" class="lp-band full-bleed">
-    <div class="container">
-      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">O processo</p>
-      <h2 class="h1 text-center mb-5">Como funciona a consultoria</h2>
+  <section class="lp-band full-bleed">
+    <div class="container reveal">
+      <h2 class="h1 text-center mb-2">Quando a imagem muda, a percepção também muda.</h2>
+      <p class="text-center mb-5" style="color: var(--avie-gold); letter-spacing: 0.2em;" aria-hidden="true">★★★★★</p>
 
-      <div class="lp-step reveal">
-        <div class="lp-step-number">01</div>
-        <div class="lp-step-body">
-          <h3 class="h4 mb-2">Diagnóstico</h3>
-          <p class="text-muted mb-0">
-            Um formulário guiado, em 3 etapas rápidas, para entender seu momento
-            profissional, como você quer ser percebida e seu estilo hoje.
-          </p>
-        </div>
-      </div>
-
-      <div class="lp-step lp-step-reverse reveal">
-        <div class="lp-step-number">02</div>
-        <div class="lp-step-body">
-          <h3 class="h4 mb-2">Consultoria</h3>
-          <p class="text-muted mb-0">
-            Uma sessão individual com Fabiana, 100% adaptada aos seus objetivos,
-            desafios de imagem e ao ambiente em que você circula profissionalmente.
-          </p>
-        </div>
-      </div>
-
-      <div class="lp-step reveal">
-        <div class="lp-step-number">03</div>
-        <div class="lp-step-body">
-          <h3 class="h4 mb-2">Plano personalizado</h3>
-          <p class="text-muted mb-0">
-            Um relatório com leitura de estilo e recomendações práticas de
-            posicionamento — seu, para consultar sempre que precisar.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="metodo" class="lp-band lp-band-tint full-bleed">
-    <div class="container">
-      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">Metodologia exclusiva</p>
-      <h2 class="h1 text-center mb-3">Método I.M.P.A.C.T.O.</h2>
-      <p class="text-center text-muted mx-auto mb-5" style="max-width: 560px;">
-        Uma jornada estruturada de 7 etapas para transformar sua imagem em uma
-        ferramenta estratégica de comunicação e autoridade.
-      </p>
-
-      <div class="lp-method-letters reveal">
-        {% for letter in "IMPACTO" %}<span class="lp-method-letter">{{ letter }}</span>{% endfor %}
-      </div>
-
-      <div class="row g-4 reveal">
-        {% set steps = [
-          ("I", "Imagem", "Análise completa da sua imagem atual e objetivos profissionais."),
-          ("M", "Mapeamento", "Identificação do seu estilo pessoal e das cores que valorizam."),
-          ("P", "Planejamento", "Estratégia personalizada para alcançar seus objetivos."),
-          ("A", "Alinhamento", "Conexão entre sua essência e a imagem que deseja projetar."),
-          ("C", "Construção", "Desenvolvimento do guarda-roupa funcional e elegante."),
-          ("T", "Transformação", "Implementação das mudanças e ajustes necessários."),
-          ("O", "Otimização", "Refinamento contínuo e manutenção da nova imagem."),
+      <div class="row g-4">
+        {% set testimonials = [
+          ("Arquiteta", "Maha Arquitetura", "Fabi é aquela que tem o dom de guiar a pessoa para realçar sua beleza natural com harmonia. Se você quer se vestir de forma adequada, se posicionar no mercado, entre amigos e com você mesmo, você precisa da consultoria dela!!! Todo o processo tem pilares evidentes: conhecimento, acolhimento, zelo e preocupação com o bem-estar de quem ela está atendendo."),
+          ("Nutricionista", "Idma Socha", "Eu ameeeeei a experiência! Fabiana muito atenciosa, detalhista… explicou o porquê de cada coisa, exemplificou. Fez toda a sessão sem pressa, respondendo todos os questionamentos e direcionou com eficiência. Após o recebimento do meu dossiê sou outra pessoa — hoje sei exatamente como me preparar para transmitir exatamente o que eu desejo."),
+          ("Pediatra", "Ana Paula Bastos", "Quando procurei a Fabi para me auxiliar em uma produção para um evento, não tinha ideia de quanto iria me surpreender! Sempre com sorriso no rosto e simpatia, me auxiliou desde a escolha do vestido até a cor da unha!! É uma profissional exemplar, cuidadosa, organizada! Super indico e confio de olhos fechados!!"),
+          ("Artesã", "Bianca Melo", "A consultoria de Fabiana me surpreendeu! Muito mais do que eu esperava. Ela tem muita propriedade e cuidado. Faz questão de me deixar tudo muito claro e explicado. A segurança nos contamina positivamente! Muito grata por tê-la conhecido."),
         ] %}
-        {% for letter, title, desc in steps %}
+        {% for role, name, quote in testimonials %}
         <div class="col-md-6 col-lg-3">
-          <div class="lp-method-card">
-            <span class="lp-method-card-letter">{{ letter }}</span>
-            <h3 class="h6 mb-2">{{ title }}</h3>
-            <p class="text-muted small mb-0">{{ desc }}</p>
+          <div class="lp-testimonial-card">
+            <p class="lp-testimonial-role">{{ role }}</p>
+            <p class="mb-2" style="color: var(--avie-gold); letter-spacing: 0.15em;" aria-hidden="true">★★★★★</p>
+            <p class="text-muted small fst-italic">“{{ quote }}”</p>
+            <p class="small fw-semibold mb-0" style="color: var(--avie-navy);">{{ name }}</p>
+            <p class="lp-testimonial-source small mb-0">Avaliação verificada no Google</p>
           </div>
         </div>
         {% endfor %}
@@ -192,59 +279,17 @@
     </div>
   </section>
 
-  <section id="servicos" class="lp-band full-bleed">
-    <div class="container">
-      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">Serviços</p>
-      <h2 class="h1 text-center mb-5">Soluções em consultoria de imagem</h2>
-
-      <p class="lp-services-group-label">Para você</p>
-      <div class="row g-4 mb-5 reveal">
-        {% set individual = [
-          ("palette", "Coloração Pessoal", "Descubra as cores que mais valorizam seu tom de pele, olhos e cabelos."),
-          ("ruler", "Análise de Biotipo", "Aprenda a destacar seus pontos fortes através das proporções corporais."),
-          ("hanger", "Análise de Estilo", "Desenvolvemos seu estilo pessoal autêntico, alinhado às suas preferências."),
-          ("sparkle", "Personal Stylist", "Acompanhamento especializado em compras e desenvolvimento contínuo do estilo."),
-        ] %}
-        {% for icon_key, title, desc in individual %}
-        <div class="col-md-6 col-lg-3">
-          <div class="lp-value-card">
-            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
-            <h3 class="h6 mb-2">{{ title }}</h3>
-            <p class="text-muted small mb-0">{{ desc }}</p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <p class="lp-services-group-label">Para empresas</p>
-      <div class="row g-4 reveal">
-        {% set corporate = [
-          ("briefcase", "Dress Code Corporativo", "Políticas de vestimenta que refletem a cultura e os valores da organização."),
-          ("presentation", "Palestras e Workshops", "Treinamentos sobre imagem profissional e etiqueta corporativa."),
-          ("users", "Consultoria para Equipes", "Programas de transformação de imagem para times e lideranças."),
-          ("bag", "Treinamento para Lojistas", "Capacitação de equipes de varejo em atendimento e apresentação pessoal."),
-        ] %}
-        {% for icon_key, title, desc in corporate %}
-        <div class="col-md-6 col-lg-3">
-          <div class="lp-value-card">
-            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
-            <h3 class="h6 mb-2">{{ title }}</h3>
-            <p class="text-muted small mb-0">{{ desc }}</p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <section class="lp-cta-banner full-bleed">
+  <section class="lp-final-cta full-bleed">
     <div class="container text-center reveal">
-      <h2 class="h2 mb-3">Pronta para dar o primeiro passo?</h2>
-      <p class="mb-4 mx-auto" style="max-width: 560px; color: var(--avie-navy-deep);">
-        O diagnóstico é gratuito e leva poucos minutos. A partir dele, Fabiana
-        entra em contato para conversar sobre os próximos passos.
+      <h2 class="h1 mb-2" style="color: #fff;">Sua carreira evoluiu.</h2>
+      <p class="h3 mb-4" style="color: var(--avie-gold-light);">Sua imagem está acompanhando essa evolução?</p>
+      <p class="mb-4 mx-auto" style="max-width: 560px; color: #cfd3de;">
+        Vamos conversar sobre seu momento profissional, seus objetivos e a
+        percepção que deseja construir. A partir daí, eu posso indicar qual
+        caminho faz mais sentido para você.
       </p>
-      <a href="{{ url_for('public.diagnostic') }}" class="btn btn-lg px-4 lp-cta-banner-btn d-inline-flex align-items-center justify-content-center gap-2">Fazer meu diagnóstico{{ arrow_icon() }}</a>
+      <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar minha sessão diagnóstica' | urlencode }}" target="_blank" rel="noopener" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero dar o primeiro passo agora{{ arrow_icon() }}</a>
+      <p class="small mt-3 mb-0" style="color: #a8adbd;">Clique para iniciar uma conversa pelo WhatsApp e agendar sua sessão diagnóstica comigo!</p>
     </div>
   </section>
 
@@ -264,7 +309,7 @@
     <div class="row gy-4">
       <div class="col-md-5">
         <div class="lp-footer-brand">
-          <img src="{{ url_for('static', filename='img/brand-mark.svg') }}" class="brand-mark" alt="">
+          <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="brand-mark" alt="">
           <span>Fabiana Montemor</span>
         </div>
         <p class="lp-footer-tagline">Transformando profissionais através da consultoria de imagem estratégica. Sua imagem é seu cartão de visitas mais poderoso.</p>
@@ -283,9 +328,8 @@
       <div class="col-md-3">
         <p class="lp-footer-heading">Links rápidos</p>
         <ul class="lp-footer-links">
+          <li><a href="#consultoria">A consultoria</a></li>
           <li><a href="#sobre">Sobre</a></li>
-          <li><a href="#servicos">Serviços</a></li>
-          <li><a href="#metodo">Método I.M.P.A.C.T.O.</a></li>
           <li><a href="{{ url_for('public.diagnostic') }}">Fazer diagnóstico</a></li>
           <li><a href="{{ url_for('public.privacy') }}">Política de Privacidade</a></li>
           <li><a href="{{ url_for('auth.login') }}">Área da equipe</a></li>
@@ -296,7 +340,8 @@
         <ul class="lp-footer-links">
           <li><a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">{{ config.MAIL_DEFAULT_SENDER }}</a></li>
           <li><a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener">WhatsApp</a></li>
-          <li>São Paulo, SP</li>
+          <li>Edifício Olimpus Offices</li>
+          <li>R. José Augusto dos Santos, 108 - Sl 512<br>Floradas de São José, São José dos Campos - SP<br>12230-085</li>
         </ul>
       </div>
     </div>

@@ -131,24 +131,31 @@ tests/               # testes automatizados (pytest)
 
 ## Identidade visual
 
-A partir do `Manual da Marca V1.2024` (StudioBin), o sistema usa:
+A partir do `Manual da Marca V1.2024` (StudioBin) e dos arquivos reais de
+logo/ícone/tipografia fornecidos pela Fabiana, o sistema usa:
 
-- **Cores**: azul índigo `#36405b` (texto, logotipo), azul marinho
-  acinzentado `#131a2e` (fundos escuros — navbar e hero) e dourado
-  `#bd9750` / `#f5d886` (CTAs e destaques). Definidas como variáveis CSS
-  em `static/css/style.css` — trocar a marca inteira é editar esse bloco.
-- **Ícone**: o "leque de cores" multicolorido do logotipo, recriado como
-  SVG em `static/img/brand-mark.svg` (o sistema não tinha acesso ao
-  arquivo vetorial original). Por regra do manual, o ícone nunca muda de
-  cor — só o logotipo alterna para branco/dourado em fundos escuros.
-- **Tipografia**: título em "Cormorant Garamond" (Google Fonts/OFL), como
-  aproximação livre da fonte oficial da marca, "Edensor" — uma serifada
-  humanista de baixo contraste licenciada pela StudioBin. Não
-  redistribuímos a Edensor aqui por não termos os arquivos de fonte com
-  licença de uso web. **Se a Fabiana tiver a licença webfont da Edensor**,
-  basta trocar os arquivos `.woff2` em `static/fonts/` e o
-  `font-family` em `static/css/fonts.css` — nada mais no sistema precisa
-  mudar.
+- **Cores**: azul índigo `#323955` (texto, logotipo), azul marinho `#1f2733`
+  (fundos escuros — navbar e hero) e dourado `#bd9750` / `#f5d886` (CTAs e
+  destaques) — valores hex exatos da Paleta de Cores do manual. Definidas
+  como variáveis CSS em `static/css/style.css` — trocar a marca inteira é
+  editar esse bloco.
+- **Ícone e logotipo**: arquivos reais da marca (`static/img/icon-navy.png`,
+  `icon-gold.png`, `logo-full-navy.png`, `logo-full-gold.png`,
+  `logo-watermark.png`) — o anel do "leque de cores" alterna entre azul
+  (fundo claro) e dourado (fundo escuro); os segmentos coloridos nunca
+  mudam.
+- **Tipografia**: título em "Edensor" (arquivo `static/fonts/edensor.woff2`,
+  variante "FREE" da fonderia FactoryType) está carregada mas **não** é
+  usada em `h1/h2/h3` — esse arquivo específico derruba acentos do
+  português (ã, é, ç, í) de forma consistente no Chromium (confirmado com
+  `document.fonts.status === "loaded"`, não é problema de carregamento).
+  `h1/h2/h3/.font-serif` usam "Cormorant Garamond" (Google Fonts/OFL) por
+  segurança. Se surgir um arquivo da Edensor licenciado/hinted
+  corretamente, troque o `font-family` em `static/css/style.css` — nada
+  mais no sistema precisa mudar. Rótulos em caixa-alta (`.eyebrow`,
+  cabeçalhos de rodapé etc.) usam "News Gothic Condensed"
+  (`static/fonts/news-gothic-condensed.woff2`, Bitstream/Monotype, uso web
+  licenciado) — essa não apresentou o mesmo problema de acentuação.
 
 ## Segurança e dados pessoais (LGPD)
 

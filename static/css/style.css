@@ -1,12 +1,14 @@
 /*
   Paleta oficial da marca Fabiana Montemor (Manual da Marca V1.2024,
-  StudioBin): azul índigo, azul marinho acinzentado (fundos escuros) e
-  dourado. Ícone: "leque de cores" multicolorido — nunca muda de cor,
-  mesmo em fundos escuros (só o logotipo alterna para branco).
+  StudioBin): azul índigo, azul marinho (fundos escuros) e dourado —
+  valores hex exatos do manual (Paleta de Cores). Ícone: "leque de
+  cores" multicolorido — os segmentos nunca mudam de cor; só o anel
+  contorno e o logotipo alternam entre azul (fundo claro) e dourado
+  (fundo escuro).
 */
 :root {
-  --avie-navy: #36405b;       /* Azul Índigo — texto, logotipo, título */
-  --avie-navy-deep: #131a2e;  /* Azul Marinho Acinzentado — fundos escuros */
+  --avie-navy: #323955;       /* Azul Índigo — texto, logotipo, título */
+  --avie-navy-deep: #1f2733;  /* Azul Marinho — fundos escuros */
   --avie-gold: #bd9750;       /* Dourado — CTAs, destaque */
   --avie-gold-light: #f5d886; /* Dourado claro — texto sobre fundo escuro */
   --avie-bg: #faf8f4;
@@ -24,8 +26,20 @@ body {
 }
 
 h1, h2, h3, .font-serif {
+  /* "Edensor" (static/fonts/edensor.woff2) fica carregada mas fora dessa
+     pilha por enquanto: esse arquivo específico (variante "FREE" da
+     FactoryType) derruba acentos do português (ã, é, ç, í) de forma
+     consistente no Chromium — "não" renderiza como "nao". Confirmado com
+     document.fonts.status === "loaded", não é problema de carregamento.
+     Cormorant Garamond não tem esse bug. Se a Fabiana conseguir um
+     arquivo da Edensor licenciado/hinted corretamente (não a versão
+     free), é só trocar esse font-family de volta. */
   font-family: "Cormorant Garamond", serif;
   font-weight: 700;
+}
+
+.font-condensed {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
 }
 
 /* Navbar: sempre em azul marinho, a aplicação de marca mais consistente
@@ -87,9 +101,10 @@ h1, h2, h3, .font-serif {
 }
 
 .eyebrow {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--avie-gold-light);
 }
@@ -211,10 +226,10 @@ footer a {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 900px;
+  width: 1100px;
   max-width: none;
   transform: translate(-50%, -50%);
-  opacity: 0.05;
+  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -370,9 +385,10 @@ footer a {
 }
 
 .lp-footer-heading {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--avie-gold-light);
   margin-bottom: 0.9rem;
@@ -508,7 +524,8 @@ footer a {
 .lp-stat-label {
   display: block;
   margin-top: 0.3rem;
-  font-size: 0.72rem;
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #a8adbd;
@@ -567,13 +584,111 @@ footer a {
 
 /* Serviços */
 .lp-services-group-label {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--avie-navy);
   margin-bottom: 1.5rem;
+}
+
+/* Faixa de foto full-bleed entre seções de texto (ex: seção "imagem não
+   é apenas estética"). */
+.lp-photo-band {
+  height: 440px;
+  overflow: hidden;
+}
+
+.lp-photo-band img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 26%;
+  display: block;
+}
+
+/* Grid de benefícios ("o que muda depois da consultoria") — sobre fundo
+   escuro, reaproveita o .lp-about já existente. */
+.lp-benefit-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.lp-benefit-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(245, 216, 134, 0.12);
+  color: var(--avie-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-benefit-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Lista de "essa consultoria é para você que..." */
+.lp-bullet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lp-bullet-list li {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--avie-border);
+  color: var(--avie-text);
+}
+
+.lp-bullet-list li:last-child {
+  border-bottom: none;
+}
+
+.lp-bullet-list li svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 0.15rem;
+  color: var(--avie-gold);
+}
+
+/* Depoimentos */
+.lp-testimonial-card {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 1.75rem 1.5rem;
+  height: 100%;
+}
+
+.lp-testimonial-role {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--avie-navy);
+  margin-bottom: 0.4rem;
+}
+
+.lp-testimonial-source {
+  color: var(--avie-text-muted);
+}
+
+/* Banner final de CTA, em navy escuro (fecha a página antes do rodapé) */
+.lp-final-cta {
+  background: radial-gradient(120% 140% at 50% -10%, #1c2440 0%, var(--avie-navy-deep) 55%, #0c1120 100%);
+  padding: 5rem 1.5rem;
 }
 
 /* WhatsApp flutuante */
