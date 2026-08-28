@@ -257,14 +257,21 @@
       <h2 class="h1 text-center mb-2">Quando a imagem muda, a percepção também muda.</h2>
       <p class="text-center mb-5" style="color: var(--avie-gold); letter-spacing: 0.2em;" aria-hidden="true">★★★★★</p>
 
-      <!-- TODO: substituir pelos depoimentos reais (texto + nome) antes de publicar -->
       <div class="row g-4">
-        {% for role in ["Arquiteta", "Nutricionista", "Pediatra", "Artesã"] %}
+        {% set testimonials = [
+          ("Arquiteta", "Maha Arquitetura", "Fabi é aquela que tem o dom de guiar a pessoa para realçar sua beleza natural com harmonia. Se você quer se vestir de forma adequada, se posicionar no mercado, entre amigos e com você mesmo, você precisa da consultoria dela!!! Todo o processo tem pilares evidentes: conhecimento, acolhimento, zelo e preocupação com o bem-estar de quem ela está atendendo."),
+          ("Nutricionista", "Idma Socha", "Eu ameeeeei a experiência! Fabiana muito atenciosa, detalhista… explicou o porquê de cada coisa, exemplificou. Fez toda a sessão sem pressa, respondendo todos os questionamentos e direcionou com eficiência. Após o recebimento do meu dossiê sou outra pessoa — hoje sei exatamente como me preparar para transmitir exatamente o que eu desejo."),
+          ("Pediatra", "Ana Paula Bastos", "Quando procurei a Fabi para me auxiliar em uma produção para um evento, não tinha ideia de quanto iria me surpreender! Sempre com sorriso no rosto e simpatia, me auxiliou desde a escolha do vestido até a cor da unha!! É uma profissional exemplar, cuidadosa, organizada! Super indico e confio de olhos fechados!!"),
+          ("Artesã", "Bianca Melo", "A consultoria de Fabiana me surpreendeu! Muito mais do que eu esperava. Ela tem muita propriedade e cuidado. Faz questão de me deixar tudo muito claro e explicado. A segurança nos contamina positivamente! Muito grata por tê-la conhecido."),
+        ] %}
+        {% for role, name, quote in testimonials %}
         <div class="col-md-6 col-lg-3">
           <div class="lp-testimonial-card">
             <p class="lp-testimonial-role">{{ role }}</p>
-            <p class="mb-0" style="color: var(--avie-gold); letter-spacing: 0.15em;" aria-hidden="true">★★★★★</p>
-            <p class="text-muted small fst-italic mb-0">Depoimento real a ser adicionado.</p>
+            <p class="mb-2" style="color: var(--avie-gold); letter-spacing: 0.15em;" aria-hidden="true">★★★★★</p>
+            <p class="text-muted small fst-italic">“{{ quote }}”</p>
+            <p class="small fw-semibold mb-0" style="color: var(--avie-navy);">{{ name }}</p>
+            <p class="lp-testimonial-source small mb-0">Avaliação verificada no Google</p>
           </div>
         </div>
         {% endfor %}
@@ -277,11 +284,12 @@
       <h2 class="h1 mb-2" style="color: #fff;">Sua carreira evoluiu.</h2>
       <p class="h3 mb-4" style="color: var(--avie-gold-light);">Sua imagem está acompanhando essa evolução?</p>
       <p class="mb-4 mx-auto" style="max-width: 560px; color: #cfd3de;">
-        Vamos conversar sobre os próximos passos profissionais, seus objetivos e a
-        percepção que deseja construir. A partir daí, poderei indicar qual caminho
-        faz mais sentido para você.
+        Vamos conversar sobre seu momento profissional, seus objetivos e a
+        percepção que deseja construir. A partir daí, eu posso indicar qual
+        caminho faz mais sentido para você.
       </p>
-      <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero entender meu próximo passo agora{{ arrow_icon() }}</a>
+      <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar minha sessão diagnóstica' | urlencode }}" target="_blank" rel="noopener" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero dar o primeiro passo agora{{ arrow_icon() }}</a>
+      <p class="small mt-3 mb-0" style="color: #a8adbd;">Clique para iniciar uma conversa pelo WhatsApp e agendar sua sessão diagnóstica comigo!</p>
     </div>
   </section>
 
@@ -332,7 +340,8 @@
         <ul class="lp-footer-links">
           <li><a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">{{ config.MAIL_DEFAULT_SENDER }}</a></li>
           <li><a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener">WhatsApp</a></li>
-          <li>São Paulo, SP</li>
+          <li>Edifício Olimpus Offices</li>
+          <li>R. José Augusto dos Santos, 108 - Sl 512<br>Floradas de São José, São José dos Campos - SP<br>12230-085</li>
         </ul>
       </div>
     </div>

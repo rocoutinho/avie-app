@@ -681,6 +681,10 @@ footer a {
   margin-bottom: 0.4rem;
 }
 
+.lp-testimonial-source {
+  color: var(--avie-text-muted);
+}
+
 /* Banner final de CTA, em navy escuro (fecha a página antes do rodapé) */
 .lp-final-cta {
   background: radial-gradient(120% 140% at 50% -10%, #1c2440 0%, var(--avie-navy-deep) 55%, #0c1120 100%);
