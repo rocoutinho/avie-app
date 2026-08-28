@@ -597,7 +597,7 @@ footer a {
 /* Faixa de foto full-bleed entre seções de texto (ex: seção "imagem não
    é apenas estética"). */
 .lp-photo-band {
-  height: 380px;
+  height: 440px;
   overflow: hidden;
 }
 
@@ -605,7 +605,7 @@ footer a {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
+  object-position: center 26%;
   display: block;
 }
 

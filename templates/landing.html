@@ -66,7 +66,6 @@
           </div>
         </div>
         <div class="col-lg-6">
-          <!-- TODO: trocar pela foto de retrato (braços cruzados, fundo veludo) assim que os arquivos novos chegarem -->
           <div class="lp-hero-photo-card">
             <img src="{{ campaign.hero_image_url if campaign and campaign.hero_image_url else url_for('static', filename='img/fabiana-hero.jpg') }}" alt="Fabiana Montemor">
           </div>
@@ -108,9 +107,8 @@
     </div>
   </section>
 
-  <!-- TODO: trocar por uma foto real (tabuleiro de xadrez era um stock do Canva com marca d'água — não é asset da marca) -->
   <section class="lp-photo-band full-bleed">
-    <img src="{{ url_for('static', filename='img/fabiana-sobre.jpg') }}" alt="">
+    <img src="{{ url_for('static', filename='img/fabiana-estrategia.jpg') }}" alt="">
   </section>
 
   <section class="lp-band full-bleed">
@@ -222,7 +220,6 @@
     <div class="container">
       <div class="row align-items-center g-5 reveal">
         <div class="col-lg-5">
-          <!-- TODO: trocar pela foto de corpo inteiro (terno branco, fundo veludo) assim que os arquivos novos chegarem -->
           <div class="lp-about-photo">
             <img src="{{ url_for('static', filename='img/fabiana-sobre.jpg') }}" alt="Fabiana Montemor">
           </div>
