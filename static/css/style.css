@@ -455,31 +455,45 @@ footer a {
   color: var(--avie-gold-light);
 }
 
-/* Retrato mesclado no fundo de seda — sem borda/sombra de card. A
-   mesclagem em si (cor puxada pro navy + alpha suave nas bordas) já
-   vem pronta no PNG (ver scripts/blend_portrait.py), então aqui só
-   controla o tamanho de exibição. Usado no hero e na seção "sobre". */
-.lp-fade-photo img {
+/* Retrato em card — foto original, sem alteração de cor/contraste, só
+   recortada num card com cantos arredondados e sombra sobre o fundo de
+   seda. Usado no hero e na seção "sobre". */
+.lp-portrait-card {
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(245, 216, 134, 0.28);
+  box-shadow: 0 24px 60px rgba(3, 4, 9, 0.55);
+}
+
+.lp-portrait-card img {
   width: 100%;
+  height: 100%;
   display: block;
+  object-fit: cover;
 }
 
 .lp-hero-portrait {
-  max-width: 380px;
-  margin-bottom: -7.5rem;
+  max-width: 300px;
+  aspect-ratio: 3 / 4;
+}
+
+.lp-hero-portrait img {
+  object-position: center 18%;
 }
 
 .lp-about-portrait {
-  max-width: 340px;
-  margin-bottom: -6rem;
+  max-width: 280px;
+  aspect-ratio: 3 / 4;
+}
+
+.lp-about-portrait img {
+  object-position: center 15%;
 }
 
 .lp-hero-logo {
   display: block;
-  height: 56px;
+  height: 72px;
   width: auto;
-  position: relative;
-  z-index: 1;
 }
 
 .lp-hero-divider {
@@ -811,12 +825,11 @@ footer a {
 
   .lp-hero-portrait,
   .lp-about-portrait {
-    max-width: 260px;
-    margin-bottom: -4.5rem;
+    max-width: 230px;
   }
 
   .lp-hero-logo {
-    height: 44px;
+    height: 56px;
   }
 
   .lp-hero {
