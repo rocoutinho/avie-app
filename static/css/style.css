@@ -213,19 +213,16 @@ footer a {
   margin-right: -50vw;
 }
 
-/* Fundo "seda escura" — várias camadas de gradiente simulando dobras de
-   tecido com brilho dourado, usado nas duas seções com retrato
-   mesclado (hero e "sobre"). Sem foto de tecido real disponível, então
-   isso é uma aproximação só com CSS — sutil de propósito, pra não
-   competir com o retrato. */
+/* Fundo "seda escura" — textura procedural com dobras e brilho dourado
+   (gerada por scripts/generate_silk_bg.py em static/img/silk-bg.jpg),
+   usada nas duas seções com retrato mesclado (hero e "sobre"). Uma camada
+   fininha de gradiente por cima só pra garantir contraste do texto nas
+   bordas em qualquer viewport. */
 .lp-silk-bg {
   background:
-    radial-gradient(52% 42% at 18% 12%, rgba(245, 216, 134, 0.11) 0%, transparent 62%),
-    radial-gradient(46% 38% at 88% 18%, rgba(189, 151, 80, 0.09) 0%, transparent 65%),
-    radial-gradient(58% 48% at 78% 92%, rgba(245, 216, 134, 0.07) 0%, transparent 60%),
-    radial-gradient(40% 55% at 8% 85%, rgba(189, 151, 80, 0.06) 0%, transparent 62%),
-    repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.018) 0px, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 38px),
-    radial-gradient(140% 120% at 50% 20%, #263049 0%, var(--avie-navy-deep) 65%, #12182a 100%);
+    radial-gradient(120% 90% at 50% -10%, rgba(8, 11, 20, 0.28) 0%, transparent 55%),
+    radial-gradient(100% 80% at 50% 110%, rgba(8, 11, 20, 0.35) 0%, transparent 55%),
+    url("../img/silk-bg.jpg") center center / cover no-repeat;
 }
 
 .lp-hero {
