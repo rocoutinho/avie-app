@@ -220,8 +220,8 @@ footer a {
    bordas em qualquer viewport. */
 .lp-silk-bg {
   background:
-    radial-gradient(120% 90% at 50% -10%, rgba(8, 11, 20, 0.28) 0%, transparent 55%),
-    radial-gradient(100% 80% at 50% 110%, rgba(8, 11, 20, 0.35) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(10, 14, 26, 0) 0%, rgba(10, 14, 26, 0.18) 45%, rgba(3, 4, 9, 0.9) 100%),
+    radial-gradient(120% 90% at 50% -10%, rgba(8, 11, 20, 0.3) 0%, transparent 55%),
     url("../img/silk-bg.jpg") center center / cover no-repeat;
 }
 
@@ -240,12 +240,38 @@ footer a {
 
 .lp-hero .display-4 {
   font-weight: 700;
-  letter-spacing: -0.01em;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.015em;
   color: #fff;
 }
 
 .lp-hero .lead {
   color: #cfd3de;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+}
+
+/* CTAs editoriais — só nas seções escuras com retrato/seda (hero, sobre,
+   CTA final); os botões do restante do site (painel, formulários, outras
+   seções claras da landing) continuam com a tipografia padrão sans-serif. */
+.lp-hero .btn-brand,
+#sobre .btn-brand,
+.lp-final-cta .btn-brand {
+  font-family: "Cormorant Garamond", serif;
+  font-variant-caps: small-caps;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, var(--avie-gold-light) 0%, var(--avie-gold) 65%, #a07f42 100%);
+  border-color: transparent;
+}
+
+.lp-hero .btn-brand:hover,
+.lp-hero .btn-brand:focus,
+#sobre .btn-brand:hover,
+#sobre .btn-brand:focus,
+.lp-final-cta .btn-brand:hover,
+.lp-final-cta .btn-brand:focus {
+  background: var(--avie-navy-deep);
 }
 
 .btn-outline-light-lp {
@@ -440,18 +466,20 @@ footer a {
 
 .lp-hero-portrait {
   max-width: 380px;
-  margin-bottom: -4.5rem;
+  margin-bottom: -7.5rem;
 }
 
 .lp-about-portrait {
   max-width: 340px;
-  margin-bottom: -4rem;
+  margin-bottom: -6rem;
 }
 
 .lp-hero-logo {
   display: block;
-  height: 108px;
+  height: 56px;
   width: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .lp-hero-divider {
@@ -784,10 +812,11 @@ footer a {
   .lp-hero-portrait,
   .lp-about-portrait {
     max-width: 260px;
+    margin-bottom: -4.5rem;
   }
 
   .lp-hero-logo {
-    height: 84px;
+    height: 44px;
   }
 
   .lp-hero {

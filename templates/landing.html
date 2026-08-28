@@ -49,7 +49,7 @@
       <div class="lp-fade-photo lp-hero-portrait mx-auto">
         <img src="{{ campaign.hero_image_url if campaign and campaign.hero_image_url else url_for('static', filename='img/fabiana-hero-blend.png') }}" alt="Fabiana Montemor">
       </div>
-      <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-4" alt="Fabiana Montemor — Consultoria de Imagem e Posicionamento Profissional">
+      <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-2" alt="Fabiana Montemor — Consultoria de Imagem e Posicionamento Profissional">
       {% if campaign and campaign.hero_eyebrow %}<p class="eyebrow mb-3">{{ campaign.hero_eyebrow }}</p>{% endif %}
       <h1 class="display-4 mb-3 mx-auto" style="max-width: 780px;">
         {% if campaign and campaign.hero_title %}{{ campaign.hero_title }}{% if campaign.hero_highlight %} <span class="lp-hero-highlight">{{ campaign.hero_highlight }}</span>{% endif %}{% else %}Sua imagem comunica a <span class="lp-hero-highlight">autoridade</span> que você já conquistou?{% endif %}
