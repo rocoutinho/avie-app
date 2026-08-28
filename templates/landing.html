@@ -44,32 +44,26 @@
 {% endif %}
 <div class="lp">
 
-  <section class="lp-hero full-bleed"{% if campaign and campaign.theme_color %} style="--avie-gold: {{ campaign.theme_color }}; --avie-gold-light: {{ campaign.theme_color }};"{% endif %}>
-    <img src="{{ url_for('static', filename='img/logo-watermark.png') }}" class="lp-hero-watermark" alt="" aria-hidden="true">
-    <div class="container lp-hero-inner">
-      <div class="row align-items-center g-5">
-        <div class="col-lg-6 text-center text-lg-start">
-          {% if campaign and campaign.hero_eyebrow %}<p class="eyebrow mb-3">{{ campaign.hero_eyebrow }}</p>{% endif %}
-          <h1 class="display-4 mb-3">
-            {% if campaign and campaign.hero_title %}{{ campaign.hero_title }}{% if campaign.hero_highlight %} <span class="lp-hero-highlight">{{ campaign.hero_highlight }}</span>{% endif %}{% else %}Sua imagem comunica a <span class="lp-hero-highlight">autoridade</span> que você já conquistou?{% endif %}
-          </h1>
-          <p class="lead mb-4 mx-auto mx-lg-0" style="max-width: 520px;">
-            {% if campaign and campaign.hero_subtitle %}{{ campaign.hero_subtitle }}{% else %}Estratégia de imagem para empresários, líderes e profissionais que
-            querem alinhar presença, posicionamento e resultados.{% endif %}
-          </p>
-          <div class="lp-hero-ctas d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">{{ campaign.hero_cta_text if campaign and campaign.hero_cta_text else "Quero descobrir o que minha imagem comunica" }}{{ arrow_icon() }}</a>
-          </div>
-          <div class="lp-hero-trust d-flex flex-wrap gap-4 justify-content-center justify-content-lg-start mt-4">
-            <span class="lp-hero-trust-item"><strong>15+</strong> anos de experiência</span>
-            <span class="lp-hero-trust-item"><strong>500+</strong> clientes atendidos</span>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="lp-hero-photo-card">
-            <img src="{{ campaign.hero_image_url if campaign and campaign.hero_image_url else url_for('static', filename='img/fabiana-hero.jpg') }}" alt="Fabiana Montemor">
-          </div>
-        </div>
+  <section class="lp-hero lp-silk-bg full-bleed"{% if campaign and campaign.theme_color %} style="--avie-gold: {{ campaign.theme_color }}; --avie-gold-light: {{ campaign.theme_color }};"{% endif %}>
+    <div class="container lp-hero-inner text-center">
+      <div class="lp-fade-photo lp-hero-portrait mx-auto">
+        <img src="{{ campaign.hero_image_url if campaign and campaign.hero_image_url else url_for('static', filename='img/fabiana-hero-blend.png') }}" alt="Fabiana Montemor">
+      </div>
+      <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-4" alt="Fabiana Montemor — Consultoria de Imagem e Posicionamento Profissional">
+      {% if campaign and campaign.hero_eyebrow %}<p class="eyebrow mb-3">{{ campaign.hero_eyebrow }}</p>{% endif %}
+      <h1 class="display-4 mb-3 mx-auto" style="max-width: 780px;">
+        {% if campaign and campaign.hero_title %}{{ campaign.hero_title }}{% if campaign.hero_highlight %} <span class="lp-hero-highlight">{{ campaign.hero_highlight }}</span>{% endif %}{% else %}Sua imagem comunica a <span class="lp-hero-highlight">autoridade</span> que você já conquistou?{% endif %}
+      </h1>
+      <p class="lead mb-4 mx-auto" style="max-width: 520px;">
+        {% if campaign and campaign.hero_subtitle %}{{ campaign.hero_subtitle }}{% else %}Estratégia de imagem para empresários, líderes e profissionais que
+        querem alinhar presença, posicionamento e resultados.{% endif %}
+      </p>
+      <div class="lp-hero-ctas d-flex flex-wrap gap-3 justify-content-center">
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">{{ campaign.hero_cta_text if campaign and campaign.hero_cta_text else "Quero descobrir o que minha imagem comunica" }}{{ arrow_icon() }}</a>
+      </div>
+      <div class="lp-hero-trust d-flex flex-wrap gap-4 justify-content-center mt-4">
+        <span class="lp-hero-trust-item"><strong>15+</strong> anos de experiência</span>
+        <span class="lp-hero-trust-item"><strong>500+</strong> clientes atendidos</span>
       </div>
     </div>
   </section>
@@ -216,38 +210,37 @@
     </div>
   </section>
 
-  <section id="sobre" class="lp-about full-bleed">
-    <div class="container">
-      <div class="row align-items-center g-5 reveal">
-        <div class="col-lg-5">
-          <div class="lp-about-photo">
-            <img src="{{ url_for('static', filename='img/fabiana-sobre.jpg') }}" alt="Fabiana Montemor">
-          </div>
-        </div>
-        <div class="col-lg-7">
-          <p class="eyebrow mb-3">Sobre mim</p>
-          <h2 class="h1 mb-4">Consultora de Imagem e Posicionamento Profissional</h2>
-          <p class="lp-about-text">
-            Antes da consultoria de imagem, construí minha trajetória profissional em
-            ambientes de gestão, liderança e varejo. Essa experiência mudou a forma
-            como enxergo a imagem: <strong>roupa nunca é apenas roupa</strong>.
-          </p>
-          <p class="lp-about-text lp-about-text-muted">
-            Ela participa da construção de percepção, confiança, presença e
-            posicionamento. Hoje, meu trabalho é ajudar profissionais a construírem
-            uma imagem que represente não apenas quem são — mas também onde querem
-            chegar.
-          </p>
-          <div class="lp-stat-grid">
-            <div class="lp-stat"><span class="lp-stat-number">15+</span><span class="lp-stat-label">Anos de liderança</span></div>
-            <div class="lp-stat"><span class="lp-stat-number">7</span><span class="lp-stat-label">Anos no varejo</span></div>
-            <div class="lp-stat"><span class="lp-stat-number">500+</span><span class="lp-stat-label">Clientes atendidos</span></div>
-          </div>
-          <div class="d-flex flex-wrap gap-3 mt-4">
-            <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand">Fale comigo</a>
-            <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" class="btn btn-outline-light-lp">@fabianamontemor</a>
-          </div>
-        </div>
+  <section id="sobre" class="lp-about lp-silk-bg full-bleed">
+    <div class="container text-center reveal">
+      <div class="lp-fade-photo lp-about-portrait mx-auto">
+        <img src="{{ url_for('static', filename='img/fabiana-sobre-blend.png') }}" alt="Fabiana Montemor">
+      </div>
+      <h2 class="h1 mb-2">Fabiana Montemor</h2>
+      <div class="lp-hero-divider mx-auto"></div>
+      <p class="lp-about-subtitle mb-4">Consultora de Imagem e Posicionamento Profissional.</p>
+      <div class="mx-auto" style="max-width: 640px;">
+        <p class="lp-about-text">
+          Antes da consultoria de imagem, construí minha trajetória profissional em
+          ambientes de gestão, liderança e varejo. Essa experiência mudou a forma
+          como enxergo a imagem. Para mim,
+          <span class="lp-manifesto-highlight fst-italic">roupa nunca é apenas roupa</span>.
+        </p>
+        <p class="lp-about-text lp-about-text-muted">
+          Ela participa da construção de
+          <span class="lp-manifesto-highlight fst-italic">percepção, confiança, presença e posicionamento</span>.
+          Hoje, meu trabalho é ajudar profissionais a construírem uma imagem que
+          represente não apenas quem são, mas também
+          <span class="lp-manifesto-highlight fst-italic">onde querem chegar</span>.
+        </p>
+      </div>
+      <div class="lp-stat-grid mx-auto" style="max-width: 480px;">
+        <div class="lp-stat"><span class="lp-stat-number">15+</span><span class="lp-stat-label">Anos de liderança</span></div>
+        <div class="lp-stat"><span class="lp-stat-number">7</span><span class="lp-stat-label">Anos no varejo</span></div>
+        <div class="lp-stat"><span class="lp-stat-number">500+</span><span class="lp-stat-label">Clientes atendidos</span></div>
+      </div>
+      <div class="d-flex flex-wrap gap-3 mt-4 justify-content-center">
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand">Fale comigo</a>
+        <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" class="btn btn-outline-light-lp">@fabianamontemor</a>
       </div>
     </div>
   </section>
