@@ -23,6 +23,11 @@
       {{ render_field(form.hero_cta_text) }}
       {{ render_field(form.hero_image_url) }}
       {{ render_field(form.theme_color) }}
+      <hr class="my-4">
+      {{ render_field(form.embed_url) }}
+      {% if form.slug.data == "campanha" %}
+      <p class="text-muted small mt-n2">O slug <code>campanha</code> também fica disponível direto em <code>/campanha</code>, além de <code>/lp/campanha</code>.</p>
+      {% endif %}
       <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
     </form>
   </div>

@@ -117,6 +117,23 @@ valores para a atribuição automática funcionar: `instagram`, `google` ou
 diagnóstico:
 `https://SEUDOMINIO/diagnostico?utm_source=instagram&utm_medium=paid_social&utm_campaign=NOME_DA_CAMPANHA`.
 
+## Campanhas com página encapsulada (Canvas, Canva etc.)
+
+Além do hero nativo (título/subtítulo/botão/imagem editados direto no
+formulário de criativo), uma campanha pode encapsular uma página pronta
+feita em outra ferramenta — no formulário de criativo (`/painel/campanhas`),
+preencha **"Link para encapsular"** com a URL pública dessa página. Quando
+preenchido, a página ao vivo do criativo (`/lp/<slug>`) mostra esse link
+em tela cheia (um `<iframe>`), sem a barra de navegação nem o rodapé do
+Avie — os campos de hero continuam salvos mas ficam sem efeito nessa
+página. O fluxo de aprovação é o mesmo de sempre (rascunho → revisão →
+publicado, só `owner` aprova).
+
+O criativo com slug `campanha` fica disponível também direto na raiz do
+site, em `/campanha` (além de `/lp/campanha`) — pensado pra ter uma URL
+curta de campanha "principal" pra divulgar. Todo outro slug continua só
+em `/lp/<slug>`.
+
 ## Blog e funil de conteúdo para o LinkedIn
 
 Um artigo é escrito e testado no blog do site antes de ser reaproveitado

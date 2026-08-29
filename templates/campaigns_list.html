@@ -21,7 +21,7 @@
       {% for c in campaigns %}
       <tr class="cursor-pointer" onclick="window.location='{{ url_for('campaigns.detail', campaign_id=c.id) }}'" style="cursor:pointer;">
         <td>{{ c.internal_name }}</td>
-        <td><code>/lp/{{ c.slug }}</code></td>
+        <td><code>/lp/{{ c.slug }}</code>{% if c.slug == "campanha" %} <code>/campanha</code>{% endif %}</td>
         <td>{{ label_for(CAMPAIGN_STATUSES, c.status) }}</td>
         <td>{{ c.created_by.name if c.created_by else "—" }}</td>
         <td>{{ c.updated_at.strftime('%d/%m/%Y %H:%M') if c.updated_at else "—" }}</td>

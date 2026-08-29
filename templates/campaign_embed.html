@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ campaign.hero_title or campaign.internal_name }} · Fabiana Montemor</title>
+  <meta property="og:title" content="{{ campaign.hero_title or campaign.internal_name }} · Fabiana Montemor">
+  {% if campaign.hero_subtitle %}<meta property="og:description" content="{{ campaign.hero_subtitle }}">{% endif %}
+  {% if campaign.hero_image_url %}<meta property="og:image" content="{{ campaign.hero_image_url }}">{% endif %}
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #1f2733; }
+    .avie-embed-frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+    .avie-embed-preview-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+      background: #1f2733; color: #f5d886; font-family: -apple-system, "Segoe UI", sans-serif;
+      font-size: 13px; text-align: center; padding: 8px; letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+  {% if preview %}
+  <div class="avie-embed-preview-banner">Pré-visualização — esta página ainda não está publicada.</div>
+  {% endif %}
+  <iframe class="avie-embed-frame" src="{{ campaign.embed_url }}" title="{{ campaign.hero_title or campaign.internal_name }}" allow="fullscreen" loading="eager"></iframe>
+</body>
+</html>
