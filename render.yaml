@@ -17,7 +17,7 @@ services:
     runtime: python
     plan: free
     buildCommand: "pip install --retries 5 --timeout 100 -r requirements.txt"
-    startCommand: "flask db upgrade && flask seed-admin && gunicorn app:app --bind 0.0.0.0:$PORT"
+    startCommand: "flask db upgrade && flask seed-admin && flask seed-demo-client && gunicorn app:app --bind 0.0.0.0:$PORT"
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.9"
