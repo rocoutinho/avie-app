@@ -45,10 +45,10 @@
 <div class="lp">
 
   <section class="lp-hero lp-silk-bg full-bleed"{% if campaign and campaign.theme_color %} style="--avie-gold: {{ campaign.theme_color }}; --avie-gold-light: {{ campaign.theme_color }};"{% endif %}>
+    <div class="lp-portrait-card lp-hero-portrait full-bleed">
+      <img src="{{ campaign.hero_image_url if campaign and campaign.hero_image_url else url_for('static', filename='img/fabiana-hero.jpg') }}" alt="Fabiana Montemor">
+    </div>
     <div class="container lp-hero-inner text-center">
-      <div class="lp-portrait-card lp-hero-portrait mx-auto mb-4">
-        <img src="{{ campaign.hero_image_url if campaign and campaign.hero_image_url else url_for('static', filename='img/fabiana-hero.jpg') }}" alt="Fabiana Montemor">
-      </div>
       <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-3" alt="Fabiana Montemor — Consultoria de Imagem e Posicionamento Profissional">
       {% if campaign and campaign.hero_eyebrow %}<p class="eyebrow mb-3">{{ campaign.hero_eyebrow }}</p>{% endif %}
       <h1 class="display-4 mb-3 mx-auto" style="max-width: 780px;">
