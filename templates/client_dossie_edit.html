@@ -1,22 +1,16 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import render_field %}
-{% block title %}Cadastrar cliente com dossiê{% endblock %}
+{% block title %}Editar dossiê{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-lg-8">
-    <h1 class="h3 mb-2">Cadastrar cliente com dossiê</h1>
+    <h1 class="h3 mb-2">Editar dossiê de {{ client.full_name }}</h1>
     <p class="text-muted mb-4">
-      Use isto para clientes que já receberam o dossiê fora do sistema.
-      Ao concluir, o cadastro é criado (ou atualizado, se já existir um
-      cliente com esse e-mail), o dossiê fica registrado como enviado
-      (um card por serviço na área do cliente), e um link de acesso é
-      gerado para você repassar por e-mail ou WhatsApp.
+      Essas informações aparecem tanto aqui quanto na área do cliente —
+      editar aqui atualiza os dois lugares.
     </p>
     <form method="post" novalidate>
       {{ form.hidden_tag() }}
-      {{ render_field(form.full_name) }}
-      {{ render_field(form.email) }}
-      {{ render_field(form.phone) }}
       {{ render_field(form.dossie_title) }}
       {{ render_field(form.pdf_url) }}
       <p class="text-muted small mb-2 mt-3">Preencha os serviços entregues neste dossiê — deixe em branco os que não se aplicam.</p>

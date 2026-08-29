@@ -264,6 +264,22 @@ class Client(UserMixin, db.Model):
     def is_staff(self):
         return False
 
+    @property
+    def dossie_report(self):
+        """O relatório mais recente que tem ao menos um serviço do dossiê
+        preenchido (ver StyleReport.is_dossie) — é essa mesma linha que a
+        ficha do cliente (client_detail.html) e a área do cliente
+        (client_area.py) leem, então editar um sempre reflete no outro
+        (ver blueprints/clients.py:edit_dossie)."""
+        return next((r for r in self.reports if r.is_dossie), None)
+
+    @property
+    def other_reports(self):
+        """Relatórios que não são o dossiê — a lista "Diagnóstico
+        preliminar" da ficha do cliente usa isso pra nunca duplicar o
+        conteúdo que já aparece no card de Dossiê."""
+        return [r for r in self.reports if not r.is_dossie]
+
     profile = db.relationship(
         "StyleProfile", backref="client", uselist=False, cascade="all, delete-orphan"
     )
@@ -329,11 +345,30 @@ class StyleReport(db.Model):
     # serviços individuais pra área do cliente mostrar um card por serviço
     # (ver templates/client_area.html) em vez de só o texto corrido de
     # `content`. Ficam em branco (None) nos relatórios gerados pelo fluxo
-    # normal (reports_engine), que só preenche `content`.
+    # normal (reports_engine), que só preenche `content`. Nomes de coluna
+    # mantidos por continuidade — os rótulos exibidos ao usuário são
+    # "Estilo"/"Biotipo"/"Cores"/"Visagismo"/"Arquétipos" (ver
+    # blueprints/client_area.py:DOSSIE_SERVICE_LABELS).
     estilo_pessoal = db.Column(db.Text)
     proporcoes = db.Column(db.Text)
     coloracao = db.Column(db.Text)
     visagismo = db.Column(db.Text)
+    arquetipos = db.Column(db.Text)
+
+    # Link externo pro PDF original do dossiê (Google Drive, Dropbox etc.)
+    # — mesmo padrão sem upload usado em Ebook.file_url/Campaign.hero_image_url
+    # (disco do Render é efêmero). Opcional: nem todo dossiê tem um PDF à parte.
+    pdf_url = db.Column(db.String(500))
+
+    @property
+    def is_dossie(self):
+        """True se este relatório veio do onboarding com dossiê (ver
+        blueprints/clients.py:new_client_with_dossie) — tem ao menos um
+        campo de serviço preenchido. Usado em toda a UI pra separar o
+        dossiê dos relatórios avulsos (diagnóstico preliminar)."""
+        return any(
+            [self.estilo_pessoal, self.proporcoes, self.coloracao, self.visagismo, self.arquetipos]
+        )
 
 
 class Payment(db.Model):

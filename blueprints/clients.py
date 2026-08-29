@@ -3,13 +3,13 @@ import secrets
 from datetime import datetime
 from urllib.parse import quote
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import login_required
 
 from blueprints.auth import require_staff
 from emails import send_client_access_email
 from extensions import db
-from forms import ClientDossieForm, ClientForm, ConsultationForm, PaymentForm, SetClientPasswordForm
+from forms import ClientDossieForm, ClientForm, ConsultationForm, EditDossieForm, PaymentForm, SetClientPasswordForm
 from models import CLIENT_STATUSES, Client, Consultation, Payment, StyleReport
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/painel/clientes")
@@ -27,6 +27,33 @@ def _whatsapp_link(phone, message):
     if len(digits) <= 11:
         digits = "55" + digits
     return f"https://wa.me/{digits}?text={quote(message)}"
+
+
+def _dossie_services_from_form(form):
+    return {
+        "Estilo": (form.estilo_pessoal.data or "").strip(),
+        "Biotipo": (form.proporcoes.data or "").strip(),
+        "Cores": (form.coloracao.data or "").strip(),
+        "Visagismo": (form.visagismo.data or "").strip(),
+        "Arquétipos": (form.arquetipos.data or "").strip(),
+    }
+
+
+def _build_dossie_content(services):
+    # Combina os serviços preenchidos num texto corrido — usado nas telas
+    # que ainda mostram o relatório como bloco único (report_view.html);
+    # os campos individuais são o que o card de Dossiê (client_detail.html)
+    # e a área do cliente (client_area.html) usam pra montar um card por
+    # serviço.
+    return "\n\n".join(f"{label}\n{text}" for label, text in services.items() if text)
+
+
+def _apply_dossie_services(report, services):
+    report.estilo_pessoal = services["Estilo"] or None
+    report.proporcoes = services["Biotipo"] or None
+    report.coloracao = services["Cores"] or None
+    report.visagismo = services["Visagismo"] or None
+    report.arquetipos = services["Arquétipos"] or None
 
 
 @clients_bp.route("/")
@@ -73,13 +100,13 @@ def new_client_with_dossie():
     WhatsApp (clique manual do admin, mesmo padrão sem API paga usado no
     resto do sistema)."""
     form = ClientDossieForm()
+    if request.method == "GET":
+        form.full_name.data = request.args.get("full_name", "")
+        form.email.data = request.args.get("email", "")
+        form.phone.data = request.args.get("phone", "")
+
     if form.validate_on_submit():
-        services = {
-            "Estilo pessoal": (form.estilo_pessoal.data or "").strip(),
-            "Proporções": (form.proporcoes.data or "").strip(),
-            "Coloração": (form.coloracao.data or "").strip(),
-            "Visagismo": (form.visagismo.data or "").strip(),
-        }
+        services = _dossie_services_from_form(form)
         if not any(services.values()):
             flash("Preencha pelo menos um dos serviços do dossiê.", "danger")
             return render_template("client_dossie_form.html", form=form)
@@ -91,26 +118,26 @@ def new_client_with_dossie():
             db.session.add(client)
         client.full_name = form.full_name.data.strip()
         client.phone = form.phone.data.strip()
-        client.status = "cliente_ativo"
+        # Quem já chega com dossiê pronto já passou pelo diagnóstico e pela
+        # consultoria completa — o status reflete isso (diferente de
+        # "cliente_ativo", que é pra um engajamento ainda em andamento).
+        client.status = "cliente_concluido"
+        db.session.flush()
 
-        # `content` combina os serviços preenchidos num texto corrido —
-        # usado nas telas que ainda mostram o relatório como bloco único
-        # (client_detail.html, report_view.html); os campos individuais
-        # abaixo são o que a área do cliente usa pra montar um card por
-        # serviço (ver templates/client_area.html).
-        content = "\n\n".join(f"{label}\n{text}" for label, text in services.items() if text)
-        report = StyleReport(
-            client=client,
-            title=form.dossie_title.data.strip(),
-            content=content,
-            status="enviado",
-            sent_at=datetime.utcnow(),
-            estilo_pessoal=services["Estilo pessoal"] or None,
-            proporcoes=services["Proporções"] or None,
-            coloracao=services["Coloração"] or None,
-            visagismo=services["Visagismo"] or None,
-        )
-        db.session.add(report)
+        # Atualiza o dossiê existente do cliente em vez de criar um novo
+        # StyleReport a cada envio — assim o card de Dossiê (admin) e os
+        # cards de serviço (área do cliente) sempre leem a mesma linha,
+        # e editar um lado sempre reflete no outro.
+        report = client.dossie_report
+        if report is None:
+            report = StyleReport(client_id=client.id)
+            db.session.add(report)
+        report.title = form.dossie_title.data.strip()
+        report.content = _build_dossie_content(services)
+        report.status = "enviado"
+        report.sent_at = datetime.utcnow()
+        report.pdf_url = (form.pdf_url.data or "").strip() or None
+        _apply_dossie_services(report, services)
 
         temp_password = secrets.token_urlsafe(9)
         client.set_password(temp_password)
@@ -136,6 +163,39 @@ def new_client_with_dossie():
         )
 
     return render_template("client_dossie_form.html", form=form)
+
+
+@clients_bp.route("/<int:client_id>/dossie/editar", methods=["GET", "POST"])
+@login_required
+def edit_dossie(client_id):
+    """Edita o dossiê já existente do cliente (título, PDF, os 5 serviços)
+    sem tocar em identidade/acesso — diferente de new_client_with_dossie,
+    que também regenera senha temporária e reenvia o acesso. É essa a via
+    normal pra corrigir/atualizar um dossiê depois do cadastro inicial."""
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+
+    form = EditDossieForm(obj=report)
+    if request.method == "GET":
+        form.dossie_title.data = report.title
+
+    if form.validate_on_submit():
+        services = _dossie_services_from_form(form)
+        if not any(services.values()):
+            flash("Preencha pelo menos um dos serviços do dossiê.", "danger")
+            return render_template("client_dossie_edit.html", form=form, client=client)
+
+        report.title = form.dossie_title.data.strip()
+        report.pdf_url = (form.pdf_url.data or "").strip() or None
+        _apply_dossie_services(report, services)
+        report.content = _build_dossie_content(services)
+        db.session.commit()
+        flash("Dossiê atualizado.", "success")
+        return redirect(url_for("clients.detail", client_id=client.id))
+
+    return render_template("client_dossie_edit.html", form=form, client=client)
 
 
 @clients_bp.route("/<int:client_id>")

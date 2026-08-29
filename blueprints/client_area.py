@@ -23,15 +23,16 @@ def require_client():
 client_area_bp.before_request(require_client)
 
 
-# icon_key casa com o macro service_icon() em templates/client_area.html
-# (mesmos ícones/paths usados pros "pilares" da consultoria em
-# landing.html, pra área do cliente falar a mesma linguagem visual da
-# página pública, sem acoplar as duas templates).
+# icon_key casa com o macro service_icon() em templates/client_area.html.
+# Rótulos e nomes de coluna não batem 1:1 de propósito — os nomes de
+# coluna (estilo_pessoal, proporcoes, coloracao) vêm de antes da marca
+# definir esses 5 nomes de serviço; ver comentário em models.py:StyleReport.
 DOSSIE_SERVICE_LABELS = [
-    ("estilo_pessoal", "Estilo pessoal", "hanger"),
-    ("proporcoes", "Proporções", "ruler"),
-    ("coloracao", "Coloração", "palette"),
-    ("visagismo", "Visagismo", "sparkle"),
+    ("estilo_pessoal", "Estilo", "estilo"),
+    ("proporcoes", "Biotipo", "biotipo"),
+    ("coloracao", "Cores", "cores"),
+    ("visagismo", "Visagismo", "visagismo"),
+    ("arquetipos", "Arquétipos", "arquetipos"),
 ]
 
 
@@ -57,9 +58,7 @@ def index():
     # "Recomendações da consultoria" só mostra relatórios que não são
     # dossiês estruturados (senão duplicaria o mesmo conteúdo já
     # detalhado nos cards de serviço acima).
-    other_reports = [
-        r for r in sent_reports if not any(getattr(r, field, None) for field, _, _ in DOSSIE_SERVICE_LABELS)
-    ]
+    other_reports = [r for r in sent_reports if not r.is_dossie]
 
     return render_template(
         "client_area.html",

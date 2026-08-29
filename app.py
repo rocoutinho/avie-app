@@ -191,7 +191,7 @@ def register_cli(app):
         client.phone = "11900000000"
         client.instagram = "ana.demonstracao"
         client.source = "instagram"
-        client.status = "cliente_ativo"
+        client.status = "cliente_concluido"
         client.notes = (
             "Cliente fictício criado para navegação e testes internos "
             "(flask seed-demo-client) — não é um lead real."
@@ -207,9 +207,9 @@ def register_cli(app):
         Payment.query.filter_by(client_id=client.id).delete()
 
         # Conteúdo inspirado num dossiê real de consultoria (biotipo,
-        # estilo pessoal e coloração) generalizado para o cliente fictício —
-        # sem nome, medidas ou dados pessoais de nenhuma cliente real.
-        # Visagismo fica de fora de propósito: nem todo dossiê cobre os 4
+        # estilo e coloração) generalizado para o cliente fictício — sem
+        # nome, medidas ou dados pessoais de nenhuma cliente real.
+        # Visagismo fica de fora de propósito: nem todo dossiê cobre os 5
         # serviços, e esse é o caso mais comum na prática.
         estilo_pessoal_text = (
             "Estilo predominantemente esportivo, com força secundária no elegante. "
@@ -236,6 +236,12 @@ def register_cli(app):
             "bem e ajudam a ampliar as combinações. Nos metais e acessórios, priorize "
             "dourado, rose gold e cobre — se for usar prateado, prefira um tom fosco."
         )
+        arquetipos_text = (
+            "Arquétipo principal: Governante, com traços secundários de Sábia. Comunica "
+            "autoridade, competência e organização — reforce isso em peças estruturadas "
+            "e numa comunicação direta, equilibrando com toques do arquétipo secundário "
+            "pra não soar fria demais."
+        )
 
         now = datetime.utcnow()
         db.session.add(
@@ -243,15 +249,18 @@ def register_cli(app):
                 client_id=client.id,
                 title="Diagnóstico de Estilo e Posicionamento — Ana Demonstração",
                 content=(
-                    f"Estilo pessoal\n{estilo_pessoal_text}\n\n"
-                    f"Proporções\n{proporcoes_text}\n\n"
-                    f"Coloração\n{coloracao_text}"
+                    f"Estilo\n{estilo_pessoal_text}\n\n"
+                    f"Biotipo\n{proporcoes_text}\n\n"
+                    f"Cores\n{coloracao_text}\n\n"
+                    f"Arquétipos\n{arquetipos_text}"
                 ),
+                pdf_url="https://example.com/dossie-demo.pdf",
                 status="enviado",
                 sent_at=now - timedelta(days=10),
                 estilo_pessoal=estilo_pessoal_text,
                 proporcoes=proporcoes_text,
                 coloracao=coloracao_text,
+                arquetipos=arquetipos_text,
             )
         )
         db.session.add(

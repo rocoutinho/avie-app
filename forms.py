@@ -113,7 +113,37 @@ class SetClientPasswordForm(FlaskForm):
     submit = SubmitField("Definir senha de acesso")
 
 
-class ClientDossieForm(FlaskForm):
+class DossieServicesForm(FlaskForm):
+    """Campos do dossiê em si (título, PDF, os 4 serviços) — compartilhados
+    entre o cadastro inicial (ClientDossieForm) e a edição de um dossiê já
+    existente (EditDossieForm), pra manter os dois formulários em sincronia
+    sem duplicar os campos."""
+
+    dossie_title = StringField(
+        "Título do dossiê", validators=[DataRequired(), Length(max=255)]
+    )
+    pdf_url = StringField(
+        "Link do PDF do dossiê (opcional — Google Drive, Dropbox etc.)",
+        validators=[Optional(), Length(max=500)],
+    )
+    estilo_pessoal = TextAreaField(
+        "Estilo", validators=[Optional()], render_kw={"rows": 4}
+    )
+    proporcoes = TextAreaField(
+        "Biotipo", validators=[Optional()], render_kw={"rows": 4}
+    )
+    coloracao = TextAreaField(
+        "Cores", validators=[Optional()], render_kw={"rows": 4}
+    )
+    visagismo = TextAreaField(
+        "Visagismo", validators=[Optional()], render_kw={"rows": 4}
+    )
+    arquetipos = TextAreaField(
+        "Arquétipos", validators=[Optional()], render_kw={"rows": 4}
+    )
+
+
+class ClientDossieForm(DossieServicesForm):
     """Cadastro consolidado para clientes que já receberam o dossiê fora do
     sistema — cria/atualiza o Client, registra o dossiê como StyleReport
     enviado, e gera o acesso à área do cliente numa única submissão (ver
@@ -124,22 +154,14 @@ class ClientDossieForm(FlaskForm):
     phone = StringField(
         "WhatsApp / Telefone", validators=[DataRequired(), Length(max=30)]
     )
-    dossie_title = StringField(
-        "Título do dossiê", validators=[DataRequired(), Length(max=255)]
-    )
-    estilo_pessoal = TextAreaField(
-        "Estilo pessoal", validators=[Optional()], render_kw={"rows": 4}
-    )
-    proporcoes = TextAreaField(
-        "Proporções", validators=[Optional()], render_kw={"rows": 4}
-    )
-    coloracao = TextAreaField(
-        "Coloração", validators=[Optional()], render_kw={"rows": 4}
-    )
-    visagismo = TextAreaField(
-        "Visagismo", validators=[Optional()], render_kw={"rows": 4}
-    )
     submit = SubmitField("Concluir cadastro e enviar acesso")
+
+
+class EditDossieForm(DossieServicesForm):
+    """Edição de um dossiê já existente (blueprints/clients.py:edit_dossie)
+    — não mexe em identidade/acesso do cliente, só no conteúdo do dossiê."""
+
+    submit = SubmitField("Salvar dossiê")
 
 
 class ResetPasswordForm(FlaskForm):

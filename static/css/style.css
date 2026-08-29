@@ -986,10 +986,11 @@ footer a {
 }
 
 /* Cards de serviço do dossiê na área do cliente (templates/client_area.html)
-   — grid que se auto-ajusta ao número de serviços preenchidos (1 a 4),
+   — grid que se auto-ajusta ao número de serviços preenchidos (1 a 5),
    cards da mesma linha sempre com a mesma altura (grid estica por
-   padrão), mesmo tratamento visual dos cards de valor da landing pra
-   manter a identidade entre a página pública e a área logada. */
+   padrão). Emblema navy/dourado no ícone (em vez do badge claro usado no
+   resto do site) pra ecoar o selo de "Estilo/Biotipo/Cores/Visagismo/
+   Arquétipos" da marca. */
 .dossie-services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1011,10 +1012,11 @@ footer a {
 }
 
 .dossie-service-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, rgba(189, 151, 80, 0.16), rgba(189, 151, 80, 0.06));
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--avie-navy-deep);
+  border: 1.5px solid var(--avie-gold);
   color: var(--avie-gold);
   display: flex;
   align-items: center;
@@ -1023,8 +1025,8 @@ footer a {
 }
 
 .dossie-service-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 .dossie-service-text {
