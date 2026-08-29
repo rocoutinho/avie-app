@@ -213,19 +213,10 @@ footer a {
   margin-right: -50vw;
 }
 
-/* Fundo "seda escura" — várias camadas de gradiente simulando dobras de
-   tecido com brilho dourado, usado nas duas seções com retrato
-   mesclado (hero e "sobre"). Sem foto de tecido real disponível, então
-   isso é uma aproximação só com CSS — sutil de propósito, pra não
-   competir com o retrato. */
+/* Fundo contínuo, cor sólida da paleta da marca — sem gradiente/textura,
+   usado nas duas seções com retrato (hero e "sobre"). */
 .lp-silk-bg {
-  background:
-    radial-gradient(52% 42% at 18% 12%, rgba(245, 216, 134, 0.11) 0%, transparent 62%),
-    radial-gradient(46% 38% at 88% 18%, rgba(189, 151, 80, 0.09) 0%, transparent 65%),
-    radial-gradient(58% 48% at 78% 92%, rgba(245, 216, 134, 0.07) 0%, transparent 60%),
-    radial-gradient(40% 55% at 8% 85%, rgba(189, 151, 80, 0.06) 0%, transparent 62%),
-    repeating-linear-gradient(112deg, rgba(255, 255, 255, 0.018) 0px, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 38px),
-    radial-gradient(140% 120% at 50% 20%, #263049 0%, var(--avie-navy-deep) 65%, #12182a 100%);
+  background: var(--avie-navy-deep);
 }
 
 .lp-hero {
@@ -243,12 +234,38 @@ footer a {
 
 .lp-hero .display-4 {
   font-weight: 700;
-  letter-spacing: -0.01em;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.015em;
   color: #fff;
 }
 
 .lp-hero .lead {
   color: #cfd3de;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+}
+
+/* CTAs editoriais — só nas seções escuras com retrato/seda (hero, sobre,
+   CTA final); os botões do restante do site (painel, formulários, outras
+   seções claras da landing) continuam com a tipografia padrão sans-serif. */
+.lp-hero .btn-brand,
+#sobre .btn-brand,
+.lp-final-cta .btn-brand {
+  font-family: "Cormorant Garamond", serif;
+  font-variant-caps: small-caps;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, var(--avie-gold-light) 0%, var(--avie-gold) 65%, #a07f42 100%);
+  border-color: transparent;
+}
+
+.lp-hero .btn-brand:hover,
+.lp-hero .btn-brand:focus,
+#sobre .btn-brand:hover,
+#sobre .btn-brand:focus,
+.lp-final-cta .btn-brand:hover,
+.lp-final-cta .btn-brand:focus {
+  background: var(--avie-navy-deep);
 }
 
 .btn-outline-light-lp {
@@ -432,28 +449,44 @@ footer a {
   color: var(--avie-gold-light);
 }
 
-/* Retrato mesclado no fundo de seda — sem borda/sombra de card. A
-   mesclagem em si (cor puxada pro navy + alpha suave nas bordas) já
-   vem pronta no PNG (ver scripts/blend_portrait.py), então aqui só
-   controla o tamanho de exibição. Usado no hero e na seção "sobre". */
-.lp-fade-photo img {
+/* Retrato em card — foto original, sem alteração de cor/contraste, só
+   recortada num card com cantos arredondados e sombra sobre o fundo de
+   seda. Usado no hero e na seção "sobre". */
+.lp-portrait-card {
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(245, 216, 134, 0.28);
+  box-shadow: 0 24px 60px rgba(3, 4, 9, 0.55);
+}
+
+.lp-portrait-card img {
   width: 100%;
+  height: 100%;
   display: block;
+  object-fit: cover;
 }
 
 .lp-hero-portrait {
-  max-width: 380px;
-  margin-bottom: -4.5rem;
+  max-width: 300px;
+  aspect-ratio: 3 / 4;
+}
+
+.lp-hero-portrait img {
+  object-position: center 18%;
 }
 
 .lp-about-portrait {
-  max-width: 340px;
-  margin-bottom: -4rem;
+  max-width: 280px;
+  aspect-ratio: 3 / 4;
+}
+
+.lp-about-portrait img {
+  object-position: center 15%;
 }
 
 .lp-hero-logo {
   display: block;
-  height: 108px;
+  height: 72px;
   width: auto;
 }
 
@@ -786,11 +819,11 @@ footer a {
 
   .lp-hero-portrait,
   .lp-about-portrait {
-    max-width: 260px;
+    max-width: 230px;
   }
 
   .lp-hero-logo {
-    height: 84px;
+    height: 56px;
   }
 
   .lp-hero {
