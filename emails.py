@@ -32,3 +32,26 @@ def send_diagnostic_confirmation(client):
     except Exception:
         current_app.logger.exception("Falha ao enviar e-mail de confirmação para %s", client.email)
         return False
+
+
+def send_ebook_email(client, ebook):
+    if not current_app.config.get("MAIL_SERVER"):
+        current_app.logger.info(
+            "[e-mail simulado] Envio do ebook '%s' para %s "
+            "(configure MAIL_SERVER no .env para enviar de verdade)",
+            ebook.title,
+            client.email,
+        )
+        return False
+
+    try:
+        msg = Message(
+            subject=f"Seu ebook \"{ebook.title}\" chegou 📘",
+            recipients=[client.email],
+            body=render_template("email/ebook_delivery.txt", client=client, ebook=ebook),
+        )
+        mail.send(msg)
+        return True
+    except Exception:
+        current_app.logger.exception("Falha ao enviar e-mail do ebook para %s", client.email)
+        return False

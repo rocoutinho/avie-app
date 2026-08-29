@@ -215,3 +215,46 @@ class PaymentForm(FlaskForm):
     status = SelectField("Status", choices=PAYMENT_STATUSES)
     due_date = DateField("Vencimento", validators=[Optional()])
     submit = SubmitField("Salvar")
+
+
+class EbookForm(FlaskForm):
+    title = StringField("Título do ebook", validators=[DataRequired(), Length(max=255)])
+    description = TextAreaField(
+        "Descrição (o que a pessoa recebe, mostrado na página de captura)",
+        validators=[DataRequired()],
+    )
+    cover_image_url = StringField(
+        "URL da imagem de capa (opcional)", validators=[Optional(), Length(max=500)]
+    )
+    file_url = StringField(
+        "Link do PDF (Google Drive, Dropbox etc. — configurado como \"qualquer "
+        "pessoa com o link pode visualizar\")",
+        validators=[DataRequired(), Length(max=500)],
+    )
+    active = BooleanField(
+        "Ativo (é este que aparece em /ebook — só um fica ativo por vez)",
+        default=True,
+    )
+    submit = SubmitField("Salvar")
+
+
+class EbookDownloadForm(FlaskForm):
+    full_name = StringField(
+        "Nome completo",
+        validators=[DataRequired(), Length(max=150)],
+        render_kw={"autocomplete": "name"},
+    )
+    email = StringField(
+        "E-mail",
+        validators=[DataRequired(), Email(), Length(max=150)],
+        render_kw={"type": "email", "inputmode": "email", "autocomplete": "email"},
+    )
+    phone = StringField(
+        "WhatsApp / Telefone",
+        validators=[DataRequired(), Length(max=30)],
+        render_kw={"type": "tel", "inputmode": "tel", "autocomplete": "tel"},
+    )
+    wants_diagnostic = BooleanField("Quero receber um diagnóstico gratuito, sem compromisso")
+    # Honeypot: campo invisível para humanos, atrai bots de spam. Deve ficar vazio.
+    website = StringField("Deixe este campo em branco", validators=[Optional(), Length(max=0)])
+    submit = SubmitField("Quero baixar o ebook")

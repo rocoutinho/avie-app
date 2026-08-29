@@ -78,16 +78,31 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
-          <div class="navbar-links d-flex flex-wrap gap-2 mt-3 mt-lg-0">
+          <div class="navbar-links d-flex flex-wrap gap-2 align-items-center mt-3 mt-lg-0">
             <a class="navbar-link-pill" href="{{ url_for('dashboard.index') }}">Painel</a>
             <a class="navbar-link-pill" href="{{ url_for('clients.list_clients') }}">Clientes</a>
             <a class="navbar-link-pill" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
-            <a class="navbar-link-pill" href="{{ url_for('blog.list_posts') }}">Blog</a>
+            <div class="dropdown">
+              <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Recursos</button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('blog.list_posts') }}">Blog</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('ebooks.list_ebooks') }}">Ebooks</a></li>
+              </ul>
+            </div>
             <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
           </div>
         </div>
       {% else %}
-        <a class="btn btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <div class="dropdown">
+            <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Recursos</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{{ url_for('public.blog_index') }}">Blog</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('public.ebook_landing') }}">Ebook</a></li>
+            </ul>
+          </div>
+          <a class="btn btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
+        </div>
       {% endif %}
     </div>
   </nav>

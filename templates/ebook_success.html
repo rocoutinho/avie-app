@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Seu ebook está pronto{% endblock %}
+{% block content %}
+<div class="row justify-content-center text-center">
+  <div class="col-lg-7">
+    <p class="eyebrow mb-2" style="color: var(--avie-gold);">Prontinho</p>
+    <h1 class="h2 mb-3">Seu ebook já está disponível</h1>
+    <p class="text-muted mb-4">
+      Também enviamos o link por e-mail — se não encontrar, confira a caixa
+      de spam ou clique no botão abaixo.
+    </p>
+
+    <a href="{{ ebook.file_url }}" target="_blank" rel="noopener" class="btn btn-brand btn-lg mb-3">
+      Baixar "{{ ebook.title }}"
+    </a>
+    <p class="mb-4">
+      <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ ('Olá! Acabei de baixar o ebook \"' ~ ebook.title ~ '\" e gostaria de receber por aqui também.') | urlencode }}" target="_blank" rel="noopener" class="text-muted small">
+        Prefere receber pelo WhatsApp? Fale com a gente →
+      </a>
+    </p>
+
+    <hr class="my-4">
+    <p class="text-muted mb-2">Quer dar o próximo passo?</p>
+    <a href="{{ url_for('public.diagnostic') }}" class="btn btn-outline-secondary">Fazer meu diagnóstico gratuito</a>
+  </div>
+</div>
+{% endblock %}

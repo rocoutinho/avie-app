@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}{{ "Editar ebook" if ebook else "Novo ebook" }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h1 class="h3 mb-4">{{ "Editar ebook" if ebook else "Novo ebook" }}</h1>
+    <div class="alert alert-info">
+      O link do PDF precisa ser público (ex.: Google Drive com "qualquer
+      pessoa com o link pode visualizar"). O sistema não armazena o
+      arquivo — hospedar localmente seria perdido a cada deploy.
+    </div>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.title) }}
+      {{ render_field(form.description) }}
+      {{ render_field(form.cover_image_url) }}
+      {{ render_field(form.file_url) }}
+      <div class="form-check my-3">
+        {{ form.active(class_="form-check-input") }}
+        <label class="form-check-label" for="active">{{ form.active.label.text }}</label>
+      </div>
+      <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

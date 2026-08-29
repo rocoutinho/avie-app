@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Ebooks{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="h3 mb-0">Ebooks (isca digital)</h1>
+  <a href="{{ url_for('ebooks.new_ebook') }}" class="btn btn-brand btn-sm">+ Novo ebook</a>
+</div>
+
+<p class="text-muted">
+  Só um ebook fica ativo por vez — é ele que aparece em
+  <code>{{ url_for('public.ebook_landing') }}</code>.
+</p>
+
+<div class="table-responsive">
+  <table class="table bg-white align-middle">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Ativo</th>
+        <th>Criado por</th>
+        <th>Atualizado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ebook in ebooks %}
+      <tr>
+        <td>{{ ebook.title }}</td>
+        <td>
+          {% if ebook.active %}
+            <span class="badge text-bg-success">Ativo</span>
+          {% else %}
+            <span class="badge text-bg-secondary">Inativo</span>
+          {% endif %}
+        </td>
+        <td>{{ ebook.created_by.name if ebook.created_by else "—" }}</td>
+        <td>{{ ebook.updated_at.strftime('%d/%m/%Y %H:%M') if ebook.updated_at else "—" }}</td>
+        <td class="text-end">
+          <div class="d-flex gap-2 justify-content-end flex-wrap">
+            {% if not ebook.active %}
+            <form method="post" action="{{ url_for('ebooks.activate_ebook', ebook_id=ebook.id) }}">
+              <button type="submit" class="btn btn-outline-secondary btn-sm">Ativar</button>
+            </form>
+            {% endif %}
+            <a href="{{ url_for('ebooks.edit_ebook', ebook_id=ebook.id) }}" class="btn btn-outline-secondary btn-sm">Editar</a>
+            <form method="post" action="{{ url_for('ebooks.delete_ebook', ebook_id=ebook.id) }}" onsubmit="return confirm('Excluir este ebook?');">
+              <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum ebook cadastrado ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

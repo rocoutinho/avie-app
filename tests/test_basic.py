@@ -5,7 +5,7 @@ import pytest
 from app import create_app
 from config import TestConfig
 from extensions import db
-from models import BlogPost, Campaign, Client, Consultation, Payment, StyleProfile, StyleReport, User
+from models import BlogPost, Campaign, Client, Consultation, Ebook, Payment, StyleProfile, StyleReport, User
 
 
 @pytest.fixture
@@ -777,3 +777,116 @@ def test_blog_markdown_renders_to_html(app, logged_in_client):
     assert b"<h2>Subt\xc3\xadtulo</h2>" in response.data
     assert b"<strong>negrito</strong>" in response.data
     assert b"<li>Item um</li>" in response.data
+
+
+def test_ebook_landing_shows_placeholder_without_active_ebook(client):
+    response = client.get("/ebook")
+    assert response.status_code == 200
+    assert "Em breve".encode() in response.data
+
+
+def _ebook_payload(**overrides):
+    payload = {
+        "title": "Guia de Posicionamento Profissional",
+        "description": "Um guia prático para alinhar imagem e carreira.",
+        "cover_image_url": "",
+        "file_url": "https://drive.google.com/file/d/teste/view",
+        "active": "y",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_owner_creates_ebook_and_activating_another_deactivates_it(app, logged_in_client):
+    response = logged_in_client.post("/painel/ebooks/novo", data=_ebook_payload(), follow_redirects=True)
+    assert response.status_code == 200
+
+    with app.app_context():
+        first = Ebook.query.filter_by(title="Guia de Posicionamento Profissional").first()
+        assert first is not None
+        assert first.active is True
+
+    response = logged_in_client.post(
+        "/painel/ebooks/novo",
+        data=_ebook_payload(title="Segundo Guia"),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        first_reloaded = db.session.get(Ebook, first.id)
+        second = Ebook.query.filter_by(title="Segundo Guia").first()
+        assert first_reloaded.active is False
+        assert second.active is True
+
+    response = logged_in_client.get("/ebook")
+    assert response.status_code == 200
+    assert b"Segundo Guia" in response.data
+
+
+def test_ebook_download_creates_lead_and_redirects_to_success(app, client):
+    with app.app_context():
+        owner = User(name="Fabiana", email="staff-ebook1@example.com", role="owner")
+        owner.set_password("senha-forte-123")
+        db.session.add(owner)
+        db.session.commit()
+        ebook = Ebook(
+            title="Guia de Imagem",
+            description="Descrição de teste.",
+            file_url="https://drive.google.com/file/d/teste2/view",
+            active=True,
+            created_by_id=owner.id,
+        )
+        db.session.add(ebook)
+        db.session.commit()
+
+    response = client.post(
+        "/ebook",
+        data={
+            "full_name": "Carlos Lead",
+            "email": "carlos@example.com",
+            "phone": "11988887777",
+            "wants_diagnostic": "y",
+            "website": "",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Guia de Imagem".encode() in response.data
+
+    with app.app_context():
+        lead = Client.query.filter_by(email="carlos@example.com").first()
+        assert lead is not None
+        assert lead.source == "ebook"
+        assert "diagnóstico" in lead.notes.lower()
+
+
+def test_ebook_download_rejects_honeypot(app, client):
+    with app.app_context():
+        owner = User(name="Fabiana", email="staff-ebook2@example.com", role="owner")
+        owner.set_password("senha-forte-123")
+        db.session.add(owner)
+        db.session.commit()
+        ebook = Ebook(
+            title="Guia de Imagem",
+            description="Descrição de teste.",
+            file_url="https://drive.google.com/file/d/teste3/view",
+            active=True,
+            created_by_id=owner.id,
+        )
+        db.session.add(ebook)
+        db.session.commit()
+
+    response = client.post(
+        "/ebook",
+        data={
+            "full_name": "Bot",
+            "email": "bot@example.com",
+            "phone": "11900000000",
+            "website": "http://spam.example.com",
+        },
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        assert Client.query.filter_by(email="bot@example.com").first() is None
