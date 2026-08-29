@@ -23,11 +23,15 @@ def require_client():
 client_area_bp.before_request(require_client)
 
 
+# icon_key casa com o macro service_icon() em templates/client_area.html
+# (mesmos ícones/paths usados pros "pilares" da consultoria em
+# landing.html, pra área do cliente falar a mesma linguagem visual da
+# página pública, sem acoplar as duas templates).
 DOSSIE_SERVICE_LABELS = [
-    ("estilo_pessoal", "Estilo pessoal"),
-    ("proporcoes", "Proporções"),
-    ("coloracao", "Coloração"),
-    ("visagismo", "Visagismo"),
+    ("estilo_pessoal", "Estilo pessoal", "hanger"),
+    ("proporcoes", "Proporções", "ruler"),
+    ("coloracao", "Coloração", "palette"),
+    ("visagismo", "Visagismo", "sparkle"),
 ]
 
 
@@ -45,16 +49,16 @@ def index():
     # relatórios enviados (o mais recente prevalece se mais de um cobrir
     # o mesmo serviço).
     dossie_services = []
-    for field, label in DOSSIE_SERVICE_LABELS:
+    for field, label, icon_key in DOSSIE_SERVICE_LABELS:
         text = next((getattr(r, field) for r in sent_reports if getattr(r, field, None)), None)
         if text:
-            dossie_services.append({"label": label, "text": text})
+            dossie_services.append({"label": label, "text": text, "icon": icon_key})
 
     # "Recomendações da consultoria" só mostra relatórios que não são
     # dossiês estruturados (senão duplicaria o mesmo conteúdo já
     # detalhado nos cards de serviço acima).
     other_reports = [
-        r for r in sent_reports if not any(getattr(r, field, None) for field, _ in DOSSIE_SERVICE_LABELS)
+        r for r in sent_reports if not any(getattr(r, field, None) for field, _, _ in DOSSIE_SERVICE_LABELS)
     ]
 
     return render_template(
