@@ -17,12 +17,12 @@
   <meta property="og:title" content="{{ page_title }}">
   <meta property="og:description" content="{{ self.meta_description() }}">
   <meta property="og:url" content="{{ site_url }}{{ request.path }}">
-  <meta property="og:image" content="{{ site_url }}{{ url_for('static', filename='img/og-cover.png') }}">
+  <meta property="og:image" content="{% block og_image %}{{ site_url }}{{ url_for('static', filename='img/og-cover.png') }}{% endblock %}">
   <meta property="og:locale" content="pt_BR">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page_title }}">
   <meta name="twitter:description" content="{{ self.meta_description() }}">
-  <meta name="twitter:image" content="{{ site_url }}{{ url_for('static', filename='img/og-cover.png') }}">
+  <meta name="twitter:image" content="{{ self.og_image() }}">
 
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/fonts.css') }}" rel="stylesheet">
@@ -82,6 +82,7 @@
             <a class="navbar-link-pill" href="{{ url_for('dashboard.index') }}">Painel</a>
             <a class="navbar-link-pill" href="{{ url_for('clients.list_clients') }}">Clientes</a>
             <a class="navbar-link-pill" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
+            <a class="navbar-link-pill" href="{{ url_for('blog.list_posts') }}">Blog</a>
             <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
           </div>
         </div>

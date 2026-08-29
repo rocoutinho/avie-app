@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Blog{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="h3 mb-0">Artigos do blog</h1>
+  <a href="{{ url_for('blog.new_post') }}" class="btn btn-brand btn-sm">+ Novo artigo</a>
+</div>
+
+<div class="table-responsive">
+  <table class="table bg-white">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>URL</th>
+        <th>Status</th>
+        <th>Criado por</th>
+        <th>Atualizado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr class="cursor-pointer" onclick="window.location='{{ url_for('blog.detail', post_id=post.id) }}'" style="cursor:pointer;">
+        <td>{{ post.title }}</td>
+        <td><code>/blog/{{ post.slug }}</code></td>
+        <td>{{ label_for(BLOG_POST_STATUSES, post.status) }}</td>
+        <td>{{ post.created_by.name if post.created_by else "—" }}</td>
+        <td>{{ post.updated_at.strftime('%d/%m/%Y %H:%M') if post.updated_at else "—" }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum artigo cadastrado ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

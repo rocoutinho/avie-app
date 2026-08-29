@@ -17,7 +17,7 @@ from flask_wtf.csrf import ValidationError, validate_csrf
 from emails import send_diagnostic_confirmation
 from extensions import db, limiter
 from forms import DiagnosticForm
-from models import LEAD_SOURCES, Campaign, Client, StyleProfile
+from models import LEAD_SOURCES, BlogPost, Campaign, Client, StyleProfile
 
 public_bp = Blueprint("public", __name__)
 
@@ -97,6 +97,18 @@ def landing_campaign(slug):
 @public_bp.route("/privacidade")
 def privacy():
     return render_template("privacy.html")
+
+
+@public_bp.route("/blog")
+def blog_index():
+    posts = BlogPost.query.filter_by(status="publicado").order_by(BlogPost.published_at.desc()).all()
+    return render_template("blog_list.html", posts=posts)
+
+
+@public_bp.route("/blog/<slug>")
+def blog_post(slug):
+    post = BlogPost.query.filter_by(slug=slug, status="publicado").first_or_404()
+    return render_template("blog_post.html", post=post)
 
 
 @public_bp.route("/diagnostico", methods=["GET", "POST"])

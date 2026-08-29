@@ -6,9 +6,11 @@ from datetime import datetime
 import click
 from flask import Flask
 
+from blog_engine import format_date_pt, render_markdown
 from config import Config, IS_PRODUCTION
 from extensions import db, limiter, login_manager, mail, migrate
 from models import (
+    BLOG_POST_STATUSES,
     CAMPAIGN_STATUSES,
     CLIENT_STATUSES,
     CONSULTATION_STATUSES,
@@ -43,6 +45,7 @@ def create_app(config_class=Config):
         return User.query.get(int(user_id))
 
     from blueprints.auth import auth_bp
+    from blueprints.blog import blog_bp
     from blueprints.campaigns import campaigns_bp
     from blueprints.clients import clients_bp
     from blueprints.dashboard import dashboard_bp
@@ -55,6 +58,10 @@ def create_app(config_class=Config):
     app.register_blueprint(clients_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(campaigns_bp)
+    app.register_blueprint(blog_bp)
+
+    app.jinja_env.filters["markdown"] = render_markdown
+    app.jinja_env.filters["pt_date"] = format_date_pt
 
     @app.context_processor
     def inject_globals():
@@ -66,6 +73,7 @@ def create_app(config_class=Config):
             PAYMENT_STATUSES=PAYMENT_STATUSES,
             LEAD_SOURCES=LEAD_SOURCES,
             CAMPAIGN_STATUSES=CAMPAIGN_STATUSES,
+            BLOG_POST_STATUSES=BLOG_POST_STATUSES,
             label_for=lambda choices, key: dict(choices).get(key, key),
             current_year=datetime.utcnow().year,
         )
