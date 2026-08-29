@@ -613,3 +613,33 @@ def test_owner_rejects_campaign_back_to_draft_with_note(app, logged_in_client):
 
     response = logged_in_client.get("/lp/natal")
     assert response.status_code == 404
+
+
+def test_seed_admin_noop_without_env_vars(app, monkeypatch):
+    monkeypatch.delenv("ADMIN_EMAIL", raising=False)
+    monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+    runner = app.test_cli_runner()
+
+    result = runner.invoke(args=["seed-admin"])
+
+    assert "não definidos" in result.output
+    with app.app_context():
+        assert User.query.count() == 0
+
+
+def test_seed_admin_creates_user_and_is_idempotent(app, monkeypatch):
+    monkeypatch.setenv("ADMIN_NAME", "Fabiana Montemor")
+    monkeypatch.setenv("ADMIN_EMAIL", "admin@example.com")
+    monkeypatch.setenv("ADMIN_PASSWORD", "senha-bem-forte-123")
+    monkeypatch.setenv("ADMIN_ROLE", "owner")
+    runner = app.test_cli_runner()
+
+    first = runner.invoke(args=["seed-admin"])
+    assert "criado" in first.output
+    with app.app_context():
+        assert User.query.filter_by(email="admin@example.com").count() == 1
+
+    second = runner.invoke(args=["seed-admin"])
+    assert "já existe" in second.output
+    with app.app_context():
+        assert User.query.filter_by(email="admin@example.com").count() == 1
