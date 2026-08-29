@@ -66,6 +66,7 @@ def _campaign_payload(**overrides):
         "hero_cta_text": "",
         "hero_image_url": "",
         "theme_color": "",
+        "embed_url": "",
     }
     payload.update(overrides)
     return payload
@@ -1194,3 +1195,60 @@ def test_delete_report_removes_preliminary_report_but_blocks_dossie(app, logged_
     assert response.status_code == 400
     with app.app_context():
         assert db.session.get(StyleReport, dossie_report_id) is not None
+
+
+def test_published_campaign_with_embed_url_renders_iframe_instead_of_hero(app, client):
+    with app.app_context():
+        user = User(name="Fabiana", email="owner-embed@example.com", role="owner")
+        user.set_password("senha-forte-123")
+        db.session.add(user)
+        db.session.commit()
+        campaign = Campaign(
+            slug="canvas-teste",
+            internal_name="Campanha Canvas",
+            hero_title="Título do hero, deve ser ignorado",
+            embed_url="https://example.com/minha-landing-canvas",
+            status="publicado",
+            created_by_id=user.id,
+        )
+        db.session.add(campaign)
+        db.session.commit()
+
+    response = client.get("/lp/canvas-teste")
+    assert response.status_code == 200
+    assert b'src="https://example.com/minha-landing-canvas"' in response.data
+    # A seção de hero nativa (landing.html) não deve ser renderizada.
+    assert b"lp-hero" not in response.data
+
+
+def test_campanha_slug_also_resolves_at_root_path(app, client):
+    with app.app_context():
+        user = User(name="Fabiana", email="owner-campanha@example.com", role="owner")
+        user.set_password("senha-forte-123")
+        db.session.add(user)
+        db.session.commit()
+        campaign = Campaign(
+            slug="campanha",
+            internal_name="Campanha Principal",
+            hero_title="Hero da campanha principal",
+            embed_url="https://example.com/campanha-principal",
+            status="publicado",
+            created_by_id=user.id,
+        )
+        db.session.add(campaign)
+        db.session.commit()
+
+    response = client.get("/campanha")
+    assert response.status_code == 200
+    assert b'src="https://example.com/campanha-principal"' in response.data
+
+    # /lp/campanha continua funcionando — o Werkzeug redireciona pra URL
+    # canônica /campanha (evita conteúdo duplicado em duas URLs).
+    response = client.get("/lp/campanha", follow_redirects=True)
+    assert response.status_code == 200
+    assert b'src="https://example.com/campanha-principal"' in response.data
+
+
+def test_unpublished_campanha_slug_returns_404_at_root_path(client):
+    response = client.get("/campanha")
+    assert response.status_code == 404

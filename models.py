@@ -131,6 +131,13 @@ class Campaign(db.Model):
     hero_image_url = db.Column(db.String(500))
     theme_color = db.Column(db.String(20))
 
+    # Link externo pra encapsular como página ao vivo no lugar do hero
+    # nativo acima (ex: uma landing desenhada no Canvas/Canva) — ver
+    # blueprints/public.py:landing_campaign e templates/campaign_embed.html.
+    # Os campos hero_* continuam preenchidos mas são ignorados na página
+    # ao vivo quando isso está definido.
+    embed_url = db.Column(db.String(500))
+
     review_note = db.Column(db.Text)
 
     created_by_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

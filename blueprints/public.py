@@ -84,13 +84,20 @@ def landing():
 
 
 @public_bp.route("/lp/<slug>")
+@public_bp.route("/campanha", defaults={"slug": "campanha"})
 def landing_campaign(slug):
+    # A campanha de slug "campanha" também fica disponível na raiz
+    # (/campanha, sem o prefixo /lp/) — pedido explícito pra ter uma URL
+    # de campanha "principal" curta pra divulgar, além do padrão /lp/<slug>
+    # usado por todas as outras.
     campaign = Campaign.query.filter_by(slug=slug, status="publicado").first_or_404()
     # Se a visita não trouxe utm_campaign explícito (ex: link direto pro
     # criativo), usa o slug como atribuição — assim os leads dessa página
     # ficam rastreados até essa campanha mesmo sem parâmetros na URL.
     if "utm_campaign" not in session and "utm_campaign" not in request.args:
         session["utm_campaign"] = campaign.slug
+    if campaign.embed_url:
+        return render_template("campaign_embed.html", campaign=campaign)
     return render_template("landing.html", campaign=campaign)
 
 

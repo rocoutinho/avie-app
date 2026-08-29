@@ -5,7 +5,7 @@
   <div>
     <h1 class="h3 mb-1">{{ campaign.internal_name }}</h1>
     <p class="text-muted mb-0">
-      <code>/lp/{{ campaign.slug }}</code> ·
+      <code>/lp/{{ campaign.slug }}</code>{% if campaign.slug == "campanha" %} · <code>/campanha</code>{% endif %} ·
       Status: <strong>{{ label_for(CAMPAIGN_STATUSES, campaign.status) }}</strong>
     </p>
   </div>
@@ -33,6 +33,7 @@
       <dt class="col-sm-3">Botão</dt><dd class="col-sm-9">{{ campaign.hero_cta_text or "—" }}</dd>
       <dt class="col-sm-3">Imagem</dt><dd class="col-sm-9">{{ campaign.hero_image_url or "—" }}</dd>
       <dt class="col-sm-3">Cor</dt><dd class="col-sm-9">{{ campaign.theme_color or "—" }}</dd>
+      <dt class="col-sm-3">Link encapsulado</dt><dd class="col-sm-9">{{ campaign.embed_url or "—" }}{% if campaign.embed_url %} <span class="text-muted">(hero acima é ignorado na página ao vivo)</span>{% endif %}</dd>
       <dt class="col-sm-3">Criado por</dt><dd class="col-sm-9">{{ campaign.created_by.name if campaign.created_by else "—" }}</dd>
       {% if campaign.reviewed_by %}
       <dt class="col-sm-3">Revisado por</dt><dd class="col-sm-9">{{ campaign.reviewed_by.name }}</dd>

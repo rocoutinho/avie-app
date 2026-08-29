@@ -231,6 +231,13 @@ class CampaignForm(FlaskForm):
             Regexp(r"^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$", message="Use um código hex válido, ex: #C9A227."),
         ],
     )
+    embed_url = StringField(
+        "Link para encapsular (opcional — página pronta no Canvas, Canva etc.). "
+        "Se preenchido, a página ao vivo mostra esse link no lugar do hero "
+        "(navbar e rodapé do Avie continuam aparecendo) — os campos de hero "
+        "acima ficam sem efeito na página ao vivo.",
+        validators=[Optional(), Length(max=500)],
+    )
     submit = SubmitField("Salvar rascunho")
 
 

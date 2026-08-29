@@ -50,6 +50,7 @@ def new_campaign():
             hero_cta_text=(form.hero_cta_text.data or "").strip() or None,
             hero_image_url=(form.hero_image_url.data or "").strip() or None,
             theme_color=(form.theme_color.data or "").strip() or None,
+            embed_url=(form.embed_url.data or "").strip() or None,
             status="rascunho",
             created_by_id=current_user.id,
         )
@@ -89,6 +90,7 @@ def edit_campaign(campaign_id):
         campaign.hero_cta_text = (form.hero_cta_text.data or "").strip() or None
         campaign.hero_image_url = (form.hero_image_url.data or "").strip() or None
         campaign.theme_color = (form.theme_color.data or "").strip() or None
+        campaign.embed_url = (form.embed_url.data or "").strip() or None
 
         # Editar um criativo publicado, em revisão ou arquivado volta pro
         # rascunho — qualquer mudança precisa passar por aprovação de novo.
@@ -109,6 +111,8 @@ def edit_campaign(campaign_id):
 @login_required
 def preview(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
+    if campaign.embed_url:
+        return render_template("campaign_embed.html", campaign=campaign, preview=True)
     return render_template("landing.html", campaign=campaign, preview=True)
 
 
