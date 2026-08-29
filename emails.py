@@ -34,6 +34,29 @@ def send_diagnostic_confirmation(client):
         return False
 
 
+def send_client_access_email(client, reset_url):
+    if not current_app.config.get("MAIL_SERVER"):
+        current_app.logger.info(
+            "[e-mail simulado] Link de acesso à área do cliente para %s: %s "
+            "(configure MAIL_SERVER no .env para enviar de verdade)",
+            client.email,
+            reset_url,
+        )
+        return False
+
+    try:
+        msg = Message(
+            subject="Seu acesso à área do cliente",
+            recipients=[client.email],
+            body=render_template("email/client_access.txt", client=client, reset_url=reset_url),
+        )
+        mail.send(msg)
+        return True
+    except Exception:
+        current_app.logger.exception("Falha ao enviar e-mail de acesso para %s", client.email)
+        return False
+
+
 def send_ebook_email(client, ebook):
     if not current_app.config.get("MAIL_SERVER"):
         current_app.logger.info(

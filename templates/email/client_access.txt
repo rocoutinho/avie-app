@@ -1,0 +1,13 @@
+Olá, {{ client.full_name.split(' ')[0] }}!
+
+Seu dossiê de estilo e posicionamento já está disponível na sua área do
+cliente. Para criar sua senha de acesso, clique no link abaixo:
+
+{{ reset_url }}
+
+O link é válido por alguns dias. Depois de definir sua senha, você pode
+entrar sempre que quiser com seu e-mail ({{ client.email }}).
+
+Um abraço,
+Fabiana Montemor
+Consultoria de Imagem e Estilo

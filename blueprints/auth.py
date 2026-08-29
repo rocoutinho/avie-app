@@ -4,7 +4,7 @@ from flask import Blueprint, abort, current_app, flash, redirect, render_templat
 from flask_login import current_user, login_required, login_user, logout_user
 
 from extensions import db, limiter
-from forms import LoginForm
+from forms import LoginForm, ResetPasswordForm
 from models import Client, User
 
 auth_bp = Blueprint("auth", __name__)
@@ -67,3 +67,28 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("public.landing"))
+
+
+@auth_bp.route("/redefinir-senha/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    """Link enviado por e-mail/WhatsApp no cadastro com dossiê (ver
+    blueprints/clients.py:new_client_with_dossie) — deixa o cliente
+    escolher a própria senha em vez de usar a temporária gerada pelo
+    sistema. Rota pública: a validade está no token, não em sessão."""
+    if current_user.is_authenticated:
+        logout_user()
+
+    client = Client.query.filter_by(password_reset_token=token).first()
+    if client is None or not client.password_reset_token_valid():
+        flash("Este link de acesso expirou ou já foi usado. Peça um novo à Fabiana.", "danger")
+        return redirect(url_for("auth.login"))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        client.set_password(form.password.data)
+        client.clear_password_reset_token()
+        db.session.commit()
+        flash("Senha definida com sucesso — já pode entrar.", "success")
+        return redirect(url_for("auth.login"))
+
+    return render_template("reset_password.html", form=form, client=client)

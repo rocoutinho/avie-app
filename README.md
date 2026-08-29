@@ -182,8 +182,18 @@ cliente no CRM, é ela (ou o suporte) quem libera o acesso: na ficha do
 cliente (`/painel/clientes/<id>`), o card "Acesso à área do cliente"
 define uma senha — a partir daí, o e-mail já cadastrado + essa senha
 já servem de login. Repassa a senha pro cliente por WhatsApp ou e-mail
-manualmente (ainda não existe fluxo de "esqueci minha senha"). O acesso
-pode ser removido a qualquer momento no mesmo card.
+manualmente. O acesso pode ser removido a qualquer momento no mesmo card.
+
+**Cadastro com dossiê** (`/painel/clientes/novo-com-dossie`): para
+clientes reais que já receberam o dossiê fora do sistema. Numa
+submissão só, cria (ou atualiza, por e-mail) o cadastro, registra o
+dossiê como um `StyleReport` já "enviado", gera uma senha temporária e
+um link de troca de senha (`/redefinir-senha/<token>`, válido por 72h) —
+esse link é o que se repassa por e-mail (se `MAIL_SERVER` estiver
+configurado) e/ou por um botão de WhatsApp que já abre a conversa com o
+número do próprio cliente com a mensagem pronta. Esse é, hoje, o único
+fluxo de "esqueci minha senha" — não há um link de "solicitar redefinição"
+que o próprio cliente possa disparar sozinho.
 
 O que a área do cliente mostra hoje: o diagnóstico que ele preencheu e
 as recomendações/relatórios que a consultoria já enviou (`status`

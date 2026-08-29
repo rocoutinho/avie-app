@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Cadastro concluído{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h1 class="h3 mb-2">Cadastro de {{ client.full_name }} concluído</h1>
+    <p class="text-muted mb-4">
+      O dossiê foi registrado como enviado e o acesso à área do cliente já
+      está pronto. Agora é só repassar o link abaixo — o cliente usa ele
+      pra escolher a própria senha.
+    </p>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <label class="form-label small text-muted mb-1">Link de acesso (válido por alguns dias)</label>
+        <div class="input-group">
+          <input type="text" class="form-control" value="{{ reset_url }}" readonly>
+        </div>
+        {% if email_sent %}
+        <p class="text-success small mt-2 mb-0">✔ Também enviamos este link por e-mail para {{ client.email }}.</p>
+        {% else %}
+        <p class="text-muted small mt-2 mb-0">
+          E-mail automático não está configurado neste ambiente — copie o link acima e envie manualmente.
+        </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      {% if whatsapp_link %}
+      <a href="{{ whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-brand">Enviar por WhatsApp</a>
+      {% endif %}
+      <a href="{{ url_for('clients.detail', client_id=client.id) }}" class="btn btn-outline-secondary">Ver cadastro do cliente</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
