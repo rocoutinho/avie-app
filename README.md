@@ -168,6 +168,30 @@ com o botão de download imediato (não depende do e-mail chegar) e um
 link de WhatsApp pra continuar a conversa. Não há envio automático por
 WhatsApp — isso exigiria uma API paga (Twilio/Meta), fora do escopo atual.
 
+## Área do cliente
+
+Staff e cliente entram pelo mesmo botão "Clientes" (`/login`) — o sistema
+reconhece automaticamente quem é quem: se o e-mail/senha bate com um
+usuário da equipe (`owner`/`marketing`), cai no painel interno de sempre;
+senão, se bate com um cliente que já tem acesso liberado, cai na área
+dele (`/minha-area`), que mostra só o diagnóstico e as recomendações
+daquele cliente — nunca dados de outros.
+
+**Cliente não se autocadastra.** Como a Fabiana já tem os dados de cada
+cliente no CRM, é ela (ou o suporte) quem libera o acesso: na ficha do
+cliente (`/painel/clientes/<id>`), o card "Acesso à área do cliente"
+define uma senha — a partir daí, o e-mail já cadastrado + essa senha
+já servem de login. Repassa a senha pro cliente por WhatsApp ou e-mail
+manualmente (ainda não existe fluxo de "esqueci minha senha"). O acesso
+pode ser removido a qualquer momento no mesmo card.
+
+O que a área do cliente mostra hoje: o diagnóstico que ele preencheu e
+as recomendações/relatórios que a consultoria já enviou (`status`
+"enviado"), além de um aviso simples de "seu último acesso foi em ...".
+**Histórico de acesso mais completo e "dicas personalizadas" ainda não
+foram implementados** — precisam ser detalhados antes (quantas entradas
+mostrar, de onde vêm as dicas etc.).
+
 ## Estrutura de pastas
 
 ```
@@ -178,7 +202,7 @@ models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleRe
 forms.py            # formulários (Flask-WTF)
 reports_engine.py   # gera o rascunho do relatório personalizado
 blog_engine.py       # renderiza Markdown -> HTML e formata datas em pt-BR pro blog
-blueprints/          # rotas: auth, public, dashboard, clients, reports, campaigns, blog, ebooks
+blueprints/          # rotas: auth, public, dashboard, clients, reports, campaigns, blog, ebooks, client_area
 templates/           # HTML (Jinja + Bootstrap)
 static/vendor/        # Bootstrap CSS/JS vendorizado (sem CDN)
 static/fonts/         # fontes auto-hospedadas (Inter, Cormorant Garamond)

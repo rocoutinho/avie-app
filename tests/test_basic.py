@@ -890,3 +890,79 @@ def test_ebook_download_rejects_honeypot(app, client):
 
     with app.app_context():
         assert Client.query.filter_by(email="bot@example.com").first() is None
+
+
+def test_client_without_password_cannot_login(app, client):
+    with app.app_context():
+        lead = Client(full_name="Sem Acesso", email="semacesso@example.com", status="lead")
+        db.session.add(lead)
+        db.session.commit()
+
+    response = client.post(
+        "/login",
+        data={"email": "semacesso@example.com", "password": "qualquer-coisa"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "inválidos".encode() in response.data
+
+
+def test_staff_sets_client_password_and_client_logs_into_own_area(app, logged_in_client, client):
+    with app.app_context():
+        lead = Client(full_name="Carla Cliente", email="carla-portal@example.com", status="lead")
+        db.session.add(lead)
+        db.session.commit()
+        client_id = lead.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/senha",
+        data={"password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        updated = db.session.get(Client, client_id)
+        assert updated.check_password("senha-cliente-123") is True
+
+    # logged_in_client e client são o mesmo cliente de teste (mesmos
+    # cookies) — sai da sessão de staff antes de logar como cliente.
+    client.get("/logout")
+
+    response = client.post(
+        "/login",
+        data={"email": "carla-portal@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Olá, Carla".encode() in response.data
+
+    # Cliente não acessa o painel interno.
+    response = client.get("/painel/", follow_redirects=False)
+    assert response.status_code == 403
+
+    response = client.get("/painel/clientes/", follow_redirects=False)
+    assert response.status_code == 403
+
+
+def test_removing_client_access_blocks_future_login(app, logged_in_client, client):
+    with app.app_context():
+        lead = Client(full_name="Acesso Temporário", email="temp-portal@example.com", status="lead")
+        lead.set_password("senha-temp-123")
+        db.session.add(lead)
+        db.session.commit()
+        client_id = lead.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/senha/remover", follow_redirects=True
+    )
+    assert response.status_code == 200
+
+    client.get("/logout")
+    response = client.post(
+        "/login",
+        data={"email": "temp-portal@example.com", "password": "senha-temp-123"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "inválidos".encode() in response.data

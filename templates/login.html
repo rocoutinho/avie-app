@@ -4,7 +4,11 @@
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-md-5">
-    <h1 class="h3 mb-4">Área da equipe</h1>
+    <h1 class="h3 mb-2">Entrar</h1>
+    <p class="text-muted mb-4">
+      Área da equipe e área do cliente usam o mesmo login — cada um vê
+      só o que é seu.
+    </p>
     <form method="post" novalidate>
       {{ form.hidden_tag() }}
       {{ render_field(form.email) }}

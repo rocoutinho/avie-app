@@ -9,11 +9,13 @@ link. Ver CLAUDE.md/README para mais contexto sobre essa limitação."""
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
+from blueprints.auth import require_staff
 from extensions import db
 from forms import EbookForm
 from models import Ebook
 
 ebooks_bp = Blueprint("ebooks", __name__, url_prefix="/painel/ebooks")
+ebooks_bp.before_request(require_staff)
 
 
 @ebooks_bp.route("/")

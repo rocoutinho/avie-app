@@ -1,11 +1,13 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required
 
+from blueprints.auth import require_staff
 from extensions import db
-from forms import ClientForm, ConsultationForm, PaymentForm
+from forms import ClientForm, ConsultationForm, PaymentForm, SetClientPasswordForm
 from models import CLIENT_STATUSES, Client, Consultation, Payment
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/painel/clientes")
+clients_bp.before_request(require_staff)
 
 
 @clients_bp.route("/")
@@ -45,7 +47,8 @@ def new_client():
 @login_required
 def detail(client_id):
     client = Client.query.get_or_404(client_id)
-    return render_template("client_detail.html", client=client)
+    password_form = SetClientPasswordForm()
+    return render_template("client_detail.html", client=client, password_form=password_form)
 
 
 @clients_bp.route("/<int:client_id>/editar", methods=["GET", "POST"])
@@ -65,6 +68,30 @@ def edit_client(client_id):
         flash("Dados atualizados.", "success")
         return redirect(url_for("clients.detail", client_id=client.id))
     return render_template("client_form.html", form=form, client=client)
+
+
+@clients_bp.route("/<int:client_id>/senha", methods=["POST"])
+@login_required
+def set_client_password(client_id):
+    client = Client.query.get_or_404(client_id)
+    form = SetClientPasswordForm()
+    if form.validate_on_submit():
+        client.set_password(form.password.data)
+        db.session.commit()
+        flash("Senha de acesso definida — repasse pro cliente por WhatsApp ou e-mail.", "success")
+    else:
+        flash("Não foi possível definir a senha (mínimo 8 caracteres).", "danger")
+    return redirect(url_for("clients.detail", client_id=client.id))
+
+
+@clients_bp.route("/<int:client_id>/senha/remover", methods=["POST"])
+@login_required
+def remove_client_password(client_id):
+    client = Client.query.get_or_404(client_id)
+    client.password_hash = None
+    db.session.commit()
+    flash("Acesso do cliente à área dele foi removido.", "success")
+    return redirect(url_for("clients.detail", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/status", methods=["POST"])

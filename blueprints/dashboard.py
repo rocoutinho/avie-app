@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
 
+from blueprints.auth import require_staff
 from models import CLIENT_STATUSES, Client, Consultation, Payment
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/painel")
+dashboard_bp.before_request(require_staff)
 
 
 @dashboard_bp.route("/")
