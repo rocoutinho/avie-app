@@ -17,7 +17,14 @@
         <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">{{ report.content }}</pre>
       </div>
     </div>
+    {% if report.is_dossie %}
+    <p class="text-muted small">Este relatório faz parte do dossiê do cliente — edite pela ficha do cliente.</p>
+    {% else %}
     <a href="{{ url_for('reports.edit_report', client_id=client.id, report_id=report.id) }}" class="btn btn-outline-secondary">Editar</a>
+    <form method="post" action="{{ url_for('reports.delete_report', client_id=client.id, report_id=report.id) }}" class="d-inline" onsubmit="return confirm('Excluir este relatório?');">
+      <button type="submit" class="btn btn-outline-secondary text-danger">Excluir</button>
+    </form>
+    {% endif %}
     <a href="{{ url_for('clients.detail', client_id=client.id) }}" class="btn btn-link">Voltar ao cliente</a>
   </div>
 </div>

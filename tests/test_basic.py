@@ -993,7 +993,7 @@ def test_staff_creates_client_with_dossie(app, logged_in_client):
     with app.app_context():
         created = Client.query.filter_by(email="dossie-nova@example.com").first()
         assert created is not None
-        assert created.status == "cliente_ativo"
+        assert created.status == "cliente_concluido"
         assert created.password_hash is not None
         assert created.password_reset_token is not None
         assert created.password_reset_token_valid() is True
@@ -1088,8 +1088,109 @@ def test_dossie_client_sees_service_cards_instead_of_diagnostic_cta(app, logged_
     )
     assert response.status_code == 200
     assert "Fazer meu diagnóstico".encode() not in response.data
-    assert "Estilo pessoal".encode() in response.data
-    assert "Coloração".encode() in response.data
+    assert "Estilo".encode() in response.data
+    assert "Cores".encode() in response.data
     assert "Estilo clássico com toques contemporâneos.".encode() in response.data
-    # Visagismo ficou em branco no dossiê — não deve virar um card vazio.
+    # Visagismo e Arquétipos ficaram em branco no dossiê — não devem virar cards vazios.
     assert "Visagismo".encode() not in response.data
+    assert "Arquétipos".encode() not in response.data
+
+
+def test_resubmitting_dossie_onboarding_updates_same_report(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    logged_in_client.post(
+        "/painel/clientes/novo-com-dossie",
+        data=_dossie_payload(estilo_pessoal="Estilo atualizado na segunda submissão."),
+        follow_redirects=True,
+    )
+
+    with app.app_context():
+        client_obj = Client.query.filter_by(email="dossie-nova@example.com").first()
+        assert client_obj.status == "cliente_concluido"
+        reports = StyleReport.query.filter_by(client_id=client_obj.id).all()
+        assert len(reports) == 1
+        assert reports[0].estilo_pessoal == "Estilo atualizado na segunda submissão."
+
+
+def test_staff_edits_dossie_and_client_area_reflects_it(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_obj = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = client_obj.id
+        client_obj.set_password("senha-cliente-final")
+        db.session.commit()
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/editar",
+        data={
+            "dossie_title": "Diagnóstico de Estilo — Nova Cliente",
+            "pdf_url": "https://example.com/dossie.pdf",
+            "estilo_pessoal": "Estilo editado depois do cadastro.",
+            "proporcoes": "Silhueta retangular, valorizar cintura.",
+            "coloracao": "Paleta de inverno — cores frias e contrastadas.",
+            "visagismo": "",
+            "arquetipos": "Arquétipo Sábia.",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Baixar PDF do dossiê".encode() in response.data
+
+    with app.app_context():
+        report = db.session.get(Client, client_id).dossie_report
+        assert report.estilo_pessoal == "Estilo editado depois do cadastro."
+        assert report.arquetipos == "Arquétipo Sábia."
+        assert report.pdf_url == "https://example.com/dossie.pdf"
+
+    logged_in_client.get("/logout")
+    client.get("/logout")
+    response = client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
+        follow_redirects=True,
+    )
+    assert "Estilo editado depois do cadastro.".encode() in response.data
+    assert "Arquétipo Sábia.".encode() in response.data
+
+
+def test_edit_report_redirects_dossie_report_to_edit_dossie(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_obj = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = client_obj.id
+        report_id = client_obj.dossie_report.id
+
+    response = logged_in_client.get(
+        f"/painel/clientes/{client_id}/relatorios/{report_id}/editar", follow_redirects=False
+    )
+    assert response.status_code == 302
+    assert f"/painel/clientes/{client_id}/dossie/editar" in response.headers["Location"]
+
+
+def test_delete_report_removes_preliminary_report_but_blocks_dossie(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_obj = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = client_obj.id
+        dossie_report_id = client_obj.dossie_report.id
+
+        extra = StyleReport(
+            client_id=client_id, title="Diagnóstico preliminar — teste", content="rascunho", status="rascunho"
+        )
+        db.session.add(extra)
+        db.session.commit()
+        extra_id = extra.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/relatorios/{extra_id}/excluir", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(StyleReport, extra_id) is None
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/relatorios/{dossie_report_id}/excluir", follow_redirects=False
+    )
+    assert response.status_code == 400
+    with app.app_context():
+        assert db.session.get(StyleReport, dossie_report_id) is not None

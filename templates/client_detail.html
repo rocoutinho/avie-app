@@ -118,17 +118,57 @@
 
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
-        Relatórios personalizados
-        <a class="btn btn-sm btn-brand" href="{{ url_for('reports.new_report', client_id=client.id) }}">+ Gerar relatório</a>
+        Dossiê
+        {% if client.dossie_report %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_dossie', client_id=client.id) }}">Editar dossiê</a>
+        {% else %}
+        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_client_with_dossie', full_name=client.full_name, email=client.email, phone=client.phone or '') }}">+ Adicionar dossiê</a>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if client.dossie_report %}
+        {% set dossie = client.dossie_report %}
+        <p class="text-muted small mb-3">
+          {{ dossie.title }} · Enviado em {{ dossie.sent_at.strftime('%d/%m/%Y') if dossie.sent_at else "—" }}
+          {% if dossie.pdf_url %}
+          · <a href="{{ dossie.pdf_url }}" target="_blank" rel="noopener">Baixar PDF do dossiê</a>
+          {% endif %}
+        </p>
+        <dl class="mb-0">
+          {% if dossie.estilo_pessoal %}<dt>Estilo</dt><dd>{{ dossie.estilo_pessoal }}</dd>{% endif %}
+          {% if dossie.proporcoes %}<dt>Biotipo</dt><dd>{{ dossie.proporcoes }}</dd>{% endif %}
+          {% if dossie.coloracao %}<dt>Cores</dt><dd>{{ dossie.coloracao }}</dd>{% endif %}
+          {% if dossie.visagismo %}<dt>Visagismo</dt><dd>{{ dossie.visagismo }}</dd>{% endif %}
+          {% if dossie.arquetipos %}<dt class="mb-0">Arquétipos</dt><dd class="mb-0">{{ dossie.arquetipos }}</dd>{% endif %}
+        </dl>
+        <p class="text-muted small mb-0 mt-2">
+          Essas informações também aparecem na área do cliente — editar aqui atualiza os dois lugares.
+        </p>
+        {% else %}
+        <p class="text-muted mb-0">Este cliente ainda não tem um dossiê registrado.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Diagnóstico preliminar
+        <a class="btn btn-sm btn-brand" href="{{ url_for('reports.new_report', client_id=client.id) }}">+ Gerar diagnóstico preliminar</a>
       </div>
       <ul class="list-group list-group-flush">
-        {% for r in client.reports %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <a href="{{ url_for('reports.view_report', client_id=client.id, report_id=r.id) }}">{{ r.title }}</a>
-          <span class="badge {{ 'bg-success' if r.status=='enviado' else 'bg-secondary' }}">{{ label_for(REPORT_STATUSES, r.status) }}</span>
+        {% for r in client.other_reports %}
+        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+          <a href="{{ url_for('reports.view_report', client_id=client.id, report_id=r.id) }}" class="text-truncate">{{ r.title }}</a>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="badge {{ 'bg-success' if r.status=='enviado' else 'bg-secondary' }}">{{ label_for(REPORT_STATUSES, r.status) }}</span>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.edit_report', client_id=client.id, report_id=r.id) }}">Editar</a>
+            <form method="post" action="{{ url_for('reports.delete_report', client_id=client.id, report_id=r.id) }}" onsubmit="return confirm('Excluir este relatório?');">
+              <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
+            </form>
+          </div>
         </li>
         {% else %}
-        <li class="list-group-item text-muted">Nenhum relatório gerado.</li>
+        <li class="list-group-item text-muted">Nenhum diagnóstico preliminar gerado.</li>
         {% endfor %}
       </ul>
     </div>

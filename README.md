@@ -187,17 +187,26 @@ manualmente. O acesso pode ser removido a qualquer momento no mesmo card.
 
 **Cadastro com dossiê** (`/painel/clientes/novo-com-dossie`): para
 clientes reais que já receberam o dossiê fora do sistema. Numa
-submissão só, cria (ou atualiza, por e-mail) o cadastro, registra o
+submissão só, cria (ou atualiza, por e-mail) o cadastro com status
+"Cliente Concluído" (já passou por diagnóstico + consultoria — diferente
+de "Cliente Ativo", que é pra um engajamento em andamento), e registra o
 dossiê como um `StyleReport` já "enviado" — com um campo por serviço
-entregue (estilo pessoal, proporções, coloração, visagismo; deixe em
-branco os que não se aplicam) —, gera uma senha temporária e um link de
-troca de senha (`/redefinir-senha/<token>`, válido por 72h) — esse link
-é o que se repassa por e-mail (se `MAIL_SERVER` estiver configurado)
-e/ou por um botão de WhatsApp que já abre a conversa com o número do
-próprio cliente com a mensagem pronta. Na área do cliente, esses
-serviços aparecem como um card cada, no lugar do CTA de "fazer o
-diagnóstico" (que só faz sentido pra quem chegou pelo funil público, via
-`/diagnostico` — quem já tem dossiê não precisa refazer nada). Esse
+entregue (**Estilo, Biotipo, Cores, Visagismo, Arquétipos**; deixe em
+branco os que não se aplicam) e um link opcional pro PDF original —,
+gera uma senha temporária e um link de troca de senha
+(`/redefinir-senha/<token>`, válido por 72h) — esse link é o que se
+repassa por e-mail (se `MAIL_SERVER` estiver configurado) e/ou por um
+botão de WhatsApp que já abre a conversa com o número do próprio cliente
+com a mensagem pronta. Reenviar o formulário pro mesmo e-mail atualiza o
+dossiê existente em vez de criar outro — pra só ajustar o conteúdo
+depois (sem mexer em senha/acesso), use "Editar dossiê" na ficha do
+cliente, que edita exatamente essa mesma linha. Na ficha do cliente
+(admin) o dossiê tem seu próprio card, com o texto de cada serviço e o
+link do PDF; na área do cliente, cada serviço vira um card com ícone —
+mesma informação nos dois lugares, porque os dois lêem o mesmo registro.
+Isso fica no lugar do CTA de "fazer o diagnóstico" (que só faz sentido
+pra quem chegou pelo funil público, via `/diagnostico` — quem já tem
+dossiê não precisa refazer nada). Esse
 link de troca de senha é, hoje, o único fluxo de "esqueci minha senha"
 — não há um link de "solicitar redefinição"
 que o próprio cliente possa disparar sozinho.
@@ -277,8 +286,10 @@ de carreira, autopercepção, orçamento). Antes de captar clientes reais:
   que o backup ficaria no mesmo disco efêmero que o banco.
 - **Cliente fictício para navegação**: `flask seed-demo-client` cria (ou
   reseta) um cliente de exemplo — `cliente.demo@example.com` / senha
-  `Demo@2026!` — com dados em todas as áreas do sistema: dossiê completo
-  (os 4 serviços), um relatório de acompanhamento, um rascunho,
+  `Demo@2026!` — com dados em todas as áreas do sistema: dossiê com 4 dos
+  5 serviços preenchidos (Visagismo em branco de propósito, pra mostrar
+  que o sistema lida bem com dossiês parciais) e link de PDF, um
+  relatório de acompanhamento, um rascunho,
   consultorias e pagamentos, pra dar pra navegar o painel inteiro e a
   área do cliente sem usar dados de clientes reais. E-mail/telefone são
   propositalmente fictícios (não disparam contato de verdade). Idempotente
