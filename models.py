@@ -72,6 +72,13 @@ CAMPAIGN_STATUSES = [
     ("arquivado", "Arquivado"),
 ]
 
+BLOG_POST_STATUSES = [
+    ("rascunho", "Rascunho"),
+    ("em_revisao", "Em revisão"),
+    ("publicado", "Publicado"),
+    ("arquivado", "Arquivado"),
+]
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,6 +114,35 @@ class Campaign(db.Model):
     hero_cta_text = db.Column(db.String(80))
     hero_image_url = db.Column(db.String(500))
     theme_color = db.Column(db.String(20))
+
+    review_note = db.Column(db.Text)
+
+    created_by_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    reviewed_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    submitted_at = db.Column(db.DateTime)
+    published_at = db.Column(db.DateTime)
+
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
+    reviewed_by = db.relationship("User", foreign_keys=[reviewed_by_id])
+
+
+class BlogPost(db.Model):
+    """Um artigo do blog — testado publicado em /blog antes de ser reaproveitado
+    manualmente no LinkedIn da Fabiana. Mesmo fluxo de aprovação da Campaign:
+    marketing cria como rascunho -> envia para revisão -> owner aprova
+    (publica) ou recusa (volta pra rascunho, com um motivo opcional)."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(120), unique=True, nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    excerpt = db.Column(db.String(300), nullable=False)
+    cover_image_url = db.Column(db.String(500))
+    body_markdown = db.Column(db.Text, nullable=False)
+    author_name = db.Column(db.String(150), default="Fabiana Montemor", nullable=False)
+    status = db.Column(db.String(20), default="rascunho", nullable=False)
 
     review_note = db.Column(db.Text)
 

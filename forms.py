@@ -169,6 +169,46 @@ class CampaignReviewForm(FlaskForm):
     submit = SubmitField("Recusar")
 
 
+class BlogPostForm(FlaskForm):
+    slug = StringField(
+        "Slug (define a URL: /blog/o-que-voce-escrever-aqui)",
+        validators=[
+            DataRequired(),
+            Length(max=120),
+            Regexp(
+                r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+                message="Use apenas letras minúsculas, números e hífens (ex: 5-erros-de-imagem-profissional).",
+            ),
+        ],
+    )
+    title = StringField("Título", validators=[DataRequired(), Length(max=255)])
+    excerpt = TextAreaField(
+        "Resumo (aparece na listagem do blog e como descrição ao compartilhar no LinkedIn)",
+        validators=[DataRequired(), Length(max=300)],
+    )
+    cover_image_url = StringField(
+        "URL da imagem de capa (opcional — cole o link de uma imagem já publicada)",
+        validators=[Optional(), Length(max=500)],
+    )
+    author_name = StringField(
+        "Assinatura (nome exibido como autora do artigo)",
+        validators=[DataRequired(), Length(max=150)],
+        default="Fabiana Montemor",
+    )
+    body_markdown = TextAreaField(
+        "Conteúdo (Markdown — ## para subtítulo, **negrito**, - para lista, etc. "
+        "Não repita o título aqui, a página já mostra ele sozinho no topo.)",
+        validators=[DataRequired()],
+        render_kw={"rows": 18},
+    )
+    submit = SubmitField("Salvar rascunho")
+
+
+class BlogPostReviewForm(FlaskForm):
+    review_note = TextAreaField("Motivo da recusa (opcional)", validators=[Optional(), Length(max=2000)])
+    submit = SubmitField("Recusar")
+
+
 class PaymentForm(FlaskForm):
     description = StringField("Descrição", validators=[DataRequired(), Length(max=255)])
     amount = DecimalField("Valor (R$)", validators=[DataRequired(), NumberRange(min=0)])

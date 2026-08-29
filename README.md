@@ -116,16 +116,44 @@ valores para a atribuição automática funcionar: `instagram`, `google` ou
 diagnóstico:
 `https://SEUDOMINIO/diagnostico?utm_source=instagram&utm_medium=paid_social&utm_campaign=NOME_DA_CAMPANHA`.
 
+## Blog e funil de conteúdo para o LinkedIn
+
+Um artigo é escrito e testado no blog do site antes de ser reaproveitado
+manualmente no LinkedIn da Fabiana — mesmo fluxo de aprovação das
+campanhas (`/painel/campanhas`):
+
+1. **Rascunho** — em `/painel/blog/novo`, `marketing` (ou `owner`) escreve
+   título, resumo, imagem de capa (URL) e o conteúdo em **Markdown**
+   (`## subtítulo`, `**negrito**`, `- item de lista`, `> citação`).
+2. **Enviar para revisão** — o artigo fica visível só no painel, não no
+   site público.
+3. **Aprovar e publicar** (só `owner`) — fica no ar em `/blog/<slug>` e
+   passa a aparecer na listagem `/blog`. Se o `owner` **recusar**, o
+   artigo volta pra rascunho com um motivo de recusa opcional.
+
+O resumo também vira a descrição mostrada ao colar o link no LinkedIn, e
+a imagem de capa vira o `og:image` daquele artigo especificamente (cada
+post tem seu próprio cartão de compartilhamento, diferente do cartão
+genérico do resto do site).
+
+**Atenção**: artigos do blog estão sujeitos à mesma perda de dados do
+plano free do Render que o resto do banco (ver "Deploy" abaixo) — um
+artigo publicado sobrevive até o próximo deploy/reinício do serviço, não
+depois disso. Diferente de um lead de teste no CRM, um artigo é conteúdo
+de verdade — vale a pena reavaliar esse trade-off (banco persistente)
+assim que o blog tiver posts que realmente importa manter.
+
 ## Estrutura de pastas
 
 ```
 app.py              # application factory + comandos flask (create-admin, backup-db)
 config.py           # configuração (lê .env; exige SECRET_KEY em produção)
 extensions.py       # instâncias do SQLAlchemy, Flask-Login, Flask-Migrate, Flask-Limiter
-models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleReport, Payment
+models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleReport, Payment, Campaign, BlogPost
 forms.py            # formulários (Flask-WTF)
 reports_engine.py   # gera o rascunho do relatório personalizado
-blueprints/          # rotas: auth, public, dashboard, clients, reports
+blog_engine.py       # renderiza Markdown -> HTML e formata datas em pt-BR pro blog
+blueprints/          # rotas: auth, public, dashboard, clients, reports, campaigns, blog
 templates/           # HTML (Jinja + Bootstrap)
 static/vendor/        # Bootstrap CSS/JS vendorizado (sem CDN)
 static/fonts/         # fontes auto-hospedadas (Inter, Cormorant Garamond)

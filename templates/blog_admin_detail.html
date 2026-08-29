@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+  <div>
+    <h1 class="h3 mb-1">{{ post.title }}</h1>
+    <p class="text-muted mb-0">
+      <code>/blog/{{ post.slug }}</code> ·
+      Status: <strong>{{ label_for(BLOG_POST_STATUSES, post.status) }}</strong>
+    </p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{{ url_for('blog.preview', post_id=post.id) }}" class="btn btn-outline-secondary btn-sm" target="_blank">Pré-visualizar</a>
+    {% if post.status == "publicado" %}
+    <a href="{{ url_for('public.blog_post', slug=post.slug) }}" class="btn btn-outline-secondary btn-sm" target="_blank">Ver página ao vivo</a>
+    {% endif %}
+    <a href="{{ url_for('blog.edit_post', post_id=post.id) }}" class="btn btn-outline-secondary btn-sm">Editar</a>
+  </div>
+</div>
+
+{% if post.review_note %}
+<div class="alert alert-warning">
+  <strong>Motivo da última recusa:</strong> {{ post.review_note }}
+</div>
+{% endif %}
+
+<div class="card mb-4">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Resumo</dt><dd class="col-sm-9">{{ post.excerpt }}</dd>
+      <dt class="col-sm-3">Assinatura</dt><dd class="col-sm-9">{{ post.author_name }}</dd>
+      <dt class="col-sm-3">Imagem de capa</dt><dd class="col-sm-9">{{ post.cover_image_url or "—" }}</dd>
+      <dt class="col-sm-3">Criado por</dt><dd class="col-sm-9">{{ post.created_by.name if post.created_by else "—" }}</dd>
+      {% if post.reviewed_by %}
+      <dt class="col-sm-3">Revisado por</dt><dd class="col-sm-9">{{ post.reviewed_by.name }}</dd>
+      {% endif %}
+    </dl>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2">
+  {% if post.status == "rascunho" %}
+    <form method="post" action="{{ url_for('blog.submit_for_review', post_id=post.id) }}">
+      <button type="submit" class="btn btn-brand">Enviar para revisão</button>
+    </form>
+    <form method="post" action="{{ url_for('blog.delete_post', post_id=post.id) }}" onsubmit="return confirm('Excluir este artigo?');">
+      <button type="submit" class="btn btn-outline-danger">Excluir</button>
+    </form>
+  {% elif post.status == "em_revisao" %}
+    {% if current_user.role == "owner" %}
+      <form method="post" action="{{ url_for('blog.approve', post_id=post.id) }}">
+        <button type="submit" class="btn btn-brand">Aprovar e publicar</button>
+      </form>
+      <button type="button" class="btn btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#recusarForm">Recusar</button>
+    {% else %}
+      <p class="text-muted mb-0">Aguardando aprovação do owner.</p>
+    {% endif %}
+  {% elif post.status == "publicado" %}
+    {% if current_user.role == "owner" %}
+      <form method="post" action="{{ url_for('blog.unpublish', post_id=post.id) }}" onsubmit="return confirm('Despublicar este artigo?');">
+        <button type="submit" class="btn btn-outline-danger">Despublicar</button>
+      </form>
+    {% endif %}
+  {% elif post.status == "arquivado" %}
+    <form method="post" action="{{ url_for('blog.delete_post', post_id=post.id) }}" onsubmit="return confirm('Excluir este artigo?');">
+      <button type="submit" class="btn btn-outline-danger">Excluir</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if post.status == "em_revisao" and current_user.role == "owner" %}
+<div class="collapse mt-3" id="recusarForm">
+  <form method="post" action="{{ url_for('blog.reject', post_id=post.id) }}" class="card card-body">
+    {{ review_form.hidden_tag() }}
+    {{ review_form.review_note.label(class_="form-label fw-semibold") }}
+    {{ review_form.review_note(class_="form-control", rows=3) }}
+    <button type="submit" class="btn btn-outline-danger mt-2">Confirmar recusa</button>
+  </form>
+</div>
+{% endif %}
+
+<hr class="my-4">
+<h2 class="h5 mb-3">Pré-visualização do conteúdo</h2>
+<div class="card">
+  <div class="card-body blog-content">
+    {{ post.body_markdown | markdown }}
+  </div>
+</div>
+{% endblock %}

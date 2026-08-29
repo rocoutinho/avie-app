@@ -1,9 +1,11 @@
+from datetime import datetime
+
 import pytest
 
 from app import create_app
 from config import TestConfig
 from extensions import db
-from models import Campaign, Client, Consultation, Payment, StyleProfile, StyleReport, User
+from models import BlogPost, Campaign, Client, Consultation, Payment, StyleProfile, StyleReport, User
 
 
 @pytest.fixture
@@ -643,3 +645,135 @@ def test_seed_admin_creates_user_and_is_idempotent(app, monkeypatch):
     assert "já existe" in second.output
     with app.app_context():
         assert User.query.filter_by(email="admin@example.com").count() == 1
+
+
+def _blog_post_payload(**overrides):
+    payload = {
+        "title": "5 erros de imagem que sabotam sua autoridade",
+        "slug": "5-erros-de-imagem",
+        "excerpt": "Erros comuns de imagem profissional e como corrigi-los.",
+        "cover_image_url": "",
+        "author_name": "Fabiana Montemor",
+        "body_markdown": "## Introdução\n\nTexto de teste do artigo.",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_marketing_creates_post_but_cannot_approve_it(app, marketing_client):
+    response = marketing_client.post(
+        "/painel/blog/novo", data=_blog_post_payload(), follow_redirects=True
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        post = BlogPost.query.filter_by(slug="5-erros-de-imagem").first()
+        assert post is not None
+        assert post.status == "rascunho"
+        post_id = post.id
+
+    response = marketing_client.post(
+        f"/painel/blog/{post_id}/enviar-revisao", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(BlogPost, post_id).status == "em_revisao"
+
+    # Marketing não pode aprovar — só o owner.
+    response = marketing_client.post(f"/painel/blog/{post_id}/aprovar")
+    assert response.status_code == 403
+
+    # A página pública ainda não existe, porque não foi aprovada.
+    response = marketing_client.get("/blog/5-erros-de-imagem")
+    assert response.status_code == 404
+
+
+def test_owner_approves_post_and_it_goes_live(app, logged_in_client):
+    with app.app_context():
+        marketing_user = User(name="Fabiana Marketing", email="mkt-blog@example.com", role="marketing")
+        marketing_user.set_password("senha-forte-123")
+        db.session.add(marketing_user)
+        db.session.commit()
+        post = BlogPost(
+            slug="posicionamento-profissional",
+            title="Como construir posicionamento profissional",
+            excerpt="Um guia prático.",
+            body_markdown="Conteúdo de teste.",
+            status="em_revisao",
+            created_by_id=marketing_user.id,
+        )
+        db.session.add(post)
+        db.session.commit()
+        post_id = post.id
+
+    response = logged_in_client.post(f"/painel/blog/{post_id}/aprovar", follow_redirects=True)
+    assert response.status_code == 200
+
+    with app.app_context():
+        approved = db.session.get(BlogPost, post_id)
+        assert approved.status == "publicado"
+        assert approved.published_at is not None
+        assert approved.reviewed_by_id is not None
+
+    response = logged_in_client.get("/blog/posicionamento-profissional")
+    assert response.status_code == 200
+    assert "Como construir posicionamento profissional".encode() in response.data
+
+    response = logged_in_client.get("/blog")
+    assert response.status_code == 200
+    assert "Como construir posicionamento profissional".encode() in response.data
+
+
+def test_owner_rejects_post_back_to_draft_with_note(app, logged_in_client):
+    with app.app_context():
+        marketing_user = User(name="Fabiana Marketing", email="mkt-blog2@example.com", role="marketing")
+        marketing_user.set_password("senha-forte-123")
+        db.session.add(marketing_user)
+        db.session.commit()
+        post = BlogPost(
+            slug="linkedin-para-executivos",
+            title="LinkedIn para executivos",
+            excerpt="Como usar o LinkedIn a favor da sua imagem.",
+            body_markdown="Conteúdo de teste.",
+            status="em_revisao",
+            created_by_id=marketing_user.id,
+        )
+        db.session.add(post)
+        db.session.commit()
+        post_id = post.id
+
+    response = logged_in_client.post(
+        f"/painel/blog/{post_id}/recusar",
+        data={"review_note": "Ajustar o título"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        rejected = db.session.get(BlogPost, post_id)
+        assert rejected.status == "rascunho"
+        assert rejected.review_note == "Ajustar o título"
+
+    response = logged_in_client.get("/blog/linkedin-para-executivos")
+    assert response.status_code == 404
+
+
+def test_blog_markdown_renders_to_html(app, logged_in_client):
+    with app.app_context():
+        post = BlogPost(
+            slug="artigo-markdown",
+            title="Artigo com Markdown",
+            excerpt="Teste de renderização.",
+            body_markdown="## Subtítulo\n\nTexto em **negrito** e uma lista:\n\n- Item um\n- Item dois",
+            status="publicado",
+            published_at=datetime.utcnow(),
+            created_by_id=User.query.first().id,
+        )
+        db.session.add(post)
+        db.session.commit()
+
+    response = logged_in_client.get("/blog/artigo-markdown")
+    assert response.status_code == 200
+    assert b"<h2>Subt\xc3\xadtulo</h2>" in response.data
+    assert b"<strong>negrito</strong>" in response.data
+    assert b"<li>Item um</li>" in response.data

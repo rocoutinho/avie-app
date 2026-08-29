@@ -996,3 +996,141 @@ footer a {
     padding-bottom: 0.75rem;
   }
 }
+
+/* Blog público — página clara (não usa o tratamento escuro/seda da
+   landing), pensada pra leitura longa e compartilhamento no LinkedIn. */
+.blog-hero {
+  padding-top: 1rem;
+}
+
+.blog-card {
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--avie-shadow);
+}
+
+.blog-card-cover {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--avie-border);
+}
+
+.blog-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.blog-card-date {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: var(--avie-text-muted);
+  margin-bottom: 0;
+}
+
+.blog-card h2 {
+  color: var(--avie-text);
+}
+
+.blog-card-cta {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--avie-gold);
+}
+
+.blog-back-link {
+  color: var(--avie-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.blog-back-link:hover {
+  color: var(--avie-navy);
+}
+
+.blog-post-cover {
+  border-radius: var(--avie-radius);
+  overflow: hidden;
+}
+
+.blog-post-cover img {
+  width: 100%;
+  display: block;
+}
+
+.blog-post-meta {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  color: var(--avie-text-muted);
+}
+
+.blog-content {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--avie-text);
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 0.85rem;
+}
+
+.blog-content h3 {
+  font-size: 1.2rem;
+  margin-top: 1.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.blog-content p {
+  margin-bottom: 1.15rem;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin-bottom: 1.15rem;
+  padding-left: 1.4rem;
+}
+
+.blog-content li {
+  margin-bottom: 0.4rem;
+}
+
+.blog-content blockquote {
+  border-left: 3px solid var(--avie-gold);
+  padding-left: 1.1rem;
+  margin: 1.5rem 0;
+  color: var(--avie-text-muted);
+  font-style: italic;
+}
+
+.blog-content img {
+  max-width: 100%;
+  border-radius: var(--avie-radius);
+  margin: 1.25rem 0;
+}
+
+.blog-content a {
+  color: var(--avie-navy);
+  text-decoration: underline;
+  text-decoration-color: var(--avie-gold);
+}
+
+.blog-post-cta {
+  background: var(--avie-bg);
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 2.5rem 1.5rem;
+}
