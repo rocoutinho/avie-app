@@ -169,6 +169,27 @@ h1, h2, h3, .font-serif {
   border-radius: 999px;
 }
 
+/* Ação secundária "de marca" — pra CTAs que merecem mais destaque que o
+   .btn-outline-secondary cinza genérico (usado em ações utilitárias tipo
+   "Editar"/"Ativar"), mas sem competir com o .btn-brand sólido. */
+.btn-outline-brand {
+  background-color: transparent;
+  border: 1.5px solid var(--avie-gold);
+  color: var(--avie-navy);
+  border-radius: 999px;
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-outline-brand:hover,
+.btn-outline-brand:focus {
+  background-color: var(--avie-gold);
+  border-color: var(--avie-gold);
+  color: var(--avie-navy-deep);
+  transform: translateY(-1px);
+  box-shadow: var(--avie-shadow);
+}
+
 .eyebrow {
   font-family: "News Gothic Condensed", "Inter", sans-serif;
   text-transform: uppercase;
