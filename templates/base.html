@@ -78,15 +78,15 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
-          <div class="d-flex flex-wrap gap-2 mt-3 mt-lg-0">
-            <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('dashboard.index') }}">Painel</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('clients.list_clients') }}">Clientes</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
-            <a class="btn btn-sm btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
+          <div class="navbar-links d-flex flex-wrap gap-2 mt-3 mt-lg-0">
+            <a class="navbar-link-pill" href="{{ url_for('dashboard.index') }}">Painel</a>
+            <a class="navbar-link-pill" href="{{ url_for('clients.list_clients') }}">Clientes</a>
+            <a class="navbar-link-pill" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
+            <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
           </div>
         </div>
       {% else %}
-        <a class="btn btn-sm btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
+        <a class="btn btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
       {% endif %}
     </div>
   </nav>
