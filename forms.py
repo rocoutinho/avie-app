@@ -12,7 +12,7 @@ from wtforms import (
     SubmitField,
     TextAreaField,
 )
-from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional, Regexp
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional, Regexp
 
 from models import (
     BUDGET_RANGES,
@@ -111,6 +111,46 @@ class SetClientPasswordForm(FlaskForm):
         validators=[DataRequired(), Length(min=8, message="Pelo menos 8 caracteres.")],
     )
     submit = SubmitField("Definir senha de acesso")
+
+
+class ClientDossieForm(FlaskForm):
+    """Cadastro consolidado para clientes que já receberam o dossiê fora do
+    sistema — cria/atualiza o Client, registra o dossiê como StyleReport
+    enviado, e gera o acesso à área do cliente numa única submissão (ver
+    blueprints/clients.py:new_client_with_dossie)."""
+
+    full_name = StringField("Nome completo", validators=[DataRequired(), Length(max=150)])
+    email = StringField("E-mail", validators=[DataRequired(), Email(), Length(max=150)])
+    phone = StringField(
+        "WhatsApp / Telefone", validators=[DataRequired(), Length(max=30)]
+    )
+    dossie_title = StringField(
+        "Título do dossiê", validators=[DataRequired(), Length(max=255)]
+    )
+    estilo_pessoal = TextAreaField(
+        "Estilo pessoal", validators=[Optional()], render_kw={"rows": 4}
+    )
+    proporcoes = TextAreaField(
+        "Proporções", validators=[Optional()], render_kw={"rows": 4}
+    )
+    coloracao = TextAreaField(
+        "Coloração", validators=[Optional()], render_kw={"rows": 4}
+    )
+    visagismo = TextAreaField(
+        "Visagismo", validators=[Optional()], render_kw={"rows": 4}
+    )
+    submit = SubmitField("Concluir cadastro e enviar acesso")
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField(
+        "Nova senha", validators=[DataRequired(), Length(min=8, message="Pelo menos 8 caracteres.")]
+    )
+    confirm = PasswordField(
+        "Confirmar nova senha",
+        validators=[DataRequired(), EqualTo("password", message="As senhas não coincidem.")],
+    )
+    submit = SubmitField("Definir minha senha")
 
 
 class ConsultationForm(FlaskForm):

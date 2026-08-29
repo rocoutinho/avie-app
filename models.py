@@ -1,9 +1,12 @@
-from datetime import datetime
+import secrets
+from datetime import datetime, timedelta
 
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from extensions import db
+
+PASSWORD_RESET_TOKEN_VALID_HOURS = 72
 
 CLIENT_STATUSES = [
     ("lead", "Novo Lead"),
@@ -224,11 +227,35 @@ class Client(UserMixin, db.Model):
     password_hash = db.Column(db.String(255))
     last_login_at = db.Column(db.DateTime)
 
+    # Link de "trocar senha" enviado por e-mail/WhatsApp no cadastro com
+    # dossiê (ver blueprints/clients.py:new_client_with_dossie) — permite o
+    # cliente escolher a própria senha em vez de usar a temporária gerada
+    # pelo sistema. Token de uso único, expira em PASSWORD_RESET_TOKEN_VALID_HOURS.
+    password_reset_token = db.Column(db.String(100), unique=True)
+    password_reset_expires_at = db.Column(db.DateTime)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return bool(self.password_hash) and check_password_hash(self.password_hash, password)
+
+    def generate_password_reset_token(self):
+        token = secrets.token_urlsafe(32)
+        self.password_reset_token = token
+        self.password_reset_expires_at = datetime.utcnow() + timedelta(
+            hours=PASSWORD_RESET_TOKEN_VALID_HOURS
+        )
+        return token
+
+    def password_reset_token_valid(self):
+        return bool(self.password_reset_token) and bool(self.password_reset_expires_at) and (
+            datetime.utcnow() < self.password_reset_expires_at
+        )
+
+    def clear_password_reset_token(self):
+        self.password_reset_token = None
+        self.password_reset_expires_at = None
 
     def get_id(self):
         return f"client-{self.id}"
@@ -296,6 +323,17 @@ class StyleReport(db.Model):
     status = db.Column(db.String(20), default="rascunho")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     sent_at = db.Column(db.DateTime)
+
+    # Preenchidos só pelo onboarding com dossiê (ver
+    # blueprints/clients.py:new_client_with_dossie) — quebram o dossiê em
+    # serviços individuais pra área do cliente mostrar um card por serviço
+    # (ver templates/client_area.html) em vez de só o texto corrido de
+    # `content`. Ficam em branco (None) nos relatórios gerados pelo fluxo
+    # normal (reports_engine), que só preenche `content`.
+    estilo_pessoal = db.Column(db.Text)
+    proporcoes = db.Column(db.Text)
+    coloracao = db.Column(db.Text)
+    visagismo = db.Column(db.Text)
 
 
 class Payment(db.Model):

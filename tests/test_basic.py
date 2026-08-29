@@ -966,3 +966,130 @@ def test_removing_client_access_blocks_future_login(app, logged_in_client, clien
     )
     assert response.status_code == 200
     assert "inválidos".encode() in response.data
+
+
+def _dossie_payload(**overrides):
+    payload = {
+        "full_name": "Nova Cliente Dossiê",
+        "email": "dossie-nova@example.com",
+        "phone": "11988887777",
+        "dossie_title": "Diagnóstico de Estilo — Nova Cliente",
+        "estilo_pessoal": "Estilo clássico com toques contemporâneos.",
+        "proporcoes": "Silhueta retangular, valorizar cintura.",
+        "coloracao": "Paleta de inverno — cores frias e contrastadas.",
+        "visagismo": "",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_staff_creates_client_with_dossie(app, logged_in_client):
+    response = logged_in_client.post(
+        "/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True
+    )
+    assert response.status_code == 200
+    assert "Cadastro de Nova Cliente Dossiê concluído".encode() in response.data
+
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        assert created is not None
+        assert created.status == "cliente_ativo"
+        assert created.password_hash is not None
+        assert created.password_reset_token is not None
+        assert created.password_reset_token_valid() is True
+
+        reports = StyleReport.query.filter_by(client_id=created.id).all()
+        assert len(reports) == 1
+        assert reports[0].status == "enviado"
+        assert reports[0].estilo_pessoal == "Estilo clássico com toques contemporâneos."
+        assert reports[0].proporcoes == "Silhueta retangular, valorizar cintura."
+        assert reports[0].coloracao == "Paleta de inverno — cores frias e contrastadas."
+        assert reports[0].visagismo is None
+        assert reports[0].sent_at is not None
+
+
+def test_dossie_onboarding_upserts_existing_client_by_email(app, logged_in_client):
+    with app.app_context():
+        existing = Client(
+            full_name="Nome Antigo", email="ja-existe@example.com", status="lead", source="instagram"
+        )
+        db.session.add(existing)
+        db.session.commit()
+        existing_id = existing.id
+
+    response = logged_in_client.post(
+        "/painel/clientes/novo-com-dossie",
+        data=_dossie_payload(full_name="Nome Atualizado", email="ja-existe@example.com"),
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        updated = db.session.get(Client, existing_id)
+        assert updated.full_name == "Nome Atualizado"
+        # A origem original não é sobrescrita pelo onboarding.
+        assert updated.source == "instagram"
+        assert len(Client.query.filter_by(email="ja-existe@example.com").all()) == 1
+
+
+def test_dossie_reset_link_lets_client_set_own_password_and_login(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        token = created.password_reset_token
+
+    client.get("/logout")
+
+    response = client.post(
+        f"/redefinir-senha/{token}",
+        data={"password": "minha-nova-senha", "confirm": "minha-nova-senha"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    with app.app_context():
+        updated = Client.query.filter_by(email="dossie-nova@example.com").first()
+        assert updated.check_password("minha-nova-senha") is True
+        assert updated.password_reset_token is None
+
+    response = client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "minha-nova-senha"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Olá, Nova".encode() in response.data
+
+
+def test_reset_password_rejects_invalid_token(client):
+    response = client.get("/redefinir-senha/token-invalido", follow_redirects=True)
+    assert response.status_code == 200
+    assert "expirou".encode() in response.data or "Entrar".encode() in response.data
+
+
+def test_dossie_client_sees_service_cards_instead_of_diagnostic_cta(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+
+    client.get("/logout")
+    client.post(
+        "/login", data={"email": "dossie-nova@example.com", "password": "senha-nao-importa"}
+    )
+
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        created.set_password("senha-cliente-final")
+        db.session.commit()
+
+    response = client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Fazer meu diagnóstico".encode() not in response.data
+    assert "Estilo pessoal".encode() in response.data
+    assert "Coloração".encode() in response.data
+    assert "Estilo clássico com toques contemporâneos.".encode() in response.data
+    # Visagismo ficou em branco no dossiê — não deve virar um card vazio.
+    assert "Visagismo".encode() not in response.data

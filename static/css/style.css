@@ -964,6 +964,55 @@ footer a {
   height: 22px;
 }
 
+/* Cards de serviço do dossiê na área do cliente (templates/client_area.html)
+   — grid que se auto-ajusta ao número de serviços preenchidos (1 a 4),
+   cards da mesma linha sempre com a mesma altura (grid estica por
+   padrão), mesmo tratamento visual dos cards de valor da landing pra
+   manter a identidade entre a página pública e a área logada. */
+.dossie-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.dossie-service-card {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 1.75rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.dossie-service-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--avie-shadow);
+  border-color: rgba(189, 151, 80, 0.35);
+}
+
+.dossie-service-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(189, 151, 80, 0.16), rgba(189, 151, 80, 0.06));
+  color: var(--avie-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.dossie-service-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dossie-service-text {
+  white-space: pre-line;
+  color: var(--avie-text-muted);
+  font-size: 0.925rem;
+  line-height: 1.6;
+}
+
 /* Botões com seta — micro-interação sutil no hover/focus, reforça o
    convite à ação sem exagerar. */
 .lp-btn-arrow {
