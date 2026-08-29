@@ -221,7 +221,7 @@ footer a {
 
 .lp-hero {
   color: #f1efe9;
-  padding: 4.5rem 1.5rem 5rem;
+  padding: 0 0 5rem;
   margin-top: -1.5rem;
   overflow: hidden;
   position: relative;
@@ -230,6 +230,7 @@ footer a {
 .lp-hero-inner {
   position: relative;
   z-index: 1;
+  padding: 2.5rem 1.5rem 0;
 }
 
 .lp-hero .display-4 {
@@ -453,8 +454,34 @@ footer a {
    de .lp-silk-bg é uma cor sólida só, então basta uma máscara CSS (sem
    processamento de imagem) esmaecendo as bordas da própria foto pra ela
    se misturar com o entorno sem precisar recortar/tingir pixel nenhum. */
-.lp-portrait-card {
+.lp-portrait-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Hero: retrato ocupa a tela inteira (borda a borda, quase a altura toda
+   da viewport) — esmaece só na base, onde dá lugar ao logo/título. */
+.lp-hero-portrait {
+  height: 88vh;
+  min-height: 520px;
+  max-height: 900px;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+}
+
+.lp-hero-portrait img {
+  object-position: center 22%;
+}
+
+/* "Sobre": retrato pequeno em card, esmaece nas 4 bordas até a cor
+   sólida do fundo. */
+.lp-about-portrait {
   --fade: 14%;
+  max-width: 400px;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   mask-image:
     linear-gradient(to right, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%),
@@ -464,27 +491,6 @@ footer a {
     linear-gradient(to right, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
   -webkit-mask-composite: source-in;
-}
-
-.lp-portrait-card img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.lp-hero-portrait {
-  max-width: 440px;
-  aspect-ratio: 3 / 4;
-}
-
-.lp-hero-portrait img {
-  object-position: center 18%;
-}
-
-.lp-about-portrait {
-  max-width: 400px;
-  aspect-ratio: 3 / 4;
 }
 
 .lp-about-portrait img {
@@ -824,9 +830,14 @@ footer a {
     right: 1rem;
   }
 
-  .lp-hero-portrait,
   .lp-about-portrait {
     max-width: 300px;
+  }
+
+  .lp-hero-portrait {
+    height: 68vh;
+    min-height: 380px;
+    max-height: 640px;
   }
 
   .lp-hero-logo {
@@ -834,7 +845,11 @@ footer a {
   }
 
   .lp-hero {
-    padding: 3.5rem 1.25rem 3rem;
+    padding: 0 0 3rem;
+  }
+
+  .lp-hero-inner {
+    padding: 1.75rem 1.25rem 0;
   }
 }
 
