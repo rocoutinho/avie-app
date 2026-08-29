@@ -73,7 +73,7 @@
         <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="brand-mark" alt="">
         Fabiana Montemor
       </a>
-      {% if current_user.is_authenticated %}
+      {% if current_user.is_authenticated and current_user.is_staff %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -83,7 +83,7 @@
             <a class="navbar-link-pill" href="{{ url_for('clients.list_clients') }}">Clientes</a>
             <a class="navbar-link-pill" href="{{ url_for('campaigns.list_campaigns') }}">Campanhas</a>
             <div class="dropdown">
-              <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Recursos</button>
+              <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Recursos</button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{{ url_for('blog.list_posts') }}">Blog</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('ebooks.list_ebooks') }}">Ebooks</a></li>
@@ -92,16 +92,21 @@
             <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
           </div>
         </div>
+      {% elif current_user.is_authenticated %}
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <a class="navbar-link-pill" href="{{ url_for('client_area.index') }}">Minha área</a>
+          <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
+        </div>
       {% else %}
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <div class="dropdown">
-            <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Recursos</button>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Recursos</button>
+            <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{ url_for('public.blog_index') }}">Blog</a></li>
               <li><a class="dropdown-item" href="{{ url_for('public.ebook_landing') }}">Ebook</a></li>
             </ul>
           </div>
-          <a class="btn btn-brand" href="{{ url_for('auth.login') }}">Área da equipe</a>
+          <a class="btn btn-brand" href="{{ url_for('auth.login') }}">Clientes</a>
         </div>
       {% endif %}
     </div>

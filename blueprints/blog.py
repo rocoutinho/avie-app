@@ -4,11 +4,13 @@ from functools import wraps
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from blueprints.auth import require_staff
 from extensions import db
 from forms import BlogPostForm, BlogPostReviewForm
 from models import BlogPost
 
 blog_bp = Blueprint("blog", __name__, url_prefix="/painel/blog")
+blog_bp.before_request(require_staff)
 
 
 def owner_required(view):

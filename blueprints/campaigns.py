@@ -4,11 +4,13 @@ from functools import wraps
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from blueprints.auth import require_staff
 from extensions import db
 from forms import CampaignForm, CampaignReviewForm
 from models import Campaign
 
 campaigns_bp = Blueprint("campaigns", __name__, url_prefix="/painel/campanhas")
+campaigns_bp.before_request(require_staff)
 
 
 def owner_required(view):

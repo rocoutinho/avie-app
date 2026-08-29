@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Minha área{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
+  <p class="text-muted mb-0">
+    {% if previous_login %}
+      Seu último acesso foi em {{ previous_login.strftime('%d/%m/%Y às %H:%M') }}.
+    {% else %}
+      Este é seu primeiro acesso à sua área.
+    {% endif %}
+  </p>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">Seu diagnóstico</div>
+      <div class="card-body">
+        {% if client.profile %}
+        <dl class="mb-0">
+          <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>
+          <dt>Momento de carreira</dt><dd>{{ client.profile.momento_carreira }}</dd>
+          <dt>Como quer ser percebida</dt><dd>{{ client.profile.como_quer_ser_percebida }}</dd>
+          <dt>Desafios de imagem</dt><dd>{{ client.profile.desafios_imagem }}</dd>
+          <dt>Ambiente de trabalho</dt><dd>{{ client.profile.ambiente_trabalho or "—" }}</dd>
+          <dt>Estilo atual</dt><dd>{{ client.profile.estilo_atual or "—" }}</dd>
+          <dt>Cores preferidas</dt><dd>{{ client.profile.cores_preferidas or "—" }}</dd>
+          <dt class="mb-0">Referências</dt><dd class="mb-0">{{ client.profile.referencias_estilo or "—" }}</dd>
+        </dl>
+        {% else %}
+        <p class="text-muted mb-2">Você ainda não preencheu seu diagnóstico.</p>
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-sm">Fazer meu diagnóstico</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">Recomendações da consultoria</div>
+      <div class="card-body">
+        {% if sent_reports %}
+          {% for report in sent_reports %}
+          <div class="{{ 'mb-4 pb-4 border-bottom' if not loop.last else 'mb-0' }}">
+            <h2 class="h6 mb-1">{{ report.title }}</h2>
+            <p class="text-muted small mb-2">Enviado em {{ report.sent_at.strftime('%d/%m/%Y') if report.sent_at else "—" }}</p>
+            <div style="white-space: pre-line;">{{ report.content }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <p class="text-muted mb-0">Nenhuma recomendação enviada ainda — assim que sua consultora enviar, aparece aqui.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

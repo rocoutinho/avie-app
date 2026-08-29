@@ -105,6 +105,14 @@ class ClientForm(FlaskForm):
     submit = SubmitField("Salvar")
 
 
+class SetClientPasswordForm(FlaskForm):
+    password = PasswordField(
+        "Senha de acesso do cliente",
+        validators=[DataRequired(), Length(min=8, message="Pelo menos 8 caracteres.")],
+    )
+    submit = SubmitField("Definir senha de acesso")
+
+
 class ConsultationForm(FlaskForm):
     tipo = SelectField("Tipo de consulta", choices=CONSULTATION_TYPES)
     scheduled_at = DateTimeLocalField(

@@ -95,6 +95,18 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get_id(self):
+        # Prefixado pra diferenciar de Client na mesma sessão de login (ver
+        # login_manager.user_loader em app.py) — staff e cliente usam o
+        # mesmo /login, mas são dois tipos de conta distintos.
+        return f"user-{self.id}"
+
+    @property
+    def is_staff(self):
+        # Usado em templates/base.html pra decidir qual navbar mostrar
+        # (current_user pode ser User ou Client, ambos autenticáveis).
+        return True
+
 
 class Campaign(db.Model):
     """Um criativo de landing page (título, imagem, CTA etc.) que pode ser
@@ -181,7 +193,15 @@ class Ebook(db.Model):
     created_by = db.relationship("User", foreign_keys=[created_by_id])
 
 
-class Client(db.Model):
+class Client(UserMixin, db.Model):
+    """Além do registro de CRM, um Client pode opcionalmente logar sozinho
+    (área do cliente, ver blueprints/client_area.py) — mas só se um staff
+    definir uma senha de acesso pra ele (client_detail.html); sem isso
+    password_hash fica None e o login como cliente nunca é possível.
+    UserMixin permite o Flask-Login tratar Client como um "usuário" de
+    sessão igual a User — os dois compartilham o mesmo /login (ver
+    blueprints/auth.py), diferenciados por um prefixo em get_id()."""
+
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
@@ -199,6 +219,23 @@ class Client(db.Model):
     utm_term = db.Column(db.String(150))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Acesso à área do cliente (opcional — ver docstring acima).
+    password_hash = db.Column(db.String(255))
+    last_login_at = db.Column(db.DateTime)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return bool(self.password_hash) and check_password_hash(self.password_hash, password)
+
+    def get_id(self):
+        return f"client-{self.id}"
+
+    @property
+    def is_staff(self):
+        return False
 
     profile = db.relationship(
         "StyleProfile", backref="client", uselist=False, cascade="all, delete-orphan"

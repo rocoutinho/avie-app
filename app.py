@@ -18,6 +18,7 @@ from models import (
     LEAD_SOURCES,
     PAYMENT_STATUSES,
     REPORT_STATUSES,
+    Client,
     User,
 )
 
@@ -42,11 +43,19 @@ def create_app(config_class=Config):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        # user_id vem prefixado por get_id() (User.get_id/Client.get_id) —
+        # staff e cliente compartilham o /login mas são contas distintas.
+        kind, _, raw_id = user_id.partition("-")
+        if kind == "client":
+            return Client.query.get(int(raw_id))
+        if kind == "user":
+            return User.query.get(int(raw_id))
+        return None
 
     from blueprints.auth import auth_bp
     from blueprints.blog import blog_bp
     from blueprints.campaigns import campaigns_bp
+    from blueprints.client_area import client_area_bp
     from blueprints.clients import clients_bp
     from blueprints.dashboard import dashboard_bp
     from blueprints.ebooks import ebooks_bp
@@ -61,6 +70,7 @@ def create_app(config_class=Config):
     app.register_blueprint(campaigns_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(ebooks_bp)
+    app.register_blueprint(client_area_bp)
 
     app.jinja_env.filters["markdown"] = render_markdown
     app.jinja_env.filters["pt_date"] = format_date_pt

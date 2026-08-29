@@ -3,12 +3,14 @@ from datetime import datetime
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required
 
+from blueprints.auth import require_staff
 from extensions import db
 from forms import ReportForm
 from models import Client, StyleReport
 from reports_engine import generate_report_draft
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/painel/clientes/<int:client_id>/relatorios")
+reports_bp.before_request(require_staff)
 
 
 @reports_bp.route("/novo", methods=["GET", "POST"])
