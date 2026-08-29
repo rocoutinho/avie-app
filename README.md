@@ -45,6 +45,7 @@ cp .env.example .env            # ajuste SECRET_KEY para um valor aleatório
 
 flask db upgrade                # cria/atualiza as tabelas do banco (via migrações)
 flask create-admin              # cria o primeiro usuário (Fabiana ou o suporte)
+flask seed-demo-client          # opcional: cria um cliente fictício pra navegar o sistema
 
 flask run                       # abre em http://127.0.0.1:5000
 ```
@@ -274,6 +275,17 @@ de carreira, autopercepção, orçamento). Antes de captar clientes reais:
   `instance/backups/` com timestamp. Útil localmente; em produção não
   ajuda contra a perda de dados a cada deploy (ver "Deploy" abaixo), já
   que o backup ficaria no mesmo disco efêmero que o banco.
+- **Cliente fictício para navegação**: `flask seed-demo-client` cria (ou
+  reseta) um cliente de exemplo — `cliente.demo@example.com` / senha
+  `Demo@2026!` — com dados em todas as áreas do sistema: dossiê completo
+  (os 4 serviços), um relatório de acompanhamento, um rascunho,
+  consultorias e pagamentos, pra dar pra navegar o painel inteiro e a
+  área do cliente sem usar dados de clientes reais. E-mail/telefone são
+  propositalmente fictícios (não disparam contato de verdade). Idempotente
+  — pode rodar de novo quando quiser um estado limpo. Como o disco de
+  produção é efêmero (ver "Deploy"), esse cliente some a cada
+  deploy/restart junto com o resto do banco; rode o comando de novo se
+  precisar dele lá.
 - **Rate limiting em memória**: funciona bem para um único processo/servidor
   (o cenário atual). Se o sistema crescer para múltiplas instâncias, trocar
   o `storage_uri` do `Limiter` (em `extensions.py`) para Redis.

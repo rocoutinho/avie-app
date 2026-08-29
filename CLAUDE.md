@@ -16,6 +16,7 @@ cp .env.example .env            # set a random SECRET_KEY
 
 flask db upgrade                # apply migrations
 flask create-admin              # create a staff user; prompts for role: owner | marketing
+flask seed-demo-client          # optional: idempotent fictitious client (dossiê, reports, consultations, payments) for demoing the whole system
 flask run                       # http://127.0.0.1:5000
 
 pytest                          # run all tests
