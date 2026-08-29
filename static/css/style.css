@@ -461,9 +461,11 @@ footer a {
   object-fit: cover;
 }
 
-/* Hero: retrato ocupa a tela inteira (borda a borda, quase a altura toda
-   da viewport) — esmaece só na base, onde dá lugar ao logo/título. */
-.lp-hero-portrait {
+/* Hero e "sobre": retrato ocupa a tela inteira (borda a borda, quase a
+   altura toda da viewport) — esmaece só na base, onde dá lugar ao
+   logo/título (hero) ou ao nome/bio (sobre). */
+.lp-hero-portrait,
+.lp-about-portrait {
   height: 88vh;
   min-height: 520px;
   max-height: 900px;
@@ -476,25 +478,8 @@ footer a {
   object-position: center 22%;
 }
 
-/* "Sobre": retrato pequeno em card, esmaece nas 4 bordas até a cor
-   sólida do fundo. */
-.lp-about-portrait {
-  --fade: 14%;
-  max-width: 400px;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
-  mask-composite: intersect;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
-  -webkit-mask-composite: source-in;
-}
-
 .lp-about-portrait img {
-  object-position: center 15%;
+  object-position: center 18%;
 }
 
 .lp-hero-logo {
@@ -529,6 +514,19 @@ footer a {
 .lp-about {
   color: #f1efe9;
   padding: 5.5rem 1.5rem;
+}
+
+/* A seção "sobre" (#sobre, com .lp-silk-bg) tem o retrato em tela cheia
+   substituindo o padding-top — as outras seções que reaproveitam
+   .lp-about (ex.: benefícios) continuam com o padding padrão acima. */
+.lp-about.lp-silk-bg {
+  padding: 0 0 5.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.lp-about-inner {
+  padding: 2.5rem 1.5rem 0;
 }
 
 .lp-about .eyebrow {
@@ -830,11 +828,8 @@ footer a {
     right: 1rem;
   }
 
+  .lp-hero-portrait,
   .lp-about-portrait {
-    max-width: 300px;
-  }
-
-  .lp-hero-portrait {
     height: 68vh;
     min-height: 380px;
     max-height: 640px;
@@ -849,6 +844,14 @@ footer a {
   }
 
   .lp-hero-inner {
+    padding: 1.75rem 1.25rem 0;
+  }
+
+  .lp-about.lp-silk-bg {
+    padding: 0 0 3.5rem;
+  }
+
+  .lp-about-inner {
     padding: 1.75rem 1.25rem 0;
   }
 }
