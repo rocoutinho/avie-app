@@ -43,37 +43,76 @@ h1, h2, h3, .font-serif {
 }
 
 /* Navbar: sempre em azul marinho, a aplicação de marca mais consistente
-   em qualquer página (interna ou pública). */
+   em qualquer página (interna ou pública). Acabamento com um pouco mais
+   de respiro vertical, borda inferior sutil em dourado (em vez de um
+   corte reto) e os links no mesmo registro tipográfico condensado do
+   resto da marca (.eyebrow), pra não ficar com a fonte padrão genérica
+   do Bootstrap. */
 .navbar {
   background: var(--avie-navy-deep) !important;
-  border-bottom: none !important;
+  border-bottom: 1px solid rgba(245, 216, 134, 0.14) !important;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.navbar > .container {
+  align-items: center;
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   font-family: "Cormorant Garamond", serif;
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   letter-spacing: 0.01em;
   color: var(--avie-gold-light) !important;
 }
 
 .navbar-brand .brand-mark {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
 }
 
-.navbar .btn-outline-secondary {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.35);
+.navbar-links {
+  align-items: center;
 }
 
-.navbar .btn-outline-secondary:hover {
+.navbar-link-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 2.35rem;
+  padding: 0 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #f1efe9;
+  text-decoration: none;
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.navbar-link-pill:hover,
+.navbar-link-pill:focus {
   background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(245, 216, 134, 0.55);
   color: #fff;
+}
+
+.navbar .btn-brand {
+  height: 2.35rem;
+  padding: 0 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.8rem;
 }
 
 .btn-brand {
