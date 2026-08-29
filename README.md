@@ -27,6 +27,12 @@ tudo rodando com `python`/`flask` a partir da linha de comando.
 - **Sem dependência de serviços pagos no v1** (e-mail, calendário,
   pagamento online, IA): tudo isso está listado no roadmap abaixo como
   evolução, não como pré-requisito para começar a usar.
+- **Custo zero em produção enquanto o sistema é experimental**: o
+  deploy no Render usa o plano free (sem banco Postgres pago) — ver
+  "Deploy" mais abaixo. A troca de contrapartida é que o disco é
+  efêmero (os dados somem a cada deploy/reinício), aceitável nesta
+  fase; quando isso deixar de fazer sentido, é só voltar pro plano
+  pago com um banco persistente.
 
 ## Como rodar localmente
 
@@ -172,12 +178,53 @@ de carreira, autopercepção, orçamento). Antes de captar clientes reais:
 - **Cookies de sessão**: `HttpOnly` sempre; `Secure` (só via HTTPS) quando
   `AVIE_ENV=production`.
 - **Backup do banco**: `flask backup-db` copia o SQLite atual para
-  `instance/backups/` com timestamp. Agende isso (cron/Task Scheduler)
-  enquanto o banco for um arquivo local — é o item de maior risco de perda
-  de dados do sistema hoje.
+  `instance/backups/` com timestamp. Útil localmente; em produção não
+  ajuda contra a perda de dados a cada deploy (ver "Deploy" abaixo), já
+  que o backup ficaria no mesmo disco efêmero que o banco.
 - **Rate limiting em memória**: funciona bem para um único processo/servidor
   (o cenário atual). Se o sistema crescer para múltiplas instâncias, trocar
   o `storage_uri` do `Limiter` (em `extensions.py`) para Redis.
+
+## Deploy
+
+Hospedado no Render.com (`avie-app`), plano **free** — custo zero enquanto
+o sistema é experimental. Sem banco Postgres: produção roda em SQLite,
+igual ao ambiente local.
+
+**Troca envolvida (aceita de propósito nesta fase)**: o disco do plano
+free é efêmero — os dados (leads, clientes, usuários) somem a cada deploy
+e a cada reinício por inatividade. Pra que o site nunca fique inacessível
+por isso, o comando de start (`render.yaml`) roda sozinho, a cada boot:
+
+```
+flask db upgrade && flask seed-admin && gunicorn app:app --bind 0.0.0.0:$PORT
+```
+
+`flask db upgrade` recria as tabelas; `flask seed-admin` recria o usuário
+de acesso a partir das variáveis `ADMIN_NAME`/`ADMIN_EMAIL`/
+`ADMIN_PASSWORD`/`ADMIN_ROLE` configuradas no painel do Render (não faz
+nada se essas variáveis não estiverem definidas, ou se o usuário já
+existir — seguro de rodar toda vez).
+
+**Configurar pela primeira vez** (o serviço `avie-app` já existe e foi
+criado manualmente no Render, então `render.yaml` não se aplica sozinho —
+os campos abaixo precisam ser conferidos/ajustados à mão no painel):
+
+1. **Settings → Instance Type**: Free.
+2. **Settings → Build & Deploy → Start Command**:
+   `flask db upgrade && flask seed-admin && gunicorn app:app --bind 0.0.0.0:$PORT`
+3. **Environment**: adicionar `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+   (senha com pelo menos 10 caracteres), `ADMIN_ROLE` (`owner` ou
+   `marketing`); remover `DATABASE_URL` se existir uma apontando pro
+   Postgres antigo (sem essa variável, a aplicação usa SQLite
+   automaticamente).
+4. Se ainda existir um banco Postgres (`avie-db`) criado antes dessa
+   mudança, pode ser apagado no painel do Render — não é mais usado.
+
+**Quando o negócio justificar o custo**: trocar o plano de volta pra
+`starter` e definir `DATABASE_URL` com a connection string de um banco
+Postgres (Render ou outro provedor) — o código já suporta os dois sem
+mudança nenhuma.
 
 ## Roadmap de evolução
 

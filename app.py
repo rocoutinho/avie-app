@@ -110,6 +110,41 @@ def register_cli(app):
         db.session.commit()
         click.echo(f"Usuário '{name}' criado com sucesso (papel: {role}).")
 
+    @app.cli.command("seed-admin")
+    def seed_admin():
+        """Cria o usuário admin a partir das variáveis de ambiente ADMIN_*,
+        sem interação — pra rodar sozinho a cada deploy (ver startCommand
+        no render.yaml). Necessário porque o disco do plano free do Render
+        é efêmero: sem isso, o login some a cada deploy/restart. Não faz
+        nada se ADMIN_EMAIL/ADMIN_PASSWORD não estiverem definidos, ou se
+        o usuário já existir."""
+        email = os.environ.get("ADMIN_EMAIL", "").strip().lower()
+        password = os.environ.get("ADMIN_PASSWORD", "")
+        name = os.environ.get("ADMIN_NAME", "Admin")
+        role = os.environ.get("ADMIN_ROLE", "owner")
+
+        if not email or not password:
+            click.echo("ADMIN_EMAIL/ADMIN_PASSWORD não definidos — nada a fazer.")
+            return
+
+        if role not in ("owner", "marketing"):
+            click.echo(f"ADMIN_ROLE inválido: '{role}' (use 'owner' ou 'marketing').")
+            return
+
+        if len(password) < MIN_PASSWORD_LENGTH:
+            click.echo(f"ADMIN_PASSWORD precisa ter pelo menos {MIN_PASSWORD_LENGTH} caracteres.")
+            return
+
+        if User.query.filter_by(email=email).first():
+            click.echo(f"Usuário '{email}' já existe — nada a fazer.")
+            return
+
+        user = User(name=name, email=email, role=role)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        click.echo(f"Usuário '{name}' <{email}> criado (papel: {role}).")
+
     @app.cli.command("backup-db")
     def backup_db():
         """Copia o banco SQLite atual para instance/backups com timestamp."""
