@@ -206,45 +206,52 @@ def register_cli(app):
         Consultation.query.filter_by(client_id=client.id).delete()
         Payment.query.filter_by(client_id=client.id).delete()
 
+        # Conteúdo inspirado num dossiê real de consultoria (biotipo,
+        # estilo pessoal e coloração) generalizado para o cliente fictício —
+        # sem nome, medidas ou dados pessoais de nenhuma cliente real.
+        # Visagismo fica de fora de propósito: nem todo dossiê cobre os 4
+        # serviços, e esse é o caso mais comum na prática.
+        estilo_pessoal_text = (
+            "Estilo predominantemente esportivo, com força secundária no elegante. "
+            "Prioriza conforto no dia a dia — jeans, camisetas, tecidos em algodão, "
+            "sapatos confortáveis, bolsas desestruturadas, maquiagem leve — mas também "
+            "aprecia alfaiataria, materiais nobres, blazers estruturados e bolsas com "
+            "mais estrutura para ocasiões formais. Aposte em looks casual chique, que "
+            "equilibram as duas essências em vez de escolher só uma."
+        )
+        proporcoes_text = (
+            "Biotipo ampulheta — ombros e quadril com medidas equilibradas e cintura "
+            "bem definida, o que dá mais liberdade na hora de montar composições. Para "
+            "reforçar essa harmonia: decote V, calças retas e sem pregas, linhas "
+            "verticais, vestido envelope, saias retas ou evasês; prefira cores mais "
+            "escuras na parte de baixo e use sobreposições ao usar peças justas. Evite "
+            "peças amplas ou quadradas, ombreiras exageradas, tricôs volumosos e saias "
+            "tulipa/balonê/godê, que escondem a definição da cintura."
+        )
+        coloracao_text = (
+            "Outono suave — cartela de cores quentes, intensidade baixa e profundidade "
+            "intermediária: tons ricos, mas nem muito claros nem muito escuros. Boas "
+            "apostas: terracota, mostarda, verde-oliva, marrom, off-white. As cores "
+            "universais (azul-petróleo, verde-garrafa, vinho, azul-marinho) também caem "
+            "bem e ajudam a ampliar as combinações. Nos metais e acessórios, priorize "
+            "dourado, rose gold e cobre — se for usar prateado, prefira um tom fosco."
+        )
+
         now = datetime.utcnow()
         db.session.add(
             StyleReport(
                 client_id=client.id,
                 title="Diagnóstico de Estilo e Posicionamento — Ana Demonstração",
                 content=(
-                    "Estilo pessoal\nEstilo elegante-clássico com toques contemporâneos — "
-                    "peças de corte limpo, tecidos nobres e paleta neutra como base, com "
-                    "um item de destaque por look.\n\n"
-                    "Proporções\nSilhueta ampulheta. Valorizar a cintura marcada, evitar "
-                    "volumes excessivos nos quadris e priorizar comprimentos na altura do "
-                    "joelho ou abaixo.\n\n"
-                    "Coloração\nPaleta de inverno — cores frias, contrastadas e saturadas "
-                    "(azul-marinho, branco puro, vermelho profundo) favorecem mais que "
-                    "tons terrosos.\n\n"
-                    "Visagismo\nRosto oval. Óculos e acessórios com linhas retas e corte "
-                    "de cabelo com repartição lateral reforçam a simetria natural do rosto."
+                    f"Estilo pessoal\n{estilo_pessoal_text}\n\n"
+                    f"Proporções\n{proporcoes_text}\n\n"
+                    f"Coloração\n{coloracao_text}"
                 ),
                 status="enviado",
                 sent_at=now - timedelta(days=10),
-                estilo_pessoal=(
-                    "Estilo elegante-clássico com toques contemporâneos — peças de corte "
-                    "limpo, tecidos nobres e paleta neutra como base, com um item de "
-                    "destaque por look."
-                ),
-                proporcoes=(
-                    "Silhueta ampulheta. Valorizar a cintura marcada, evitar volumes "
-                    "excessivos nos quadris e priorizar comprimentos na altura do joelho "
-                    "ou abaixo."
-                ),
-                coloracao=(
-                    "Paleta de inverno — cores frias, contrastadas e saturadas "
-                    "(azul-marinho, branco puro, vermelho profundo) favorecem mais que "
-                    "tons terrosos."
-                ),
-                visagismo=(
-                    "Rosto oval. Óculos e acessórios com linhas retas e corte de cabelo "
-                    "com repartição lateral reforçam a simetria natural do rosto."
-                ),
+                estilo_pessoal=estilo_pessoal_text,
+                proporcoes=proporcoes_text,
+                coloracao=coloracao_text,
             )
         )
         db.session.add(
@@ -252,11 +259,12 @@ def register_cli(app):
                 client_id=client.id,
                 title="Recomendações de guarda-roupa cápsula",
                 content=(
-                    "Sugestão de 12 peças-base para montar mais de 30 combinações "
-                    "profissionais: blazer estruturado azul-marinho, calça de alfaiataria "
-                    "preta, camisa de seda off-white, vestido tubinho vermelho, trench "
-                    "coat bege, sapatos e bolsa em couro neutro. Relatório complementar "
-                    "ao dossiê inicial."
+                    "Sugestão de peças-base para multiplicar combinações dentro da "
+                    "paleta outono suave: blazer estruturado terracota, calça de "
+                    "alfaiataria em bege areia, camisa off-white, vestido midi "
+                    "verde-oliva, trench coat marrom, sapatos e bolsa em couro caramelo. "
+                    "Acessórios em metais dourados ou cobre reforçam o efeito. Relatório "
+                    "complementar ao dossiê inicial."
                 ),
                 status="enviado",
                 sent_at=now - timedelta(days=3),
@@ -268,7 +276,8 @@ def register_cli(app):
                 title="Próxima etapa — acessórios e styling para eventos",
                 content=(
                     "Rascunho: mapear ocasiões de uso (eventos corporativos, jantares, "
-                    "viagens) e alinhar três combinações completas com acessórios."
+                    "viagens) e alinhar três combinações completas com acessórios em "
+                    "metais dourados/cobre, seguindo a cartela outono suave."
                 ),
                 status="rascunho",
             )
