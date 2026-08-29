@@ -449,14 +449,21 @@ footer a {
   color: var(--avie-gold-light);
 }
 
-/* Retrato em card — foto original, sem alteração de cor/contraste, só
-   recortada num card com cantos arredondados e sombra sobre o fundo de
-   seda. Usado no hero e na seção "sobre". */
+/* Retrato — foto original do zip, sem alteração de cor/contraste. O fundo
+   de .lp-silk-bg é uma cor sólida só, então basta uma máscara CSS (sem
+   processamento de imagem) esmaecendo as bordas da própria foto pra ela
+   se misturar com o entorno sem precisar recortar/tingir pixel nenhum. */
 .lp-portrait-card {
+  --fade: 14%;
   overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid rgba(245, 216, 134, 0.28);
-  box-shadow: 0 24px 60px rgba(3, 4, 9, 0.55);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+  -webkit-mask-composite: source-in;
 }
 
 .lp-portrait-card img {
@@ -467,7 +474,7 @@ footer a {
 }
 
 .lp-hero-portrait {
-  max-width: 300px;
+  max-width: 440px;
   aspect-ratio: 3 / 4;
 }
 
@@ -476,7 +483,7 @@ footer a {
 }
 
 .lp-about-portrait {
-  max-width: 280px;
+  max-width: 400px;
   aspect-ratio: 3 / 4;
 }
 
@@ -819,7 +826,7 @@ footer a {
 
   .lp-hero-portrait,
   .lp-about-portrait {
-    max-width: 230px;
+    max-width: 300px;
   }
 
   .lp-hero-logo {
