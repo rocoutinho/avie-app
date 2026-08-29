@@ -14,10 +14,10 @@
 
 <div class="row g-4">
   <div class="col-lg-6">
+    {% if client.profile %}
     <div class="card">
       <div class="card-header">Seu diagnóstico</div>
       <div class="card-body">
-        {% if client.profile %}
         <dl class="mb-0">
           <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>
           <dt>Momento de carreira</dt><dd>{{ client.profile.momento_carreira }}</dd>
@@ -28,20 +28,35 @@
           <dt>Cores preferidas</dt><dd>{{ client.profile.cores_preferidas or "—" }}</dd>
           <dt class="mb-0">Referências</dt><dd class="mb-0">{{ client.profile.referencias_estilo or "—" }}</dd>
         </dl>
-        {% else %}
-        <p class="text-muted mb-2">Você ainda não preencheu seu diagnóstico.</p>
-        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-sm">Fazer meu diagnóstico</a>
-        {% endif %}
       </div>
     </div>
+    {% elif dossie_services %}
+    <h2 class="h6 mb-3">Seu dossiê de estilo</h2>
+    {% for service in dossie_services %}
+    <div class="card {{ 'mb-3' if not loop.last else '' }}">
+      <div class="card-header">{{ service.label }}</div>
+      <div class="card-body">
+        <div style="white-space: pre-line;">{{ service.text }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card">
+      <div class="card-header">Seu diagnóstico</div>
+      <div class="card-body">
+        <p class="text-muted mb-2">Você ainda não preencheu seu diagnóstico.</p>
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-sm">Fazer meu diagnóstico</a>
+      </div>
+    </div>
+    {% endif %}
   </div>
 
   <div class="col-lg-6">
     <div class="card">
       <div class="card-header">Recomendações da consultoria</div>
       <div class="card-body">
-        {% if sent_reports %}
-          {% for report in sent_reports %}
+        {% if other_reports %}
+          {% for report in other_reports %}
           <div class="{{ 'mb-4 pb-4 border-bottom' if not loop.last else 'mb-0' }}">
             <h2 class="h6 mb-1">{{ report.title }}</h2>
             <p class="text-muted small mb-2">Enviado em {{ report.sent_at.strftime('%d/%m/%Y') if report.sent_at else "—" }}</p>

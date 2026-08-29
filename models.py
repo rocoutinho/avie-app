@@ -324,6 +324,17 @@ class StyleReport(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     sent_at = db.Column(db.DateTime)
 
+    # Preenchidos só pelo onboarding com dossiê (ver
+    # blueprints/clients.py:new_client_with_dossie) — quebram o dossiê em
+    # serviços individuais pra área do cliente mostrar um card por serviço
+    # (ver templates/client_area.html) em vez de só o texto corrido de
+    # `content`. Ficam em branco (None) nos relatórios gerados pelo fluxo
+    # normal (reports_engine), que só preenche `content`.
+    estilo_pessoal = db.Column(db.Text)
+    proporcoes = db.Column(db.Text)
+    coloracao = db.Column(db.Text)
+    visagismo = db.Column(db.Text)
+
 
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

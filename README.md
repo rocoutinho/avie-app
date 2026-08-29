@@ -187,12 +187,18 @@ manualmente. O acesso pode ser removido a qualquer momento no mesmo card.
 **Cadastro com dossiê** (`/painel/clientes/novo-com-dossie`): para
 clientes reais que já receberam o dossiê fora do sistema. Numa
 submissão só, cria (ou atualiza, por e-mail) o cadastro, registra o
-dossiê como um `StyleReport` já "enviado", gera uma senha temporária e
-um link de troca de senha (`/redefinir-senha/<token>`, válido por 72h) —
-esse link é o que se repassa por e-mail (se `MAIL_SERVER` estiver
-configurado) e/ou por um botão de WhatsApp que já abre a conversa com o
-número do próprio cliente com a mensagem pronta. Esse é, hoje, o único
-fluxo de "esqueci minha senha" — não há um link de "solicitar redefinição"
+dossiê como um `StyleReport` já "enviado" — com um campo por serviço
+entregue (estilo pessoal, proporções, coloração, visagismo; deixe em
+branco os que não se aplicam) —, gera uma senha temporária e um link de
+troca de senha (`/redefinir-senha/<token>`, válido por 72h) — esse link
+é o que se repassa por e-mail (se `MAIL_SERVER` estiver configurado)
+e/ou por um botão de WhatsApp que já abre a conversa com o número do
+próprio cliente com a mensagem pronta. Na área do cliente, esses
+serviços aparecem como um card cada, no lugar do CTA de "fazer o
+diagnóstico" (que só faz sentido pra quem chegou pelo funil público, via
+`/diagnostico` — quem já tem dossiê não precisa refazer nada). Esse
+link de troca de senha é, hoje, o único fluxo de "esqueci minha senha"
+— não há um link de "solicitar redefinição"
 que o próprio cliente possa disparar sozinho.
 
 O que a área do cliente mostra hoje: o diagnóstico que ele preencheu e

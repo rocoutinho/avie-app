@@ -74,6 +74,16 @@ def new_client_with_dossie():
     resto do sistema)."""
     form = ClientDossieForm()
     if form.validate_on_submit():
+        services = {
+            "Estilo pessoal": (form.estilo_pessoal.data or "").strip(),
+            "Proporções": (form.proporcoes.data or "").strip(),
+            "Coloração": (form.coloracao.data or "").strip(),
+            "Visagismo": (form.visagismo.data or "").strip(),
+        }
+        if not any(services.values()):
+            flash("Preencha pelo menos um dos serviços do dossiê.", "danger")
+            return render_template("client_dossie_form.html", form=form)
+
         email = form.email.data.strip().lower()
         client = Client.query.filter_by(email=email).first()
         if client is None:
@@ -83,12 +93,22 @@ def new_client_with_dossie():
         client.phone = form.phone.data.strip()
         client.status = "cliente_ativo"
 
+        # `content` combina os serviços preenchidos num texto corrido —
+        # usado nas telas que ainda mostram o relatório como bloco único
+        # (client_detail.html, report_view.html); os campos individuais
+        # abaixo são o que a área do cliente usa pra montar um card por
+        # serviço (ver templates/client_area.html).
+        content = "\n\n".join(f"{label}\n{text}" for label, text in services.items() if text)
         report = StyleReport(
             client=client,
             title=form.dossie_title.data.strip(),
-            content=form.dossie_content.data,
+            content=content,
             status="enviado",
             sent_at=datetime.utcnow(),
+            estilo_pessoal=services["Estilo pessoal"] or None,
+            proporcoes=services["Proporções"] or None,
+            coloracao=services["Coloração"] or None,
+            visagismo=services["Visagismo"] or None,
         )
         db.session.add(report)
 

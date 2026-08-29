@@ -974,7 +974,10 @@ def _dossie_payload(**overrides):
         "email": "dossie-nova@example.com",
         "phone": "11988887777",
         "dossie_title": "Diagnóstico de Estilo — Nova Cliente",
-        "dossie_content": "Conteúdo completo do dossiê entregue anteriormente.",
+        "estilo_pessoal": "Estilo clássico com toques contemporâneos.",
+        "proporcoes": "Silhueta retangular, valorizar cintura.",
+        "coloracao": "Paleta de inverno — cores frias e contrastadas.",
+        "visagismo": "",
     }
     payload.update(overrides)
     return payload
@@ -998,6 +1001,10 @@ def test_staff_creates_client_with_dossie(app, logged_in_client):
         reports = StyleReport.query.filter_by(client_id=created.id).all()
         assert len(reports) == 1
         assert reports[0].status == "enviado"
+        assert reports[0].estilo_pessoal == "Estilo clássico com toques contemporâneos."
+        assert reports[0].proporcoes == "Silhueta retangular, valorizar cintura."
+        assert reports[0].coloracao == "Paleta de inverno — cores frias e contrastadas."
+        assert reports[0].visagismo is None
         assert reports[0].sent_at is not None
 
 
@@ -1059,3 +1066,30 @@ def test_reset_password_rejects_invalid_token(client):
     response = client.get("/redefinir-senha/token-invalido", follow_redirects=True)
     assert response.status_code == 200
     assert "expirou".encode() in response.data or "Entrar".encode() in response.data
+
+
+def test_dossie_client_sees_service_cards_instead_of_diagnostic_cta(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+
+    client.get("/logout")
+    client.post(
+        "/login", data={"email": "dossie-nova@example.com", "password": "senha-nao-importa"}
+    )
+
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        created.set_password("senha-cliente-final")
+        db.session.commit()
+
+    response = client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Fazer meu diagnóstico".encode() not in response.data
+    assert "Estilo pessoal".encode() in response.data
+    assert "Coloração".encode() in response.data
+    assert "Estilo clássico com toques contemporâneos.".encode() in response.data
+    # Visagismo ficou em branco no dossiê — não deve virar um card vazio.
+    assert "Visagismo".encode() not in response.data

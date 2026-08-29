@@ -127,10 +127,17 @@ class ClientDossieForm(FlaskForm):
     dossie_title = StringField(
         "Título do dossiê", validators=[DataRequired(), Length(max=255)]
     )
-    dossie_content = TextAreaField(
-        "Conteúdo do dossiê (o que já foi entregue à cliente)",
-        validators=[DataRequired()],
-        render_kw={"rows": 12},
+    estilo_pessoal = TextAreaField(
+        "Estilo pessoal", validators=[Optional()], render_kw={"rows": 4}
+    )
+    proporcoes = TextAreaField(
+        "Proporções", validators=[Optional()], render_kw={"rows": 4}
+    )
+    coloracao = TextAreaField(
+        "Coloração", validators=[Optional()], render_kw={"rows": 4}
+    )
+    visagismo = TextAreaField(
+        "Visagismo", validators=[Optional()], render_kw={"rows": 4}
     )
     submit = SubmitField("Concluir cadastro e enviar acesso")
 

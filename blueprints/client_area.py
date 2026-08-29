@@ -23,10 +23,44 @@ def require_client():
 client_area_bp.before_request(require_client)
 
 
+DOSSIE_SERVICE_LABELS = [
+    ("estilo_pessoal", "Estilo pessoal"),
+    ("proporcoes", "Proporções"),
+    ("coloracao", "Coloração"),
+    ("visagismo", "Visagismo"),
+]
+
+
 @client_area_bp.route("/")
 @login_required
 def index():
     previous_login_raw = session.pop("client_previous_login_at", None)
     previous_login = datetime.fromisoformat(previous_login_raw) if previous_login_raw else None
     sent_reports = [r for r in current_user.reports if r.status == "enviado"]
-    return render_template("client_area.html", client=current_user, previous_login=previous_login, sent_reports=sent_reports)
+
+    # Clientes cadastrados via dossiê (ver blueprints/clients.py:new_client_with_dossie)
+    # já chegam com o diagnóstico feito fora do sistema — em vez do CTA
+    # "faça seu diagnóstico" (que é pro funil público do zero), mostramos
+    # um card por serviço já entregue, juntando os campos de todos os
+    # relatórios enviados (o mais recente prevalece se mais de um cobrir
+    # o mesmo serviço).
+    dossie_services = []
+    for field, label in DOSSIE_SERVICE_LABELS:
+        text = next((getattr(r, field) for r in sent_reports if getattr(r, field, None)), None)
+        if text:
+            dossie_services.append({"label": label, "text": text})
+
+    # "Recomendações da consultoria" só mostra relatórios que não são
+    # dossiês estruturados (senão duplicaria o mesmo conteúdo já
+    # detalhado nos cards de serviço acima).
+    other_reports = [
+        r for r in sent_reports if not any(getattr(r, field, None) for field, _ in DOSSIE_SERVICE_LABELS)
+    ]
+
+    return render_template(
+        "client_area.html",
+        client=current_user,
+        previous_login=previous_login,
+        other_reports=other_reports,
+        dossie_services=dossie_services,
+    )
