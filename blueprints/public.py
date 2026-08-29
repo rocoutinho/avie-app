@@ -14,10 +14,10 @@ from flask import (
 )
 from flask_wtf.csrf import ValidationError, validate_csrf
 
-from emails import send_diagnostic_confirmation
+from emails import send_diagnostic_confirmation, send_ebook_email
 from extensions import db, limiter
-from forms import DiagnosticForm
-from models import LEAD_SOURCES, BlogPost, Campaign, Client, StyleProfile
+from forms import DiagnosticForm, EbookDownloadForm
+from models import LEAD_SOURCES, BlogPost, Campaign, Client, Ebook, StyleProfile
 
 public_bp = Blueprint("public", __name__)
 
@@ -109,6 +109,47 @@ def blog_index():
 def blog_post(slug):
     post = BlogPost.query.filter_by(slug=slug, status="publicado").first_or_404()
     return render_template("blog_post.html", post=post)
+
+
+@public_bp.route("/ebook", methods=["GET", "POST"])
+@limiter.limit("10 per hour", methods=["POST"])
+def ebook_landing():
+    ebook = Ebook.query.filter_by(active=True).order_by(Ebook.created_at.desc()).first()
+    if ebook is None:
+        return render_template("ebook_landing.html", ebook=None, form=None)
+
+    form = EbookDownloadForm()
+
+    if form.validate_on_submit():
+        email = form.email.data.strip().lower()
+        client = Client.query.filter_by(email=email).first()
+        if client is None:
+            client = Client(email=email, status="lead", source="ebook")
+
+        client.full_name = form.full_name.data.strip()
+        client.phone = form.phone.data.strip()
+        note = f'Baixou o ebook "{ebook.title}".'
+        if form.wants_diagnostic.data:
+            note += " Quer receber um diagnóstico gratuito, sem compromisso."
+        client.notes = f"{client.notes}\n{note}" if client.notes else note
+        _apply_utm(client, session)
+        db.session.add(client)
+        db.session.commit()
+
+        send_ebook_email(client, ebook)
+        session["ebook_download_id"] = ebook.id
+        return redirect(url_for("public.ebook_success"))
+
+    return render_template("ebook_landing.html", ebook=ebook, form=form)
+
+
+@public_bp.route("/ebook/obrigado")
+def ebook_success():
+    ebook_id = session.get("ebook_download_id")
+    ebook = Ebook.query.get(ebook_id) if ebook_id else None
+    if ebook is None:
+        return redirect(url_for("public.ebook_landing"))
+    return render_template("ebook_success.html", ebook=ebook)
 
 
 @public_bp.route("/diagnostico", methods=["GET", "POST"])

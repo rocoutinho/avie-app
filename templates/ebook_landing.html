@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}{{ ebook.title if ebook else "Ebook" }}{% endblock %}
+{% block meta_description %}{{ ebook.description[:160] if ebook else "Material gratuito de imagem e posicionamento profissional." }}{% endblock %}
+{% block og_image %}{{ ebook.cover_image_url if ebook and ebook.cover_image_url else (site_url ~ url_for('static', filename='img/og-cover.png')) }}{% endblock %}
+{% block content %}
+{% if not ebook %}
+<div class="row justify-content-center text-center">
+  <div class="col-lg-6">
+    <p class="text-muted py-5">Em breve, um material gratuito por aqui.</p>
+  </div>
+</div>
+{% else %}
+<div class="row justify-content-center align-items-center g-5">
+  {% if ebook.cover_image_url %}
+  <div class="col-lg-5">
+    <img src="{{ ebook.cover_image_url }}" alt="Capa de {{ ebook.title }}" class="img-fluid rounded shadow-sm">
+  </div>
+  {% endif %}
+  <div class="{{ 'col-lg-7' if ebook.cover_image_url else 'col-lg-8' }}">
+    <p class="eyebrow mb-2" style="color: var(--avie-gold);">Material gratuito</p>
+    <h1 class="h2 mb-3">{{ ebook.title }}</h1>
+    <div class="text-muted mb-4" style="white-space: pre-line;">{{ ebook.description }}</div>
+
+    <div class="card">
+      <div class="card-body">
+        <h2 class="h6 text-uppercase text-muted mb-3">Baixe agora, é grátis</h2>
+        <form method="post" novalidate>
+          {{ form.hidden_tag() }}
+          {{ render_field(form.full_name) }}
+          {{ render_field(form.email) }}
+          {{ render_field(form.phone) }}
+
+          <div style="position:absolute; left:-9999px;" aria-hidden="true" tabindex="-1">
+            {{ form.website.label }}
+            {{ form.website(autocomplete="off", tabindex="-1") }}
+          </div>
+
+          <div class="form-check my-3">
+            {{ form.wants_diagnostic(class_="form-check-input") }}
+            <label class="form-check-label" for="wants_diagnostic">{{ form.wants_diagnostic.label.text }}</label>
+          </div>
+
+          <button type="submit" class="btn btn-brand w-100">{{ form.submit.label.text }}</button>
+          <p class="text-muted small mt-2 mb-0">
+            Ao baixar, você concorda com o uso dos seus dados conforme a
+            <a href="{{ url_for('public.privacy') }}" target="_blank">Política de Privacidade</a>.
+            Enviamos o link também por e-mail.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

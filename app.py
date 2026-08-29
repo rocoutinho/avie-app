@@ -49,6 +49,7 @@ def create_app(config_class=Config):
     from blueprints.campaigns import campaigns_bp
     from blueprints.clients import clients_bp
     from blueprints.dashboard import dashboard_bp
+    from blueprints.ebooks import ebooks_bp
     from blueprints.public import public_bp
     from blueprints.reports import reports_bp
 
@@ -59,6 +60,7 @@ def create_app(config_class=Config):
     app.register_blueprint(reports_bp)
     app.register_blueprint(campaigns_bp)
     app.register_blueprint(blog_bp)
+    app.register_blueprint(ebooks_bp)
 
     app.jinja_env.filters["markdown"] = render_markdown
     app.jinja_env.filters["pt_date"] = format_date_pt

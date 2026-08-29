@@ -143,6 +143,31 @@ depois disso. Diferente de um lead de teste no CRM, um artigo é conteúdo
 de verdade — vale a pena reavaliar esse trade-off (banco persistente)
 assim que o blog tiver posts que realmente importa manter.
 
+## Ebook (isca digital)
+
+Em `/painel/ebooks`, qualquer pessoa da equipe cadastra um ebook: título,
+descrição, imagem de capa (opcional) e o **link** do PDF — não é upload
+de arquivo, precisa ser um link já hospedado (Google Drive, Dropbox etc.,
+configurado como "qualquer pessoa com o link pode visualizar"). Isso é
+proposital: o disco do plano free do Render é efêmero, um PDF enviado
+pelo sistema seria apagado no próximo deploy e quebraria o link que já
+foi enviado por e-mail para quem baixou. Só um ebook fica **ativo** por
+vez (botão "Ativar" na listagem) — é ele que aparece em `/ebook`.
+
+Sem fluxo de aprovação (diferente de campanhas e blog) — é tratado como
+um material de marketing simples, não como conteúdo público que precisa
+de revisão.
+
+Fluxo de quem baixa: em `/ebook`, a pessoa informa nome, e-mail, telefone
+e opcionalmente marca "quero receber um diagnóstico gratuito, sem
+compromisso". Ao enviar, isso cria (ou atualiza) um registro de **Lead**
+no CRM (origem "Ebook") com uma nota sobre o download e o interesse no
+diagnóstico, o link é enviado por e-mail (mesmo mecanismo do diagnóstico —
+não faz nada sem `MAIL_SERVER` configurado) e a pessoa já cai numa página
+com o botão de download imediato (não depende do e-mail chegar) e um
+link de WhatsApp pra continuar a conversa. Não há envio automático por
+WhatsApp — isso exigiria uma API paga (Twilio/Meta), fora do escopo atual.
+
 ## Estrutura de pastas
 
 ```
@@ -153,7 +178,7 @@ models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleRe
 forms.py            # formulários (Flask-WTF)
 reports_engine.py   # gera o rascunho do relatório personalizado
 blog_engine.py       # renderiza Markdown -> HTML e formata datas em pt-BR pro blog
-blueprints/          # rotas: auth, public, dashboard, clients, reports, campaigns, blog
+blueprints/          # rotas: auth, public, dashboard, clients, reports, campaigns, blog, ebooks
 templates/           # HTML (Jinja + Bootstrap)
 static/vendor/        # Bootstrap CSS/JS vendorizado (sem CDN)
 static/fonts/         # fontes auto-hospedadas (Inter, Cormorant Garamond)

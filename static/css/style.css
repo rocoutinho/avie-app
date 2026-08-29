@@ -87,8 +87,10 @@ h1, h2, h3, .font-serif {
   padding: 0 1.15rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.28);
+  background: transparent;
   color: #f1efe9;
   text-decoration: none;
+  cursor: pointer;
   font-family: "News Gothic Condensed", "Inter", sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -101,6 +103,34 @@ h1, h2, h3, .font-serif {
 .navbar-link-pill:focus {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(245, 216, 134, 0.55);
+  color: #fff;
+}
+
+/* Dropdown "Recursos" — Bootstrap padrão é claro, precisa do próprio
+   tema escuro pra combinar com a navbar. */
+.navbar .dropdown-menu {
+  background: var(--avie-navy-deep);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.4rem;
+  margin-top: 0.5rem;
+  box-shadow: var(--avie-shadow);
+}
+
+.navbar .dropdown-item {
+  color: #f1efe9;
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 

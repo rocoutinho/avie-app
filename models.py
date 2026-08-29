@@ -49,6 +49,7 @@ LEAD_SOURCES = [
     ("indicacao", "Indicação"),
     ("site", "Site"),
     ("evento", "Evento / Palestra"),
+    ("ebook", "Ebook (isca digital)"),
     ("outro", "Outro"),
 ]
 
@@ -156,6 +157,28 @@ class BlogPost(db.Model):
 
     created_by = db.relationship("User", foreign_keys=[created_by_id])
     reviewed_by = db.relationship("User", foreign_keys=[reviewed_by_id])
+
+
+class Ebook(db.Model):
+    """Isca digital: um PDF/material hospedado externamente (Google Drive,
+    etc. — não é upload de arquivo, ver comentário em blueprints/ebooks.py)
+    usado pra capturar leads em /ebook. Sem fluxo de aprovação (diferente
+    de Campaign/BlogPost) — é um material de marketing simples, qualquer
+    staff cria/edita direto. Só o Ebook com active=True (o mais recente)
+    aparece na página pública."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    cover_image_url = db.Column(db.String(500))
+    file_url = db.Column(db.String(500), nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)
+
+    created_by_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
 
 
 class Client(db.Model):

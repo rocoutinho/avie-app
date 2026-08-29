@@ -1,0 +1,15 @@
+Olá, {{ client.full_name.split(' ')[0] }}!
+
+Aqui está o link para baixar "{{ ebook.title }}":
+
+{{ ebook.file_url }}
+
+{% if client.notes and 'diagnóstico' in client.notes.lower() -%}
+Você marcou que gostaria de receber um diagnóstico gratuito, sem
+compromisso — nossa equipe vai entrar em contato em breve para combinar
+os próximos passos.
+
+{% endif -%}
+Um abraço,
+Fabiana Montemor
+Consultoria de Imagem e Estilo
