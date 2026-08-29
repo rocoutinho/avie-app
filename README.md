@@ -302,14 +302,23 @@ e a cada reinício por inatividade. Pra que o site nunca fique inacessível
 por isso, o comando de start (`render.yaml`) roda sozinho, a cada boot:
 
 ```
-flask db upgrade && flask seed-admin && gunicorn app:app --bind 0.0.0.0:$PORT
+flask db upgrade && flask seed-admin && flask seed-demo-client && gunicorn app:app --bind 0.0.0.0:$PORT
 ```
+
+> **Atenção**: como o serviço `avie-app` foi criado manualmente no Render
+> (ver abaixo), esse `render.yaml` **não se aplica sozinho**. Pra esse
+> Start Command valer de verdade em produção, é preciso colar essa mesma
+> linha em **Settings → Build & Deploy → Start Command** no painel do
+> Render e salvar — só editar o arquivo no repositório não muda o que
+> está rodando lá.
 
 `flask db upgrade` recria as tabelas; `flask seed-admin` recria o usuário
 de acesso a partir das variáveis `ADMIN_NAME`/`ADMIN_EMAIL`/
 `ADMIN_PASSWORD`/`ADMIN_ROLE` configuradas no painel do Render (não faz
 nada se essas variáveis não estiverem definidas, ou se o usuário já
-existir — seguro de rodar toda vez).
+existir — seguro de rodar toda vez); `flask seed-demo-client` recria o
+cliente fictício de navegação (ver "Segurança e boas práticas" acima) —
+sempre roda, é idempotente e não depende de variável nenhuma.
 
 **Configurar pela primeira vez** (o serviço `avie-app` já existe e foi
 criado manualmente no Render, então `render.yaml` não se aplica sozinho —
@@ -317,7 +326,7 @@ os campos abaixo precisam ser conferidos/ajustados à mão no painel):
 
 1. **Settings → Instance Type**: Free.
 2. **Settings → Build & Deploy → Start Command**:
-   `flask db upgrade && flask seed-admin && gunicorn app:app --bind 0.0.0.0:$PORT`
+   `flask db upgrade && flask seed-admin && flask seed-demo-client && gunicorn app:app --bind 0.0.0.0:$PORT`
 3. **Environment**: adicionar `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
    (senha com pelo menos 10 caracteres), `ADMIN_ROLE` (`owner` ou
    `marketing`); remover `DATABASE_URL` se existir uma apontando pro
