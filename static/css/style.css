@@ -118,8 +118,7 @@ h1, h2, h3, .font-serif {
     gap: 0.3rem;
   }
 
-  .navbar-links-anon .navbar-link-pill,
-  .navbar-links-anon .btn-brand {
+  .navbar-links-anon .navbar-link-pill {
     padding-left: 0.6rem;
     padding-right: 0.6rem;
     font-size: 0.66rem;
