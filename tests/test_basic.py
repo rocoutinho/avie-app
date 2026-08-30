@@ -59,14 +59,8 @@ def _campaign_payload(**overrides):
     payload = {
         "internal_name": "Instagram Agosto",
         "slug": "instagram-agosto",
-        "hero_eyebrow": "",
         "hero_title": "Título de teste",
-        "hero_highlight": "",
-        "hero_subtitle": "",
-        "hero_cta_text": "",
-        "hero_image_url": "",
-        "theme_color": "",
-        "embed_url": "",
+        "embed_url": "https://exemplo-canva.my.canva.site/instagram-agosto",
     }
     payload.update(overrides)
     return payload
@@ -562,6 +556,7 @@ def test_owner_approves_campaign_and_it_goes_live(app, logged_in_client):
             slug="black-friday",
             internal_name="Black Friday",
             hero_title="Título Black Friday",
+            embed_url="https://exemplo-canva.my.canva.site/black-friday",
             status="em_revisao",
             created_by_id=marketing_user.id,
         )
@@ -580,9 +575,9 @@ def test_owner_approves_campaign_and_it_goes_live(app, logged_in_client):
         assert approved.published_at is not None
         assert approved.reviewed_by_id is not None
 
-    response = logged_in_client.get("/lp/black-friday")
-    assert response.status_code == 200
-    assert "Título Black Friday".encode() in response.data
+    response = logged_in_client.get("/lp/black-friday", follow_redirects=False)
+    assert response.status_code == 302
+    assert response.headers["Location"] == "https://exemplo-canva.my.canva.site/black-friday"
 
 
 def test_owner_rejects_campaign_back_to_draft_with_note(app, logged_in_client):
@@ -1206,7 +1201,7 @@ def test_published_campaign_with_embed_url_redirects_instead_of_hero(app, client
         campaign = Campaign(
             slug="canvas-teste",
             internal_name="Campanha Canvas",
-            hero_title="Título do hero, deve ser ignorado",
+            hero_title="Campanha Canvas",
             embed_url="https://exemplo-canva.my.canva.site/",
             status="publicado",
             created_by_id=user.id,

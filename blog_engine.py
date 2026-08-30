@@ -10,9 +10,9 @@ _PT_MONTHS = [
 def render_markdown(text):
     """Converte o Markdown de um BlogPost.body_markdown pra HTML. O
     conteúdo só é escrito por staff autenticado (mesmo nível de confiança
-    já dado a outros campos "URL/HTML crus" do sistema, como
-    Campaign.hero_image_url) — não há sanitização adicional porque não é
-    input de visitante público."""
+    já dado a outros campos "URL crua" do sistema, como
+    Ebook.file_url) — não há sanitização adicional porque não é input de
+    visitante público."""
     html = _markdown.markdown(text or "", extensions=["extra", "sane_lists", "nl2br"])
     return Markup(html)
 

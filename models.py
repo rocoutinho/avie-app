@@ -112,32 +112,23 @@ class User(UserMixin, db.Model):
 
 
 class Campaign(db.Model):
-    """Um criativo de landing page (título, imagem, CTA etc.) que pode ser
-    testado numa URL própria (/lp/<slug>) para uma campanha de tráfego
-    específica, sem mexer na landing principal. Fluxo: marketing cria como
-    rascunho -> envia para revisão -> owner aprova (publica) ou recusa
-    (volta pra rascunho, com um motivo opcional)."""
+    """Um criativo de campanha: um título (pro <title>/compartilhamento) e
+    um link externo pro qual a URL própria (/lp/<slug>) redireciona (ex:
+    uma landing desenhada no Canva/Canvas) — ver
+    blueprints/public.py:landing_campaign. É um redirect, não um iframe:
+    a maioria dos criadores de site (Canva incluso) bloqueia incorporação
+    em outro domínio via X-Frame-Options/CSP, então embutir num iframe
+    embaixo da navbar do Avie não funcionava (tentado e revertido). Fluxo
+    de aprovação: marketing cria como rascunho -> envia para revisão ->
+    owner aprova (publica) ou recusa (volta pra rascunho, com um motivo
+    opcional)."""
 
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(80), unique=True, nullable=False)
     internal_name = db.Column(db.String(150), nullable=False)
     status = db.Column(db.String(20), default="rascunho", nullable=False)
 
-    hero_eyebrow = db.Column(db.String(150))
     hero_title = db.Column(db.String(255), nullable=False)
-    hero_highlight = db.Column(db.String(100))
-    hero_subtitle = db.Column(db.Text)
-    hero_cta_text = db.Column(db.String(80))
-    hero_image_url = db.Column(db.String(500))
-    theme_color = db.Column(db.String(20))
-
-    # Link externo pro qual a página ao vivo redireciona, no lugar de
-    # mostrar o hero nativo acima (ex: uma landing desenhada no
-    # Canva/Canvas) — ver blueprints/public.py:landing_campaign. É um
-    # redirect, não um iframe: a maioria dos criadores de site (Canva
-    # incluso) bloqueia incorporação em outro domínio via
-    # X-Frame-Options/CSP, então embutir travava. Os campos hero_*
-    # continuam preenchidos mas são ignorados quando isso está definido.
     embed_url = db.Column(db.String(500))
 
     review_note = db.Column(db.Text)
@@ -365,8 +356,8 @@ class StyleReport(db.Model):
     arquetipos = db.Column(db.Text)
 
     # Link externo pro PDF original do dossiê (Google Drive, Dropbox etc.)
-    # — mesmo padrão sem upload usado em Ebook.file_url/Campaign.hero_image_url
-    # (disco do Render é efêmero). Opcional: nem todo dossiê tem um PDF à parte.
+    # — mesmo padrão sem upload usado em Ebook.file_url (disco do Render
+    # é efêmero). Opcional: nem todo dossiê tem um PDF à parte.
     pdf_url = db.Column(db.String(500))
 
     @property
