@@ -98,7 +98,8 @@
           <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
         </div>
       {% else %}
-        <div class="d-flex flex-wrap gap-2 align-items-center">
+        <div class="d-flex flex-nowrap navbar-links-anon align-items-center">
+          <a class="navbar-link-pill" href="{{ url_for('public.landing_campaign', slug='fab1') }}" target="_blank" rel="noopener">Diagnóstico</a>
           <div class="dropdown">
             <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Recursos</button>
             <ul class="dropdown-menu">
@@ -106,8 +107,7 @@
               <li><a class="dropdown-item" href="{{ url_for('public.ebook_landing') }}">Ebook</a></li>
             </ul>
           </div>
-          <a class="navbar-link-pill" href="{{ url_for('public.landing_campaign', slug='fab1') }}" target="_blank" rel="noopener">Sessão Diagnóstico</a>
-          <a class="btn btn-brand" href="{{ url_for('auth.login') }}">Clientes</a>
+          <a class="navbar-link-pill" href="{{ url_for('auth.login') }}">Clientes</a>
         </div>
       {% endif %}
     </div>
