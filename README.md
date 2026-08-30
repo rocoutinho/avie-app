@@ -119,14 +119,14 @@ diagnóstico:
 
 ## Campanhas com redirecionamento externo (Canva, Canvas etc.)
 
-Além do hero nativo (título/subtítulo/botão/imagem editados direto no
-formulário de criativo), uma campanha pode apontar pra uma página pronta
-feita em outra ferramenta — no formulário de criativo (`/painel/campanhas`),
-preencha **"Link externo para redirecionar"** com a URL pública dessa
-página. Quando preenchido, a página ao vivo do criativo (`/lp/<slug>`)
-redireciona direto pra esse link (a pessoa sai do site do Avie) em vez de
-mostrar o hero — os campos de hero continuam salvos mas ficam sem efeito.
-O fluxo de aprovação é o mesmo de sempre (rascunho → revisão → publicado,
+Uma campanha é um redirecionamento simples: no formulário de criativo
+(`/painel/campanhas`), preencha **nome interno** (só pra identificar no
+painel), **slug** (define a URL `/lp/o-que-escrever-aqui`), **título**
+(usado na aba do navegador e ao compartilhar o link) e **link** — a URL
+pública da página pronta em outra ferramenta (Canva, Canvas etc.). Quando
+publicado, a página ao vivo do criativo (`/lp/<slug>`) redireciona direto
+pra esse link — a pessoa sai do site do Avie e vê só a página externa. O
+fluxo de aprovação é o mesmo de sempre (rascunho → revisão → publicado,
 só `owner` aprova).
 
 **É redirecionamento, não incorporação (iframe)**: a primeira versão

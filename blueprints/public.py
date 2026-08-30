@@ -3,6 +3,7 @@ from datetime import datetime
 
 from flask import (
     Blueprint,
+    abort,
     current_app,
     jsonify,
     redirect,
@@ -96,13 +97,12 @@ def landing_campaign(slug):
     # ficam rastreados até essa campanha mesmo sem parâmetros na URL.
     if "utm_campaign" not in session and "utm_campaign" not in request.args:
         session["utm_campaign"] = campaign.slug
-    if campaign.embed_url:
-        # A maioria dos criadores de site (Canva incluso) bloqueia
-        # incorporação via iframe em outro domínio (X-Frame-Options/CSP
-        # frame-ancestors) — tentamos isso antes e a página simplesmente
-        # não carregava. Redirecionar é o que garante que funciona sempre.
-        return redirect(campaign.embed_url)
-    return render_template("landing.html", campaign=campaign)
+    if not campaign.embed_url:
+        # Campanha antiga sem link definido (o campo passou a ser
+        # obrigatório no formulário) — não há mais um hero nativo pra
+        # cair de volta, então trata como página inexistente.
+        abort(404)
+    return redirect(campaign.embed_url)
 
 
 @public_bp.route("/privacidade")

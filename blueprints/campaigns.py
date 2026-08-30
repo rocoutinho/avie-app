@@ -43,14 +43,8 @@ def new_campaign():
         campaign = Campaign(
             slug=slug,
             internal_name=form.internal_name.data.strip(),
-            hero_eyebrow=(form.hero_eyebrow.data or "").strip() or None,
             hero_title=form.hero_title.data.strip(),
-            hero_highlight=(form.hero_highlight.data or "").strip() or None,
-            hero_subtitle=(form.hero_subtitle.data or "").strip() or None,
-            hero_cta_text=(form.hero_cta_text.data or "").strip() or None,
-            hero_image_url=(form.hero_image_url.data or "").strip() or None,
-            theme_color=(form.theme_color.data or "").strip() or None,
-            embed_url=(form.embed_url.data or "").strip() or None,
+            embed_url=form.embed_url.data.strip(),
             status="rascunho",
             created_by_id=current_user.id,
         )
@@ -83,14 +77,8 @@ def edit_campaign(campaign_id):
 
         campaign.slug = slug
         campaign.internal_name = form.internal_name.data.strip()
-        campaign.hero_eyebrow = (form.hero_eyebrow.data or "").strip() or None
         campaign.hero_title = form.hero_title.data.strip()
-        campaign.hero_highlight = (form.hero_highlight.data or "").strip() or None
-        campaign.hero_subtitle = (form.hero_subtitle.data or "").strip() or None
-        campaign.hero_cta_text = (form.hero_cta_text.data or "").strip() or None
-        campaign.hero_image_url = (form.hero_image_url.data or "").strip() or None
-        campaign.theme_color = (form.theme_color.data or "").strip() or None
-        campaign.embed_url = (form.embed_url.data or "").strip() or None
+        campaign.embed_url = form.embed_url.data.strip()
 
         # Editar um criativo publicado, em revisão ou arquivado volta pro
         # rascunho — qualquer mudança precisa passar por aprovação de novo.
@@ -111,9 +99,10 @@ def edit_campaign(campaign_id):
 @login_required
 def preview(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
-    if campaign.embed_url:
-        return redirect(campaign.embed_url)
-    return render_template("landing.html", campaign=campaign, preview=True)
+    if not campaign.embed_url:
+        flash("Defina o link antes de pré-visualizar.", "warning")
+        return redirect(url_for("campaigns.detail", campaign_id=campaign.id))
+    return redirect(campaign.embed_url)
 
 
 @campaigns_bp.route("/<int:campaign_id>/enviar-revisao", methods=["POST"])

@@ -196,8 +196,11 @@ class ReportForm(FlaskForm):
 
 
 class CampaignForm(FlaskForm):
+    internal_name = StringField(
+        "Nome interno (só para identificar no painel)", validators=[DataRequired(), Length(max=150)]
+    )
     slug = StringField(
-        "Slug (define a URL: /lp/o-que-voce-escrever-aqui)",
+        "Slug (define a URL: /o-que-escrever-aqui)",
         validators=[
             DataRequired(),
             Length(max=80),
@@ -207,36 +210,14 @@ class CampaignForm(FlaskForm):
             ),
         ],
     )
-    internal_name = StringField(
-        "Nome interno (só para identificar no painel)", validators=[DataRequired(), Length(max=150)]
-    )
-    hero_eyebrow = StringField("Selo acima do título (opcional)", validators=[Optional(), Length(max=150)])
-    hero_title = StringField("Título principal", validators=[DataRequired(), Length(max=255)])
-    hero_highlight = StringField(
-        "Trecho em destaque (opcional, aparece em dourado no fim do título)",
-        validators=[Optional(), Length(max=100)],
-    )
-    hero_subtitle = TextAreaField("Texto de apoio abaixo do título", validators=[Optional()])
-    hero_cta_text = StringField(
-        "Texto do botão principal", validators=[Optional(), Length(max=80)]
-    )
-    hero_image_url = StringField(
-        "URL da imagem de destaque (opcional — cole o link de uma imagem já publicada)",
-        validators=[Optional(), Length(max=500)],
-    )
-    theme_color = StringField(
-        "Cor de destaque em hex (opcional, ex: #C9A227)",
-        validators=[
-            Optional(),
-            Regexp(r"^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$", message="Use um código hex válido, ex: #C9A227."),
-        ],
+    hero_title = StringField(
+        "Título (usado na aba do navegador e ao compartilhar o link)",
+        validators=[DataRequired(), Length(max=255)],
     )
     embed_url = StringField(
-        "Link externo para redirecionar (opcional — página pronta no Canva, "
-        "Canvas etc.). Se preenchido, a página ao vivo redireciona direto pra "
-        "esse link (a pessoa sai do site do Avie) em vez de mostrar o hero — "
-        "os campos de hero acima ficam sem efeito.",
-        validators=[Optional(), Length(max=500)],
+        "Link (página pronta no Canva, Canvas etc.) — a página da campanha "
+        "redireciona direto pra cá",
+        validators=[DataRequired(), Length(max=500)],
     )
     submit = SubmitField("Salvar rascunho")
 
