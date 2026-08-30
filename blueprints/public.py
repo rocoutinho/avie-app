@@ -97,7 +97,11 @@ def landing_campaign(slug):
     if "utm_campaign" not in session and "utm_campaign" not in request.args:
         session["utm_campaign"] = campaign.slug
     if campaign.embed_url:
-        return render_template("campaign_embed.html", campaign=campaign)
+        # A maioria dos criadores de site (Canva incluso) bloqueia
+        # incorporação via iframe em outro domínio (X-Frame-Options/CSP
+        # frame-ancestors) — tentamos isso antes e a página simplesmente
+        # não carregava. Redirecionar é o que garante que funciona sempre.
+        return redirect(campaign.embed_url)
     return render_template("landing.html", campaign=campaign)
 
 

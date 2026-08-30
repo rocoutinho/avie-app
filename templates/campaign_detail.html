@@ -33,7 +33,7 @@
       <dt class="col-sm-3">Botão</dt><dd class="col-sm-9">{{ campaign.hero_cta_text or "—" }}</dd>
       <dt class="col-sm-3">Imagem</dt><dd class="col-sm-9">{{ campaign.hero_image_url or "—" }}</dd>
       <dt class="col-sm-3">Cor</dt><dd class="col-sm-9">{{ campaign.theme_color or "—" }}</dd>
-      <dt class="col-sm-3">Link encapsulado</dt><dd class="col-sm-9">{{ campaign.embed_url or "—" }}{% if campaign.embed_url %} <span class="text-muted">(hero acima é ignorado na página ao vivo)</span>{% endif %}</dd>
+      <dt class="col-sm-3">Redirecionamento</dt><dd class="col-sm-9">{{ campaign.embed_url or "—" }}{% if campaign.embed_url %} <span class="text-muted">(a página ao vivo redireciona pra cá — hero acima fica sem efeito)</span>{% endif %}</dd>
       <dt class="col-sm-3">Criado por</dt><dd class="col-sm-9">{{ campaign.created_by.name if campaign.created_by else "—" }}</dd>
       {% if campaign.reviewed_by %}
       <dt class="col-sm-3">Revisado por</dt><dd class="col-sm-9">{{ campaign.reviewed_by.name }}</dd>

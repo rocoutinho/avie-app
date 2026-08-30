@@ -117,18 +117,26 @@ valores para a atribuição automática funcionar: `instagram`, `google` ou
 diagnóstico:
 `https://SEUDOMINIO/diagnostico?utm_source=instagram&utm_medium=paid_social&utm_campaign=NOME_DA_CAMPANHA`.
 
-## Campanhas com página encapsulada (Canvas, Canva etc.)
+## Campanhas com redirecionamento externo (Canva, Canvas etc.)
 
 Além do hero nativo (título/subtítulo/botão/imagem editados direto no
-formulário de criativo), uma campanha pode encapsular uma página pronta
+formulário de criativo), uma campanha pode apontar pra uma página pronta
 feita em outra ferramenta — no formulário de criativo (`/painel/campanhas`),
-preencha **"Link para encapsular"** com a URL pública dessa página. Quando
-preenchido, a página ao vivo do criativo (`/lp/<slug>`) mostra esse link
-num `<iframe>` grande no lugar do hero — a barra de navegação e o rodapé
-do Avie continuam aparecendo por cima/embaixo, mantendo a identidade do
-site. Os campos de hero continuam salvos mas ficam sem efeito nessa
-página. O fluxo de aprovação é o mesmo de sempre (rascunho → revisão →
-publicado, só `owner` aprova).
+preencha **"Link externo para redirecionar"** com a URL pública dessa
+página. Quando preenchido, a página ao vivo do criativo (`/lp/<slug>`)
+redireciona direto pra esse link (a pessoa sai do site do Avie) em vez de
+mostrar o hero — os campos de hero continuam salvos mas ficam sem efeito.
+O fluxo de aprovação é o mesmo de sempre (rascunho → revisão → publicado,
+só `owner` aprova).
+
+**É redirecionamento, não incorporação (iframe)**: a primeira versão
+desse recurso tentava mostrar a página externa dentro de um `<iframe>`,
+mantendo a navbar/rodapé do Avie por cima — mas a maioria dos criadores
+de site (Canva incluso) bloqueia esse tipo de incorporação por padrão
+(cabeçalho `X-Frame-Options`/`Content-Security-Policy: frame-ancestors`),
+então a página simplesmente não carregava. Redirecionar é o que garante
+que funciona sempre, com a troca de perder a navbar/rodapé nessa página
+específica.
 
 O criativo com slug `campanha` fica disponível também direto na raiz do
 site, em `/campanha` (além de `/lp/campanha`) — pensado pra ter uma URL
