@@ -131,11 +131,13 @@ class Campaign(db.Model):
     hero_image_url = db.Column(db.String(500))
     theme_color = db.Column(db.String(20))
 
-    # Link externo pra encapsular como página ao vivo no lugar do hero
-    # nativo acima (ex: uma landing desenhada no Canvas/Canva) — ver
-    # blueprints/public.py:landing_campaign e templates/campaign_embed.html.
-    # Os campos hero_* continuam preenchidos mas são ignorados na página
-    # ao vivo quando isso está definido.
+    # Link externo pro qual a página ao vivo redireciona, no lugar de
+    # mostrar o hero nativo acima (ex: uma landing desenhada no
+    # Canva/Canvas) — ver blueprints/public.py:landing_campaign. É um
+    # redirect, não um iframe: a maioria dos criadores de site (Canva
+    # incluso) bloqueia incorporação em outro domínio via
+    # X-Frame-Options/CSP, então embutir travava. Os campos hero_*
+    # continuam preenchidos mas são ignorados quando isso está definido.
     embed_url = db.Column(db.String(500))
 
     review_note = db.Column(db.Text)

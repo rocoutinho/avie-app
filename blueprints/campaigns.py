@@ -112,7 +112,7 @@ def edit_campaign(campaign_id):
 def preview(campaign_id):
     campaign = Campaign.query.get_or_404(campaign_id)
     if campaign.embed_url:
-        return render_template("campaign_embed.html", campaign=campaign, preview=True)
+        return redirect(campaign.embed_url)
     return render_template("landing.html", campaign=campaign, preview=True)
 
 

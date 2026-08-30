@@ -232,10 +232,10 @@ class CampaignForm(FlaskForm):
         ],
     )
     embed_url = StringField(
-        "Link para encapsular (opcional — página pronta no Canvas, Canva etc.). "
-        "Se preenchido, a página ao vivo mostra esse link no lugar do hero "
-        "(navbar e rodapé do Avie continuam aparecendo) — os campos de hero "
-        "acima ficam sem efeito na página ao vivo.",
+        "Link externo para redirecionar (opcional — página pronta no Canva, "
+        "Canvas etc.). Se preenchido, a página ao vivo redireciona direto pra "
+        "esse link (a pessoa sai do site do Avie) em vez de mostrar o hero — "
+        "os campos de hero acima ficam sem efeito.",
         validators=[Optional(), Length(max=500)],
     )
     submit = SubmitField("Salvar rascunho")
