@@ -365,9 +365,10 @@ footer a {
   font-family: "Cormorant Garamond", serif;
   font-variant-caps: small-caps;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   line-height: 1.2;
   letter-spacing: 0.03em;
+  color: #1a0f02;
   border-radius: 14px;
   padding: 0.4rem 1rem;
   /* Textura metálica: dourado bem mais saturado que o degradê pastel
