@@ -987,12 +987,6 @@ footer a {
   }
 }
 
-@media (max-width: 575.98px) {
-  .lp-hero-ctas .btn {
-    width: 100%;
-  }
-}
-
 /* Ícones dos cards de serviço — mesmo tratamento visual dos badges do
    Método I.M.P.A.C.T.O., pra reforçar a identidade sem introduzir uma
    nova linguagem visual. */
