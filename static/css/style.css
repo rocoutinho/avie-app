@@ -364,10 +364,26 @@ footer a {
 .lp-final-cta .btn-brand {
   font-family: "Cormorant Garamond", serif;
   font-variant-caps: small-caps;
+  font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: 0.03em;
-  background: linear-gradient(135deg, var(--avie-gold-light) 0%, var(--avie-gold) 65%, #a07f42 100%);
+  /* Textura metálica: uma faixa de brilho quase branca cruzando o dourado
+     em diagonal, com sombras internas simulando um leve relevo. */
+  background: linear-gradient(
+    115deg,
+    #b8863d 0%,
+    #e7c877 22%,
+    #fff3d0 34%,
+    #e7c877 46%,
+    #c89a4c 62%,
+    #f5d886 82%,
+    #caa254 100%
+  );
   border-color: transparent;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.22),
+    0 10px 24px rgba(19, 26, 46, 0.35);
 }
 
 .lp-hero .btn-brand:hover,
@@ -377,6 +393,7 @@ footer a {
 .lp-final-cta .btn-brand:hover,
 .lp-final-cta .btn-brand:focus {
   background: var(--avie-navy-deep);
+  box-shadow: 0 10px 24px rgba(19, 26, 46, 0.35);
 }
 
 .btn-outline-light-lp {
