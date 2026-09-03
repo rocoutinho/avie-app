@@ -31,6 +31,10 @@
   <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
   {%- elif key == "compass" %}
   <circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.8 13.8 8.5 15.5l1.7-5.3 5.3-1.7Z"/>
+  {%- elif key == "medal" %}
+  <circle cx="12" cy="8" r="4.5"/><path d="M9 11.5 7 21l5-3.2 5 3.2-2-9.5"/>
+  {%- elif key == "crown" %}
+  <path d="M4 18h16"/><path d="m4 18 1.5-8 4 3.2L12 7l2.5 6.2 4-3.2L20 18"/>
   {%- endif %}
 </svg>
 {% endmacro %}
@@ -62,36 +66,37 @@
     </div>
   </section>
 
-  <section class="lp-band full-bleed">
+  <section class="lp-band lp-intro full-bleed">
     <div class="container reveal">
-      <h2 class="h1 text-center mb-4 mx-auto" style="max-width: 760px;">Talvez sua carreira tenha evoluído mais rápido que a sua imagem.</h2>
-      <p class="text-center text-muted mx-auto mb-5" style="max-width: 640px;">
-        Você cresceu profissionalmente. Assumiu novas responsabilidades. Conquistou
-        experiência, reconhecimento e resultados. Mas ainda sente que sua imagem
-        não representa exatamente quem você se tornou.
+      <h2 class="h1 text-center mb-2 mx-auto" style="max-width: 760px;">Talvez sua carreira tenha evoluído mais rápido que a sua imagem.</h2>
+      <p class="lp-manifesto-text text-center mx-auto mb-5" style="max-width: 560px; font-size: 1.3rem;">
+        Mas sua imagem ainda não acompanha
       </p>
 
-      <div class="row g-4 mb-5">
-        {% set symptoms = [
-          ("eye", "É comum sentir que a imagem não acompanhou a evolução na carreira."),
-          ("compass", "Nem sempre é fácil perceber com clareza como você está sendo visto."),
-          ("sparkle", "Isso não é sobre vaidade — é sobre comunicação estratégica e presença."),
-          ("check", "Por isso existe um caminho estruturado para realinhar isso com precisão."),
+      <div class="row g-3 mb-5 justify-content-center">
+        {% set intro_badges = [
+          ("briefcase", "Sua posição"),
+          ("medal", "Sua experiência"),
+          ("crown", "Sua autoridade"),
         ] %}
-        {% for icon_key, text in symptoms %}
-        <div class="col-md-6 col-lg-3">
-          <div class="lp-value-card">
-            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
-            <p class="text-muted small mb-0">{{ text }}</p>
+        {% for icon_key, label in intro_badges %}
+        <div class="col-4">
+          <div class="lp-intro-badge">
+            <div class="lp-intro-badge-icon">{{ service_icon(icon_key) }}</div>
+            <p class="lp-intro-badge-label mb-0">{{ label }}</p>
           </div>
         </div>
         {% endfor %}
       </div>
 
-      <p class="lp-manifesto-text text-center mx-auto mb-0">
-        O problema pode não estar nas suas roupas.
-        <span class="lp-manifesto-highlight">Pode estar na estratégia por trás delas.</span>
+      <p class="lp-manifesto-text text-center mx-auto mb-5">
+        Sua competência já existe.
+        <span class="lp-manifesto-highlight">Sua imagem precisa torná-la perceptível.</span>
       </p>
+
+      <div class="text-center">
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg d-inline-flex align-items-center justify-content-center">Quero entender o que<br>minha imagem comunica</a>
+      </div>
     </div>
   </section>
 
