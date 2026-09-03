@@ -356,12 +356,15 @@ footer a {
   letter-spacing: 0.02em;
 }
 
-/* CTAs editoriais — só nas seções escuras com retrato/seda (hero, sobre,
-   CTA final); os botões do restante do site (painel, formulários, outras
-   seções claras da landing) continuam com a tipografia padrão sans-serif. */
+/* CTAs editoriais — nas seções escuras com retrato/seda (hero, sobre,
+   CTA final) e também na seção de abertura .lp-intro (clara, mas com o
+   mesmo botão dourado vivo pedido pela referência); os botões do restante
+   do site (painel, formulários, outras seções claras da landing) continuam
+   com a tipografia padrão sans-serif. */
 .lp-hero .btn-brand,
 #sobre .btn-brand,
-.lp-final-cta .btn-brand {
+.lp-final-cta .btn-brand,
+.lp-intro .btn-brand {
   font-family: "Cormorant Garamond", serif;
   font-variant-caps: small-caps;
   font-weight: 700;
@@ -396,9 +399,50 @@ footer a {
 #sobre .btn-brand:hover,
 #sobre .btn-brand:focus,
 .lp-final-cta .btn-brand:hover,
-.lp-final-cta .btn-brand:focus {
+.lp-final-cta .btn-brand:focus,
+.lp-intro .btn-brand:hover,
+.lp-intro .btn-brand:focus {
   background: var(--avie-navy-deep);
   box-shadow: 0 10px 24px rgba(19, 26, 46, 0.35);
+}
+
+/* Seção de abertura (após o hero): "sintoma" — reforça a dor antes de
+   apresentar a consultoria. Badges navy/dourado ecoando o mesmo emblema
+   circular usado no dossiê do cliente (.dossie-service-icon), só que em
+   cartão escuro cheio pra bater com a referência de criativo da Fabiana. */
+.lp-intro-badge {
+  background: var(--avie-navy-deep);
+  border-radius: var(--avie-radius);
+  padding: 1.5rem 0.75rem;
+  height: 100%;
+  text-align: center;
+}
+
+.lp-intro-badge-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--avie-navy);
+  border: 2px solid var(--avie-gold);
+  color: var(--avie-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.85rem;
+}
+
+.lp-intro-badge-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.lp-intro-badge-label {
+  color: #fff;
+  font-family: "Cormorant Garamond", serif;
+  font-variant-caps: small-caps;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
 }
 
 .btn-outline-light-lp {
