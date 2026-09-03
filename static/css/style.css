@@ -445,6 +445,46 @@ footer a {
   letter-spacing: 0.03em;
 }
 
+/* Pílulas de serviço (Estilo/Biotipo/Cores/Visagismo/Arquétipos) — mesmo
+   emblema navy/dourado do .dossie-service-icon, só que em formato de
+   pílula horizontal pra bater com o criativo de referência. */
+.lp-service-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--avie-navy-deep);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+  height: 100%;
+}
+
+.lp-service-pill-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--avie-navy);
+  border: 2px solid var(--avie-gold);
+  color: var(--avie-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-service-pill-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.lp-service-pill-label {
+  color: #fff;
+  font-family: "Cormorant Garamond", serif;
+  font-variant-caps: small-caps;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+}
+
 .btn-outline-light-lp {
   border: 1px solid rgba(241, 239, 233, 0.4);
   color: #f1efe9;
