@@ -159,72 +159,7 @@
     </div>
   </section>
 
-  <section id="consultoria" class="lp-band lp-band-tint full-bleed">
-    <div class="container">
-      <p class="eyebrow text-center mb-2" style="color: var(--avie-gold);">A consultoria</p>
-      <h2 class="h1 text-center mb-3">Sua imagem, construída para gerar resultados.</h2>
-      <p class="text-center text-muted mx-auto mb-5" style="max-width: 640px;">
-        A Consultoria de Imagem e Posicionamento Profissional é um processo
-        personalizado para transformar sua imagem em uma ferramenta estratégica,
-        através de pilares fundamentais.
-      </p>
-
-      <div class="row g-4 reveal">
-        {% set pillars = [
-          ("hanger", "Estilo Pessoal", "Como suas escolhas comunicam quem você é."),
-          ("ruler", "Proporções", "Cortes e proporções que valorizam seu biotipo."),
-          ("palette", "Cores", "A paleta que reforça sua presença e credibilidade."),
-          ("sparkle", "Visagismo", "Ajustes que harmonizam rosto, cabelo e expressão."),
-          ("users", "Comportamento e Posicionamento", "Como sua postura reforça sua autoridade."),
-        ] %}
-        {% for icon_key, title, desc in pillars %}
-        <div class="col-md-6 col-lg-4">
-          <div class="lp-value-card">
-            <div class="lp-value-card-icon">{{ service_icon(icon_key) }}</div>
-            <h3 class="h6 mb-2">{{ title }}</h3>
-            <p class="text-muted small mb-0">{{ desc }}</p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <p class="lp-manifesto-text text-center mx-auto mt-5 mb-0" style="font-size: 1.5rem;">
-        O objetivo não é simplesmente se vestir melhor.
-        <span class="lp-manifesto-highlight">É comunicar, com clareza, exatamente onde você quer chegar.</span>
-      </p>
-    </div>
-  </section>
-
-  <section class="lp-about full-bleed">
-    <div class="container">
-      <p class="eyebrow text-center mb-2">O que muda depois da consultoria?</p>
-      <h2 class="h1 text-center mb-5" style="color: #fff;">Resultados que você sente no dia a dia</h2>
-
-      <div class="row g-4 reveal">
-        {% set benefits = [
-          ("Clareza", "Você entra em qualquer ambiente sabendo exatamente o que representa."),
-          ("Praticidade", "Menos tempo se vestindo, mais clareza sobre o que vestir."),
-          ("Segurança", "Você deixa de duvidar do que veste em ocasiões importantes."),
-          ("Intencionalidade", "Cada escolha passa a ter um propósito."),
-          ("Autoridade", "Sua presença passa a acompanhar sua posição profissional."),
-          ("Coerência", "Imagem, carreira e objetivos comunicam a mesma direção."),
-        ] %}
-        {% for title, desc in benefits %}
-        <div class="col-md-6 col-lg-4">
-          <div class="lp-benefit-item">
-            <div class="lp-benefit-icon">{{ service_icon("check") }}</div>
-            <div>
-              <h3 class="h6 mb-1">{{ title }}</h3>
-              <p class="lp-about-text-muted small mb-0">{{ desc }}</p>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <section class="lp-band full-bleed">
+  <section class="lp-band lp-consult-cta full-bleed">
     <div class="container reveal">
       <h2 class="h1 text-center mb-5">Essa consultoria é para você que...</h2>
 
@@ -241,7 +176,7 @@
         <p class="lp-manifesto-text mb-4" style="font-size: 1.6rem;">
           <span class="lp-manifesto-highlight">Eu mudei. Minha imagem também precisa mudar.</span>
         </p>
-        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero conhecer a consultoria{{ arrow_icon() }}</a>
+        <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg d-inline-flex align-items-center justify-content-center">Quero conhecer<br>a consultoria</a>
       </div>
     </div>
   </section>
@@ -251,28 +186,21 @@
       <img src="{{ url_for('static', filename='img/fabiana-sobre.jpg') }}" alt="Fabiana Montemor">
     </div>
     <div class="container lp-about-inner text-center reveal">
+      <p class="lp-manifesto-text mb-2" style="font-size: 1.2rem;">
+        <span class="lp-manifesto-highlight">Quem vai te acompanhar?</span>
+      </p>
       <h2 class="h1 mb-2">Fabiana Montemor</h2>
       <div class="lp-hero-divider mx-auto"></div>
       <p class="lp-about-subtitle mb-4">Consultora de Imagem e Posicionamento Profissional.</p>
-      <div class="mx-auto" style="max-width: 640px;">
-        <p class="lp-about-text">
-          Antes da consultoria de imagem, construí minha trajetória profissional em
-          ambientes de gestão, liderança e varejo. Essa experiência mudou a forma
-          como enxergo a imagem. Para mim,
-          <span class="lp-manifesto-highlight fst-italic">roupa nunca é apenas roupa</span>.
+      <div class="mx-auto" style="max-width: 620px;">
+        <p class="lp-about-text lp-about-text-muted mb-4">
+          Ajudo profissionais a transformarem sua imagem em uma ferramenta
+          estratégica de comunicação, posicionamento e resultados.
         </p>
-        <p class="lp-about-text lp-about-text-muted">
-          Ela participa da construção de
-          <span class="lp-manifesto-highlight fst-italic">percepção, confiança, presença e posicionamento</span>.
-          Hoje, meu trabalho é ajudar profissionais a construírem uma imagem que
-          represente não apenas quem são, mas também
-          <span class="lp-manifesto-highlight fst-italic">onde querem chegar</span>.
+        <h3 class="h1 mb-3" style="color: #fff; font-size: 1.6rem;">Sua imagem não precisa chamar mais atenção.</h3>
+        <p class="lp-manifesto-text mb-0">
+          <span class="lp-manifesto-highlight">Ela precisa comunicar melhor.</span>
         </p>
-      </div>
-      <div class="lp-stat-grid mx-auto" style="max-width: 480px;">
-        <div class="lp-stat"><span class="lp-stat-number">15+</span><span class="lp-stat-label">Anos de liderança</span></div>
-        <div class="lp-stat"><span class="lp-stat-number">7</span><span class="lp-stat-label">Anos no varejo</span></div>
-        <div class="lp-stat"><span class="lp-stat-number">500+</span><span class="lp-stat-label">Clientes atendidos</span></div>
       </div>
       <div class="d-flex flex-wrap gap-3 mt-4 justify-content-center">
         <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand">Fale comigo</a>
@@ -357,7 +285,6 @@
       <div class="col-md-3">
         <p class="lp-footer-heading">Links rápidos</p>
         <ul class="lp-footer-links">
-          <li><a href="#consultoria">A consultoria</a></li>
           <li><a href="#sobre">Sobre</a></li>
           <li><a href="{{ url_for('public.blog_index') }}">Blog</a></li>
           <li><a href="{{ url_for('public.diagnostic') }}">Fazer diagnóstico</a></li>
