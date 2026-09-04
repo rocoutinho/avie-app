@@ -357,14 +357,15 @@ footer a {
 }
 
 /* CTAs editoriais — nas seções escuras com retrato/seda (hero, sobre,
-   CTA final) e também na seção de abertura .lp-intro (clara, mas com o
-   mesmo botão dourado vivo pedido pela referência); os botões do restante
-   do site (painel, formulários, outras seções claras da landing) continuam
+   CTA final) e também nas seções claras .lp-intro/.lp-consult-cta (mesmo
+   botão dourado vivo pedido pela referência); os botões do restante do
+   site (painel, formulários, outras seções claras da landing) continuam
    com a tipografia padrão sans-serif. */
 .lp-hero .btn-brand,
 #sobre .btn-brand,
 .lp-final-cta .btn-brand,
-.lp-intro .btn-brand {
+.lp-intro .btn-brand,
+.lp-consult-cta .btn-brand {
   font-family: "Cormorant Garamond", serif;
   font-variant-caps: small-caps;
   font-weight: 700;
@@ -401,7 +402,9 @@ footer a {
 .lp-final-cta .btn-brand:hover,
 .lp-final-cta .btn-brand:focus,
 .lp-intro .btn-brand:hover,
-.lp-intro .btn-brand:focus {
+.lp-intro .btn-brand:focus,
+.lp-consult-cta .btn-brand:hover,
+.lp-consult-cta .btn-brand:focus {
   background: var(--avie-navy-deep);
   box-shadow: 0 10px 24px rgba(19, 26, 46, 0.35);
 }
@@ -524,10 +527,6 @@ footer a {
   padding: 5rem 1.5rem;
 }
 
-.lp-band-tint {
-  background: linear-gradient(180deg, #f4f0e6 0%, #efe9db 100%);
-}
-
 .lp-step {
   display: flex;
   align-items: center;
@@ -558,14 +557,6 @@ footer a {
 
 .lp-step-reverse .lp-step-number {
   text-align: right;
-}
-
-.lp-value-card {
-  background: #fff;
-  border: 1px solid var(--avie-border);
-  border-radius: var(--avie-radius);
-  padding: 2rem 1.75rem;
-  height: 100%;
 }
 
 .lp-cta-banner {
@@ -771,40 +762,6 @@ footer a {
   color: #a8adbd;
 }
 
-.lp-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-top: 1.75rem;
-}
-
-.lp-stat {
-  text-align: center;
-  background: rgba(245, 216, 134, 0.06);
-  border: 1px solid rgba(245, 216, 134, 0.15);
-  border-radius: 12px;
-  padding: 1rem 0.5rem;
-}
-
-.lp-stat-number {
-  display: block;
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 700;
-  font-size: 2.1rem;
-  color: var(--avie-gold-light);
-  line-height: 1.1;
-}
-
-.lp-stat-label {
-  display: block;
-  margin-top: 0.3rem;
-  font-family: "News Gothic Condensed", "Inter", sans-serif;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #a8adbd;
-}
-
 .lp-about .btn-outline-light-lp {
   color: #f1efe9;
 }
@@ -881,31 +838,6 @@ footer a {
   object-fit: cover;
   object-position: center 26%;
   display: block;
-}
-
-/* Grid de benefícios ("o que muda depois da consultoria") — sobre fundo
-   escuro, reaproveita o .lp-about já existente. */
-.lp-benefit-item {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-}
-
-.lp-benefit-icon {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(245, 216, 134, 0.12);
-  color: var(--avie-gold-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lp-benefit-icon svg {
-  width: 16px;
-  height: 16px;
 }
 
 /* Lista de "essa consultoria é para você que..." */
@@ -1028,15 +960,6 @@ footer a {
     font-size: 1.5rem;
   }
 
-  .lp-stat-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
-  }
-
-  .lp-stat-number {
-    font-size: 1.6rem;
-  }
-
   .lp-whatsapp-float {
     width: 52px;
     height: 52px;
@@ -1070,39 +993,6 @@ footer a {
   .lp-about-inner {
     padding: 1.75rem 1.25rem 0;
   }
-}
-
-/* Ícones dos cards de serviço — mesmo tratamento visual dos badges do
-   Método I.M.P.A.C.T.O., pra reforçar a identidade sem introduzir uma
-   nova linguagem visual. */
-.lp-value-card {
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.lp-value-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--avie-shadow);
-  border-color: rgba(189, 151, 80, 0.35);
-}
-
-.lp-value-card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, rgba(189, 151, 80, 0.16), rgba(189, 151, 80, 0.06));
-  color: var(--avie-gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  flex-shrink: 0;
-}
-
-.lp-value-card-icon svg {
-  width: 22px;
-  height: 22px;
 }
 
 /* Cards de serviço do dossiê na área do cliente (templates/client_area.html)
