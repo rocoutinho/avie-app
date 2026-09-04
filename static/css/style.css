@@ -522,6 +522,17 @@ footer a {
   font-style: normal;
 }
 
+/* Destaque em estilo manuscrito (referência: linhas de abertura/fecho da
+   seção #sobre). Usa "Dancing Script", auto-hospedada em
+   static/fonts/dancing-script.woff2 (ver fonts.css) — mesmo critério de
+   não depender de CDN externo das demais fontes do projeto. */
+.lp-script-highlight {
+  font-family: "Dancing Script", cursive;
+  font-weight: 700;
+  color: var(--avie-gold);
+  letter-spacing: 0.01em;
+}
+
 .lp-band {
   background: #fff;
   padding: 5rem 1.5rem;
@@ -741,6 +752,10 @@ footer a {
 }
 
 .lp-about .lp-manifesto-highlight {
+  color: var(--avie-gold-light);
+}
+
+.lp-about .lp-script-highlight {
   color: var(--avie-gold-light);
 }
 
