@@ -58,3 +58,15 @@
   font-display: swap;
   src: url("/static/fonts/news-gothic-condensed.woff2") format("woff2");
 }
+
+/* "Dancing Script" (Impallari Type, SIL OFL) — única fonte cursiva do
+   projeto, usada apenas nos destaques em estilo manuscrito da landing
+   page (.lp-script-highlight). Auto-hospedada como as demais, mesmo
+   critério de "sem CDN externo". */
+@font-face {
+  font-family: "Dancing Script";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/static/fonts/dancing-script.woff2") format("woff2");
+}
