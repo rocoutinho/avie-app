@@ -533,6 +533,31 @@ footer a {
   letter-spacing: 0.01em;
 }
 
+/* Destaque manuscrito "brush" (seção "Imagem não é só roupa"). Mesmo
+   degradê metálico do botão de CTA dourado (.lp-hero .btn-brand etc)
+   recortado no texto, pra reproduzir a textura/brilho da referência —
+   com fallback sólido pra navegadores sem suporte a background-clip:
+   text. */
+.lp-script-brush {
+  font-family: "Caveat", cursive;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--avie-gold);
+  background: linear-gradient(
+    115deg,
+    #8a5f1a 0%,
+    #c8932c 20%,
+    #ffd873 36%,
+    #c8932c 50%,
+    #9c6c1f 66%,
+    #e0a936 84%,
+    #97671c 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .lp-band {
   background: #fff;
   padding: 5rem 1.5rem;
