@@ -2,8 +2,6 @@
 {% block title %}Consultoria de Imagem e Posicionamento Profissional{% endblock %}
 {% block meta_description %}Estratégia de imagem para empresários, líderes e profissionais que querem alinhar presença, posicionamento e resultados. Faça o diagnóstico gratuito com Fabiana Montemor.{% endblock %}
 
-{% macro arrow_icon() %}<svg class="lp-btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endmacro %}
-
 {% macro service_icon(key) %}
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   {%- if key == "palette" %}
@@ -234,15 +232,15 @@
 
   <section class="lp-final-cta full-bleed">
     <div class="container text-center reveal">
-      <h2 class="h1 mb-2" style="color: #fff;">Sua carreira evoluiu.</h2>
-      <p class="h3 mb-4" style="color: var(--avie-gold-light);">Sua imagem está acompanhando essa evolução?</p>
-      <p class="mb-4 mx-auto" style="max-width: 560px; color: #cfd3de;">
-        Vamos conversar sobre seu momento profissional, seus objetivos e a
-        percepção que deseja construir. A partir daí, eu posso indicar qual
-        caminho faz mais sentido para você.
-      </p>
-      <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar minha sessão diagnóstica' | urlencode }}" target="_blank" rel="noopener" class="btn btn-brand btn-lg px-4 d-inline-flex align-items-center justify-content-center gap-2">Quero dar o primeiro passo agora{{ arrow_icon() }}</a>
-      <p class="small mt-3 mb-0" style="color: #a8adbd;">Clique para iniciar uma conversa pelo WhatsApp e agendar sua sessão diagnóstica comigo!</p>
+      <h2 class="h1 mb-5 mx-auto" style="color: #fff; max-width: 760px;">Que tal transformar sua imagem em uma ferramenta para o seu posicionamento profissional?</h2>
+
+      <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar minha sessão diagnóstica' | urlencode }}" target="_blank" rel="noopener" class="btn btn-brand btn-lg d-inline-flex align-items-center justify-content-center">Quero agendar minha<br>sessão diagnóstica</a>
+
+      <p class="lp-about-text mt-4 mb-5" style="color: #fff;">Clique para iniciar uma conversa<br>comigo pelo WhatsApp</p>
+
+      <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-3" alt="Fabiana Montemor — Consultoria de Imagem e Estilo">
+
+      <p class="lp-about-text lp-about-text-muted mb-0">Atendimento presencial e online · São José dos Campos/SP</p>
     </div>
   </section>
 
