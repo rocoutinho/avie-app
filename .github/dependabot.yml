@@ -1,0 +1,11 @@
+# Scan automático de vulnerabilidade/atualização de dependências — sinalizado
+# como "esforço quase zero, alto retorno" na revisão de segurança da Fase 0
+# (ver CLAUDE.md, seção Deployment/Postgres). Sem workflow de CI configurado
+# neste repositório, só o ecossistema "pip" é relevante aqui.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

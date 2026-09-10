@@ -1969,3 +1969,41 @@ def test_closet_item_keeps_pasted_url_when_no_file_uploaded(app, logged_in_clien
     finally:
         app.config["CLOUDINARY_URL"] = None
 
+
+def test_closet_item_prep_fields_are_optional_and_persist(app):
+    with app.app_context():
+        c = Client(full_name="Karen Closet", email="karen-closet@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        # sem os campos preparatórios: continua funcionando normalmente
+        bare_item = ClosetItem(client_id=c.id, category="blazer", description="Blazer sem detalhes")
+        db.session.add(bare_item)
+        db.session.commit()
+        assert bare_item.cor is None
+        assert bare_item.marca is None
+        assert bare_item.ocasiao is None
+        assert bare_item.estacao is None
+        assert bare_item.estilo is None
+
+        # preenchidos: persistem normalmente
+        detailed_item = ClosetItem(
+            client_id=c.id,
+            category="vestido",
+            description="Vestido midi",
+            cor="Verde-oliva",
+            marca="Zara",
+            ocasiao="Evento",
+            estacao="Verão",
+            estilo="Elegante",
+        )
+        db.session.add(detailed_item)
+        db.session.commit()
+
+        saved = db.session.get(ClosetItem, detailed_item.id)
+        assert saved.cor == "Verde-oliva"
+        assert saved.marca == "Zara"
+        assert saved.ocasiao == "Evento"
+        assert saved.estacao == "Verão"
+        assert saved.estilo == "Elegante"
+
