@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Pagamentos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <h1 class="h3 mb-0">Pagamentos</h1>
+</div>
+
+<ul class="nav nav-pills mb-4 flex-wrap gap-2">
+  <li class="nav-item">
+    <a class="nav-link {% if not active_status %}active{% endif %}" href="{{ url_for('payments.list_payments') }}">
+      Todos <span class="badge bg-light text-dark">{{ counts['all'] }}</span>
+    </a>
+  </li>
+  {% for key, label in PAYMENT_STATUSES %}
+  <li class="nav-item">
+    <a class="nav-link {% if active_status == key %}active{% endif %}" href="{{ url_for('payments.list_payments', status=key) }}">
+      {{ label }} <span class="badge bg-light text-dark">{{ counts[key] }}</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="table-responsive">
+  <table class="table bg-white">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Vencimento</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in payments %}
+      <tr class="cursor-pointer" onclick="window.location='{{ url_for('clients.detail', client_id=p.client_id) }}'" style="cursor:pointer;">
+        <td>{{ p.client.full_name }}</td>
+        <td>{{ p.description }}</td>
+        <td>R$ {{ "%.2f"|format(p.amount) }}</td>
+        <td>{{ p.due_date.strftime('%d/%m/%Y') if p.due_date else "—" }}</td>
+        <td>{{ label_for(PAYMENT_STATUSES, p.status) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum pagamento encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
