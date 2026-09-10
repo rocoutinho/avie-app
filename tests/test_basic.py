@@ -210,6 +210,56 @@ def test_client_status_updates_and_consultation_advances_pipeline(app, logged_in
         assert Consultation.query.filter_by(client_id=client_id).count() == 1
 
 
+def test_sessions_list_shows_all_consultations_with_status_filter(app, logged_in_client, client):
+    with app.app_context():
+        lead = Client(full_name="Diana Sessions", email="diana-sessions@example.com", status="lead")
+        db.session.add(lead)
+        db.session.commit()
+        lead_id = lead.id
+        db.session.add(
+            Consultation(
+                client_id=lead_id,
+                tipo="diagnostico_gratuito",
+                scheduled_at=datetime(2026, 9, 1, 14, 0),
+                status="agendada",
+            )
+        )
+        db.session.add(
+            Consultation(
+                client_id=lead_id,
+                tipo="consultoria_imagem",
+                scheduled_at=datetime(2026, 8, 20, 10, 0),
+                status="realizada",
+            )
+        )
+        db.session.commit()
+
+    response = logged_in_client.get("/painel/sessoes/")
+    assert response.status_code == 200
+    assert b"Diana Sessions" in response.data
+    assert response.data.count(b"Diana Sessions") == 2
+
+    response = logged_in_client.get("/painel/sessoes/?status=realizada")
+    assert response.status_code == 200
+    assert response.data.count(b"Diana Sessions") == 1
+
+    # Cliente (não-staff) não acessa a listagem interna.
+    with app.app_context():
+        portal_client = Client(full_name="Cliente Comum", email="cliente-comum@example.com", status="lead")
+        portal_client.set_password("senha-cliente-123")
+        db.session.add(portal_client)
+        db.session.commit()
+
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "cliente-comum@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/painel/sessoes/", follow_redirects=False)
+    assert response.status_code == 403
+
+
 def test_report_draft_prefills_from_profile_and_send_advances_pipeline(app, logged_in_client):
     with app.app_context():
         c = Client(full_name="Carla Nunes", email="carla@example.com", status="diagnostico_concluido")

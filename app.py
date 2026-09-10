@@ -63,12 +63,14 @@ def create_app(config_class=Config):
     from blueprints.ebooks import ebooks_bp
     from blueprints.public import public_bp
     from blueprints.reports import reports_bp
+    from blueprints.sessions import sessions_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(reports_bp)
+    app.register_blueprint(sessions_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(ebooks_bp)
     app.register_blueprint(client_area_bp)
