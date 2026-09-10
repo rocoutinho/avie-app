@@ -5,6 +5,7 @@ import pytest
 from app import create_app
 from config import TestConfig
 from extensions import db
+from journey import build_journey
 from models import (
     BlogPost,
     Client,
@@ -1438,4 +1439,111 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
     assert response.status_code == 200
     with app.app_context():
         assert db.session.get(ShoppingListItem, item_id) is None
+
+
+def test_build_journey_for_empty_client_is_all_not_started(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Vazia", email="vazia@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        steps = build_journey(c)
+        assert len(steps) == 4
+        assert [s["status"] for s in steps] == ["nao_iniciado"] * 4
+        assert steps[3]["next_consultation"] is None
+
+
+def test_build_journey_uses_dossie_as_identity_and_diagnostic_proxy(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Dossiê", email="dossie-journey@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        report = StyleReport(
+            client_id=c.id,
+            title="Dossiê",
+            content="",
+            status="enviado",
+            estilo_pessoal="Clássico contemporâneo",
+        )
+        db.session.add(report)
+        db.session.commit()
+
+        steps = build_journey(c)
+        by_key = {s["key"]: s for s in steps}
+        assert by_key["identidade"]["status"] == "concluido"
+        assert by_key["diagnostico"]["status"] == "concluido"
+        assert by_key["looks"]["status"] == "nao_iniciado"
+        assert by_key["evolucao"]["status"] == "nao_iniciado"
+
+
+def test_build_journey_with_future_consultation_is_em_andamento(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Agendada", email="agendada-journey@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        future = Consultation(
+            client_id=c.id,
+            scheduled_at=datetime(2099, 1, 1, 10, 0),
+            status="agendada",
+        )
+        db.session.add(future)
+        db.session.commit()
+
+        steps = build_journey(c)
+        evolucao = next(s for s in steps if s["key"] == "evolucao")
+        assert evolucao["status"] == "em_andamento"
+        assert evolucao["next_consultation"].id == future.id
+
+
+def test_build_journey_with_only_past_consultation_is_concluido(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Realizada", email="realizada-journey@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        past = Consultation(
+            client_id=c.id,
+            scheduled_at=datetime(2020, 1, 1, 10, 0),
+            status="realizada",
+        )
+        db.session.add(past)
+        db.session.commit()
+
+        steps = build_journey(c)
+        evolucao = next(s for s in steps if s["key"] == "evolucao")
+        assert evolucao["status"] == "concluido"
+        assert evolucao["next_consultation"] is None
+
+
+def test_client_area_shows_journey_cards(app, client):
+    with app.app_context():
+        c = Client(full_name="Marina Jornada", email="marina-jornada@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        report = StyleReport(
+            client_id=c.id,
+            title="Dossiê",
+            content="",
+            status="enviado",
+            estilo_pessoal="Clássico contemporâneo",
+        )
+        db.session.add(report)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "marina-jornada@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/")
+    assert response.status_code == 200
+    assert "Sua jornada de transformação".encode() in response.data
+    assert "Conhecendo minha identidade".encode() in response.data
+    assert "Meu diagnóstico de imagem".encode() in response.data
+    assert "Minha assinatura visual".encode() in response.data
+    assert "Minha evolução contínua".encode() in response.data
+    assert "Concluído".encode() in response.data
 

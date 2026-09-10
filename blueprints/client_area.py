@@ -8,6 +8,7 @@ from datetime import datetime
 from flask import Blueprint, abort, current_app, render_template, session
 from flask_login import current_user, login_required
 
+from journey import build_journey
 from models import Client
 
 client_area_bp = Blueprint("client_area", __name__, url_prefix="/minha-area")
@@ -64,6 +65,7 @@ def index():
         "client_area.html",
         client=current_user,
         previous_login=previous_login,
+        journey=build_journey(current_user),
         other_reports=other_reports,
         dossie_services=dossie_services,
         closet_items=current_user.closet_items,
