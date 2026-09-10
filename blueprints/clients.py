@@ -23,6 +23,7 @@ from forms import (
 )
 from models import (
     CLIENT_STATUSES,
+    PERSONAL_SHOPPER_STATUSES,
     Client,
     ClosetItem,
     Consultation,
@@ -383,22 +384,25 @@ def new_shopping_list_item(client_id):
             client_id=client.id,
             category=form.category.data,
             description=form.description.data.strip(),
+            motivo=form.motivo.data,
             notes=form.notes.data,
         )
         db.session.add(item)
         db.session.commit()
-        flash("Peça adicionada à lista de compras.", "success")
+        flash("Recomendação adicionada.", "success")
         return redirect(url_for("clients.detail", client_id=client.id))
     return render_template("shopping_list_item_form.html", form=form, client=client)
 
 
-@clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/comprado", methods=["POST"])
+@clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/status", methods=["POST"])
 @login_required
-def toggle_shopping_list_item(client_id, item_id):
+def set_shopping_list_item_status(client_id, item_id):
     client = Client.query.get_or_404(client_id)
     item = ShoppingListItem.query.filter_by(id=item_id, client_id=client.id).first_or_404()
-    item.purchased = not item.purchased
-    db.session.commit()
+    status = request.form.get("status")
+    if status in dict(PERSONAL_SHOPPER_STATUSES):
+        item.status = status
+        db.session.commit()
     return redirect(url_for("clients.detail", client_id=client.id))
 
 

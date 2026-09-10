@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import render_field %}
-{% block title %}Nova peça na lista de compras{% endblock %}
+{% block title %}Nova recomendação do personal shopper{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-lg-6">
-    <h1 class="h3 mb-1">Nova peça na lista de compras</h1>
+    <h1 class="h3 mb-1">Nova recomendação do personal shopper</h1>
     <p class="text-muted mb-4">Cliente: {{ client.full_name }}</p>
     <form method="post" novalidate>
       {{ form.hidden_tag() }}
       {{ render_field(form.category) }}
       {{ render_field(form.description) }}
+      {{ render_field(form.motivo) }}
       {{ render_field(form.notes) }}
       <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
     </form>

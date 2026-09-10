@@ -282,6 +282,9 @@ class ClosetItemForm(FlaskForm):
 class ShoppingListItemForm(FlaskForm):
     category = SelectField("Categoria", choices=CLOSET_ITEM_CATEGORIES)
     description = StringField("Peça sugerida", validators=[DataRequired(), Length(max=255)])
+    motivo = TextAreaField(
+        "Motivo da recomendação (o porquê, não o link de compra)", validators=[Optional()]
+    )
     notes = TextAreaField("Notas (opcional)", validators=[Optional()])
     submit = SubmitField("Salvar")
 
