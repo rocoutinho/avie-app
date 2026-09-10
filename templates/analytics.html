@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <h1 class="h3 mb-0">Analytics</h1>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="text-muted small text-uppercase mb-1">Clientes</p>
+        <p class="h3 mb-0">{{ total_clients }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="text-muted small text-uppercase mb-1">Receita paga</p>
+        <p class="h3 mb-0">R$ {{ "%.2f"|format(revenue_paid) }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="text-muted small text-uppercase mb-1">Pendente / Atrasado</p>
+        <p class="h3 mb-0">R$ {{ "%.2f"|format(revenue_pending + revenue_overdue) }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="text-muted small text-uppercase mb-1">Sessões agendadas</p>
+        <p class="h3 mb-0">{{ upcoming_sessions }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <h2 class="h5">Clientes por estágio</h2>
+    <ul class="list-group">
+      {% for key, label in CLIENT_STATUSES %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>{{ label }}</span>
+        <span class="badge bg-light text-dark">{{ clients_by_status[key] }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <h2 class="h5">Leads por origem</h2>
+    <ul class="list-group">
+      {% for key, label in LEAD_SOURCES %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>{{ label }}</span>
+        <span class="badge bg-light text-dark">{{ clients_by_source[key] }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
