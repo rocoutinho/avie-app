@@ -45,6 +45,16 @@ PAYMENT_STATUSES = [
     ("atrasado", "Atrasado"),
 ]
 
+CLOSET_ITEM_CATEGORIES = [
+    ("blazer", "Blazer/Casaco"),
+    ("camisa", "Camisa/Blusa"),
+    ("calca", "Calça"),
+    ("vestido", "Vestido/Saia"),
+    ("sapato", "Sapato/Calçado"),
+    ("acessorio", "Acessório"),
+    ("outro", "Outro"),
+]
+
 LEAD_SOURCES = [
     ("instagram", "Instagram"),
     ("google", "Google"),
@@ -172,6 +182,11 @@ class Client(UserMixin, db.Model):
     source = db.Column(db.String(30), default="outro")
     status = db.Column(db.String(30), default="lead")
     notes = db.Column(db.Text)
+    # Distinto de "notes" (CRM genérico) — especificamente atributos físicos/
+    # de estilo (silhueta, formato do rosto, visagismo etc.) que informam a
+    # criação de looks e o closet digital. Uso interno da equipe, não
+    # exposto em client_area.
+    style_notes = db.Column(db.Text)
     # Atribuição técnica de campanha (parâmetros utm_* capturados na primeira
     # visita) — complementa "source", que é a origem autodeclarada pelo lead.
     utm_source = db.Column(db.String(150))
@@ -260,6 +275,12 @@ class Client(UserMixin, db.Model):
         cascade="all, delete-orphan",
         order_by="Payment.created_at.desc()",
     )
+    closet_items = db.relationship(
+        "ClosetItem",
+        backref="client",
+        cascade="all, delete-orphan",
+        order_by="ClosetItem.created_at.desc()",
+    )
 
 
 class StyleProfile(db.Model):
@@ -338,4 +359,20 @@ class Payment(db.Model):
     status = db.Column(db.String(20), default="pendente")
     due_date = db.Column(db.Date)
     paid_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ClosetItem(db.Model):
+    """Uma peça do guarda-roupa digital da cliente — base do "Closet
+    digital"/"Criação de looks" (ver plano de reestruturação Estúdio/
+    Negócio). Cadastrada pela equipe; a cliente só visualiza (sem edição)
+    na área dela. `photo_url` segue o mesmo padrão sem upload usado em
+    StyleReport.pdf_url/Ebook.file_url — o disco do Render é efêmero."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
+    category = db.Column(db.String(30), default="outro", nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    photo_url = db.Column(db.String(500))
+    notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

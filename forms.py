@@ -17,6 +17,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange
 from models import (
     BUDGET_RANGES,
     CLIENT_STATUSES,
+    CLOSET_ITEM_CATEGORIES,
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
     LEAD_SOURCES,
@@ -102,6 +103,9 @@ class ClientForm(FlaskForm):
     source = SelectField("Origem", choices=LEAD_SOURCES)
     status = SelectField("Status", choices=CLIENT_STATUSES)
     notes = TextAreaField("Notas internas", validators=[Optional()])
+    style_notes = TextAreaField(
+        "Sobre a cliente (silhueta, formato do rosto, visagismo...)", validators=[Optional()]
+    )
     submit = SubmitField("Salvar")
 
 
@@ -240,6 +244,14 @@ class PaymentForm(FlaskForm):
     amount = DecimalField("Valor (R$)", validators=[DataRequired(), NumberRange(min=0)])
     status = SelectField("Status", choices=PAYMENT_STATUSES)
     due_date = DateField("Vencimento", validators=[Optional()])
+    submit = SubmitField("Salvar")
+
+
+class ClosetItemForm(FlaskForm):
+    category = SelectField("Categoria", choices=CLOSET_ITEM_CATEGORIES)
+    description = StringField("Descrição da peça", validators=[DataRequired(), Length(max=255)])
+    photo_url = StringField("Link da foto (opcional)", validators=[Optional(), Length(max=500)])
+    notes = TextAreaField("Notas (opcional)", validators=[Optional()])
     submit = SubmitField("Salvar")
 
 

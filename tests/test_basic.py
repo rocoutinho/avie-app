@@ -5,7 +5,7 @@ import pytest
 from app import create_app
 from config import TestConfig
 from extensions import db
-from models import BlogPost, Client, Consultation, Ebook, Payment, StyleProfile, StyleReport, User
+from models import BlogPost, Client, ClosetItem, Consultation, Ebook, Payment, StyleProfile, StyleReport, User
 
 
 @pytest.fixture
@@ -1288,4 +1288,86 @@ def test_staff_navbar_links_to_studio_and_business_groups(logged_in_client):
         b'href="/painel/ebooks/"',
     ):
         assert href in response.data
+
+
+def test_staff_saves_style_notes_via_client_edit(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Helena Estilo", email="helena-estilo@example.com", status="cliente_ativo")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/editar",
+        data={
+            "full_name": "Helena Estilo",
+            "email": "helena-estilo@example.com",
+            "phone": "",
+            "instagram": "",
+            "source": "indicacao",
+            "status": "cliente_ativo",
+            "notes": "",
+            "style_notes": "Silhueta ampulheta, rosto oval, prefere tons quentes.",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Silhueta ampulheta".encode() in response.data
+
+    with app.app_context():
+        assert db.session.get(Client, client_id).style_notes == "Silhueta ampulheta, rosto oval, prefere tons quentes."
+
+
+def test_staff_manages_closet_items_and_client_sees_them_read_only(app, logged_in_client, client):
+    with app.app_context():
+        c = Client(full_name="Isabela Closet", email="isabela-closet@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/closet/novo",
+        data={
+            "category": "blazer",
+            "description": "Blazer preto alfaiataria",
+            "photo_url": "https://example.com/blazer.jpg",
+            "notes": "",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Blazer preto alfaiataria".encode() in response.data
+
+    with app.app_context():
+        item = ClosetItem.query.filter_by(client_id=client_id).first()
+        assert item is not None
+        assert item.category == "blazer"
+        item_id = item.id
+
+    # Aparece na área do cliente, sem opção de editar/excluir.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "isabela-closet@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/")
+    assert response.status_code == 200
+    assert "Blazer preto alfaiataria".encode() in response.data
+    assert b"Excluir" not in response.data
+
+    # Volta como staff (mesmos cookies do fixture logged_in_client) e remove a peça.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "staff@example.com", "password": "senha-forte-123"},
+        follow_redirects=True,
+    )
+    response = client.post(
+        f"/painel/clientes/{client_id}/closet/{item_id}/excluir", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ClosetItem, item_id) is None
 

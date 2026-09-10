@@ -9,8 +9,16 @@ from flask_login import login_required
 from blueprints.auth import require_staff
 from emails import send_client_access_email
 from extensions import db
-from forms import ClientDossieForm, ClientForm, ConsultationForm, EditDossieForm, PaymentForm, SetClientPasswordForm
-from models import CLIENT_STATUSES, Client, Consultation, Payment, StyleReport
+from forms import (
+    ClientDossieForm,
+    ClientForm,
+    ClosetItemForm,
+    ConsultationForm,
+    EditDossieForm,
+    PaymentForm,
+    SetClientPasswordForm,
+)
+from models import CLIENT_STATUSES, Client, ClosetItem, Consultation, Payment, StyleReport
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/painel/clientes")
 clients_bp.before_request(require_staff)
@@ -81,6 +89,7 @@ def new_client():
             source=form.source.data,
             status=form.status.data,
             notes=form.notes.data,
+            style_notes=form.style_notes.data,
         )
         db.session.add(client)
         db.session.commit()
@@ -219,6 +228,7 @@ def edit_client(client_id):
         client.source = form.source.data
         client.status = form.status.data
         client.notes = form.notes.data
+        client.style_notes = form.style_notes.data
         db.session.commit()
         flash("Dados atualizados.", "success")
         return redirect(url_for("clients.detail", client_id=client.id))
@@ -302,3 +312,34 @@ def new_payment(client_id):
         flash("Pagamento registrado.", "success")
         return redirect(url_for("clients.detail", client_id=client.id))
     return render_template("payment_form.html", form=form, client=client)
+
+
+@clients_bp.route("/<int:client_id>/closet/novo", methods=["GET", "POST"])
+@login_required
+def new_closet_item(client_id):
+    client = Client.query.get_or_404(client_id)
+    form = ClosetItemForm()
+    if form.validate_on_submit():
+        item = ClosetItem(
+            client_id=client.id,
+            category=form.category.data,
+            description=form.description.data.strip(),
+            photo_url=form.photo_url.data,
+            notes=form.notes.data,
+        )
+        db.session.add(item)
+        db.session.commit()
+        flash("Peça adicionada ao closet.", "success")
+        return redirect(url_for("clients.detail", client_id=client.id))
+    return render_template("closet_item_form.html", form=form, client=client)
+
+
+@clients_bp.route("/<int:client_id>/closet/<int:item_id>/excluir", methods=["POST"])
+@login_required
+def delete_closet_item(client_id, item_id):
+    client = Client.query.get_or_404(client_id)
+    item = ClosetItem.query.filter_by(id=item_id, client_id=client.id).first_or_404()
+    db.session.delete(item)
+    db.session.commit()
+    flash("Peça removida do closet.", "success")
+    return redirect(url_for("clients.detail", client_id=client.id))

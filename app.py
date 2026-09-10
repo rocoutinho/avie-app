@@ -13,6 +13,7 @@ from extensions import db, limiter, login_manager, mail, migrate
 from models import (
     BLOG_POST_STATUSES,
     CLIENT_STATUSES,
+    CLOSET_ITEM_CATEGORIES,
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
     LEAD_SOURCES,
@@ -93,6 +94,7 @@ def create_app(config_class=Config):
             REPORT_STATUSES=REPORT_STATUSES,
             PAYMENT_STATUSES=PAYMENT_STATUSES,
             LEAD_SOURCES=LEAD_SOURCES,
+            CLOSET_ITEM_CATEGORIES=CLOSET_ITEM_CATEGORIES,
             BLOG_POST_STATUSES=BLOG_POST_STATUSES,
             label_for=lambda choices, key: dict(choices).get(key, key),
             current_year=datetime.utcnow().year,

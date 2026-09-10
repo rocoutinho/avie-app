@@ -119,4 +119,20 @@
   </div>
 </div>
 {% endif %}
+
+{% if closet_items %}
+<div class="card mt-4">
+  <div class="card-header">Seu closet</div>
+  <ul class="list-group list-group-flush">
+    {% for item in closet_items %}
+    <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+      <span>
+        {% if item.photo_url %}<a href="{{ item.photo_url }}" target="_blank" rel="noopener">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}
+      </span>
+      <span class="text-muted small">{{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
 {% endblock %}

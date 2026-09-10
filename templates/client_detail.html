@@ -61,6 +61,13 @@
       </div>
     </div>
 
+    <div class="card mb-4">
+      <div class="card-header">Sobre a cliente</div>
+      <div class="card-body">
+        <p class="mb-0">{{ client.style_notes or "Sem notas de estilo (silhueta, formato do rosto, visagismo...)." }}</p>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header">Acesso à área do cliente</div>
       <div class="card-body">
@@ -173,7 +180,7 @@
       </ul>
     </div>
 
-    <div class="card">
+    <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         Pagamentos
         <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_payment', client_id=client.id) }}">+ Novo</a>
@@ -186,6 +193,28 @@
         </li>
         {% else %}
         <li class="list-group-item text-muted">Nenhum pagamento registrado.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Closet
+        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_closet_item', client_id=client.id) }}">+ Nova peça</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for item in client.closet_items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+          <span>
+            {% if item.photo_url %}<a href="{{ item.photo_url }}" target="_blank" rel="noopener">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}
+            <span class="text-muted small">· {{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+          </span>
+          <form method="post" action="{{ url_for('clients.delete_closet_item', client_id=client.id, item_id=item.id) }}" onsubmit="return confirm('Remover esta peça do closet?');">
+            <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhuma peça cadastrada ainda.</li>
         {% endfor %}
       </ul>
     </div>
