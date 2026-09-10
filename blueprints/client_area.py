@@ -66,4 +66,5 @@ def index():
         previous_login=previous_login,
         other_reports=other_reports,
         dossie_services=dossie_services,
+        closet_items=current_user.closet_items,
     )
