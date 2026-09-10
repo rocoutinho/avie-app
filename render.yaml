@@ -4,13 +4,27 @@
 # marcadas como "sync: false" — ver o passo a passo de deploy para o
 # significado de cada uma.
 #
-# Fase experimental, custo zero: plano free (sem banco Postgres pago) e
-# SQLite no próprio disco do serviço. O disco do plano free é efêmero —
-# os dados (leads, clientes) somem a cada deploy/restart. O startCommand
-# roda as migrações e recria o usuário admin (via ADMIN_*) sozinho a cada
-# boot, então o site sempre sobe utilizável mesmo depois de perder o
-# banco. Quando o negócio justificar o custo, trocar pra um banco
-# persistente é só definir DATABASE_URL e voltar o plano pra "starter".
+# IMPORTANTE: o serviço web "avie-app" já existe e foi criado manualmente
+# no painel do Render — este arquivo não é aplicado automaticamente nele.
+# Ele documenta a configuração pretendida (infraestrutura-como-código) mas
+# qualquer mudança aqui só tem efeito em produção depois de alguém colar
+# a mudança correspondente em Settings → Build & Deploy / Environment no
+# painel do Render.
+#
+# databases.avie-db: banco PostgreSQL gerenciado pelo Render — decisão do
+# negócio de sair do SQLite efêmero (ver seção "Fase 0" no relatório
+# estratégico da sessão) usando o mesmo provedor que já hospeda o app, em
+# vez de um Postgres gratuito de terceiro (Supabase/Neon). Tem custo
+# mensal (plano "starter" do Postgres do Render) — ainda não provisionado
+# no painel; até isso acontecer, produção continua no SQLite efêmero do
+# plano web free (ver nota abaixo). Quando o banco for criado no painel,
+# DATABASE_URL passa a vir de lá (fromDatabase), sem precisar colar a
+# connection string manualmente numa env var "sync: false".
+databases:
+  - name: avie-db
+    plan: starter
+    postgresMajorVersion: "16"
+
 services:
   - type: web
     name: avie-app
@@ -25,6 +39,10 @@ services:
         generateValue: true
       - key: AVIE_ENV
         value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: avie-db
+          property: connectionString
       - key: SITE_URL
         sync: false
       - key: ADMIN_NAME
