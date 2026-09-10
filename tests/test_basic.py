@@ -1274,3 +1274,18 @@ def test_analytics_aggregates_clients_payments_and_sessions(app, logged_in_clien
     response = client.get("/painel/analytics/", follow_redirects=False)
     assert response.status_code == 403
 
+
+def test_staff_navbar_links_to_studio_and_business_groups(logged_in_client):
+    response = logged_in_client.get("/painel/")
+    assert response.status_code == 200
+    for href in (
+        b'href="/painel/clientes/"',
+        b'href="/painel/sessoes/"',
+        b'href="/painel/dossies/"',
+        b'href="/painel/pagamentos/"',
+        b'href="/painel/analytics/"',
+        b'href="/painel/blog/"',
+        b'href="/painel/ebooks/"',
+    ):
+        assert href in response.data
+
