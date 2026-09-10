@@ -5,7 +5,7 @@
 <div class="row justify-content-center">
   <div class="col-lg-7">
     <h1 class="h3 mb-4">{{ "Editar cliente" if client else "Novo cliente" }}</h1>
-    <form method="post" novalidate>
+    <form method="post" enctype="multipart/form-data" novalidate>
       {{ form.hidden_tag() }}
       {{ render_field(form.full_name) }}
       {{ render_field(form.email) }}
@@ -24,6 +24,7 @@
         <div class="col-md-4">{{ render_field(form.cidade) }}</div>
       </div>
       {{ render_field(form.foto_perfil) }}
+      {{ render_field(form.foto_perfil_arquivo) }}
       {{ render_field(form.identidade_rotina) }}
       {{ render_field(form.identidade_objetivo) }}
       {{ render_field(form.identidade_estilo) }}

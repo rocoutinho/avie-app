@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField
 from wtforms import (
     BooleanField,
     DateField,
@@ -25,6 +26,10 @@ from models import (
     PAYMENT_STATUSES,
     REPORT_STATUSES,
 )
+
+# Extensões aceitas nos campos de upload de imagem (Cloudinary) — ver
+# image_upload.py. Mesma lista pros 3 campos que ganharam upload.
+IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"]
 
 
 class LoginForm(FlaskForm):
@@ -115,6 +120,10 @@ class ClientForm(FlaskForm):
     foto_perfil = StringField(
         "Link da foto de perfil (opcional — Google Drive, Dropbox etc.)",
         validators=[Optional(), Length(max=500)],
+    )
+    foto_perfil_arquivo = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
     )
     identidade_rotina = TextAreaField(
         "Quem sou (rotina, momentos importantes)", validators=[Optional()], render_kw={"rows": 4}
@@ -275,6 +284,10 @@ class ClosetItemForm(FlaskForm):
     category = SelectField("Categoria", choices=CLOSET_ITEM_CATEGORIES)
     description = StringField("Descrição da peça", validators=[DataRequired(), Length(max=255)])
     photo_url = StringField("Link da foto (opcional)", validators=[Optional(), Length(max=500)])
+    photo_file = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
+    )
     notes = TextAreaField("Notas (opcional)", validators=[Optional()])
     submit = SubmitField("Salvar")
 
@@ -314,6 +327,10 @@ class LookForm(FlaskForm):
     nome = StringField("Nome do look", validators=[DataRequired(), Length(max=150)])
     photo_url = StringField(
         "Link da foto principal (opcional)", validators=[Optional(), Length(max=500)]
+    )
+    photo_file = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
     )
     ocasiao = StringField("Ocasião (opcional)", validators=[Optional(), Length(max=150)])
     descricao = TextAreaField("Descrição (opcional)", validators=[Optional()])

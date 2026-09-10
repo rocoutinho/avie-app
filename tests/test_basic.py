@@ -1,4 +1,6 @@
+import io
 from datetime import datetime
+from unittest.mock import patch
 
 import pytest
 
@@ -1891,4 +1893,79 @@ def test_analytics_shows_recurring_clients_count(app, logged_in_client):
     response = logged_in_client.get("/painel/analytics/")
     assert response.status_code == 200
     assert "Clientes recorrentes".encode() in response.data
+
+
+def test_upload_image_noop_without_cloudinary_configured(app):
+    from werkzeug.datastructures import FileStorage
+
+    from image_upload import upload_image
+
+    with app.app_context():
+        fake_file = FileStorage(stream=io.BytesIO(b"conteudo fake"), filename="foto.jpg")
+        assert app.config.get("CLOUDINARY_URL") is None
+        assert upload_image(fake_file) is None
+
+
+def test_closet_item_photo_upload_overrides_pasted_url(app, logged_in_client):
+    app.config["CLOUDINARY_URL"] = "cloudinary://fake_key:fake_secret@fake_cloud"
+    try:
+        with app.app_context():
+            c = Client(full_name="Iris Upload", email="iris-upload@example.com")
+            db.session.add(c)
+            db.session.commit()
+            client_id = c.id
+
+        with patch("image_upload.cloudinary.uploader.upload") as mock_upload:
+            mock_upload.return_value = {"secure_url": "https://res.cloudinary.com/fake/avie/blazer.jpg"}
+            response = logged_in_client.post(
+                f"/painel/clientes/{client_id}/closet/novo",
+                data={
+                    "category": "blazer",
+                    "description": "Blazer com foto enviada",
+                    "photo_url": "https://exemplo.com/link-colado.jpg",
+                    "photo_file": (io.BytesIO(b"conteudo fake de imagem"), "blazer.jpg"),
+                    "notes": "",
+                },
+                content_type="multipart/form-data",
+                follow_redirects=True,
+            )
+            assert response.status_code == 200
+            mock_upload.assert_called_once()
+
+        with app.app_context():
+            item = ClosetItem.query.filter_by(client_id=client_id).first()
+            assert item.photo_url == "https://res.cloudinary.com/fake/avie/blazer.jpg"
+    finally:
+        app.config["CLOUDINARY_URL"] = None
+
+
+def test_closet_item_keeps_pasted_url_when_no_file_uploaded(app, logged_in_client):
+    app.config["CLOUDINARY_URL"] = "cloudinary://fake_key:fake_secret@fake_cloud"
+    try:
+        with app.app_context():
+            c = Client(full_name="Julia Upload", email="julia-upload@example.com")
+            db.session.add(c)
+            db.session.commit()
+            client_id = c.id
+
+        with patch("image_upload.cloudinary.uploader.upload") as mock_upload:
+            response = logged_in_client.post(
+                f"/painel/clientes/{client_id}/closet/novo",
+                data={
+                    "category": "blazer",
+                    "description": "Blazer só com link",
+                    "photo_url": "https://exemplo.com/link-colado.jpg",
+                    "notes": "",
+                },
+                content_type="multipart/form-data",
+                follow_redirects=True,
+            )
+            assert response.status_code == 200
+            mock_upload.assert_not_called()
+
+        with app.app_context():
+            item = ClosetItem.query.filter_by(client_id=client_id).first()
+            assert item.photo_url == "https://exemplo.com/link-colado.jpg"
+    finally:
+        app.config["CLOUDINARY_URL"] = None
 
