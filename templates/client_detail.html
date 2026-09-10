@@ -197,7 +197,7 @@
       </ul>
     </div>
 
-    <div class="card">
+    <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         Closet
         <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_closet_item', client_id=client.id) }}">+ Nova peça</a>
@@ -215,6 +215,33 @@
         </li>
         {% else %}
         <li class="list-group-item text-muted">Nenhuma peça cadastrada ainda.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Lista de compras
+        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_shopping_list_item', client_id=client.id) }}">+ Nova sugestão</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for item in client.shopping_list_items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+          <span class="{{ 'text-decoration-line-through text-muted' if item.purchased }}">
+            {{ item.description }}
+            <span class="text-muted small">· {{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+          </span>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <form method="post" action="{{ url_for('clients.toggle_shopping_list_item', client_id=client.id, item_id=item.id) }}">
+              <button type="submit" class="btn btn-sm btn-outline-secondary">{{ "Desmarcar" if item.purchased else "Marcar comprado" }}</button>
+            </form>
+            <form method="post" action="{{ url_for('clients.delete_shopping_list_item', client_id=client.id, item_id=item.id) }}" onsubmit="return confirm('Remover esta sugestão?');">
+              <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
+            </form>
+          </div>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhuma sugestão de compra registrada.</li>
         {% endfor %}
       </ul>
     </div>

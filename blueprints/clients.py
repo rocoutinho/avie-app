@@ -17,8 +17,9 @@ from forms import (
     EditDossieForm,
     PaymentForm,
     SetClientPasswordForm,
+    ShoppingListItemForm,
 )
-from models import CLIENT_STATUSES, Client, ClosetItem, Consultation, Payment, StyleReport
+from models import CLIENT_STATUSES, Client, ClosetItem, Consultation, Payment, ShoppingListItem, StyleReport
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/painel/clientes")
 clients_bp.before_request(require_staff)
@@ -342,4 +343,44 @@ def delete_closet_item(client_id, item_id):
     db.session.delete(item)
     db.session.commit()
     flash("Peça removida do closet.", "success")
+    return redirect(url_for("clients.detail", client_id=client.id))
+
+
+@clients_bp.route("/<int:client_id>/lista-compras/novo", methods=["GET", "POST"])
+@login_required
+def new_shopping_list_item(client_id):
+    client = Client.query.get_or_404(client_id)
+    form = ShoppingListItemForm()
+    if form.validate_on_submit():
+        item = ShoppingListItem(
+            client_id=client.id,
+            category=form.category.data,
+            description=form.description.data.strip(),
+            notes=form.notes.data,
+        )
+        db.session.add(item)
+        db.session.commit()
+        flash("Peça adicionada à lista de compras.", "success")
+        return redirect(url_for("clients.detail", client_id=client.id))
+    return render_template("shopping_list_item_form.html", form=form, client=client)
+
+
+@clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/comprado", methods=["POST"])
+@login_required
+def toggle_shopping_list_item(client_id, item_id):
+    client = Client.query.get_or_404(client_id)
+    item = ShoppingListItem.query.filter_by(id=item_id, client_id=client.id).first_or_404()
+    item.purchased = not item.purchased
+    db.session.commit()
+    return redirect(url_for("clients.detail", client_id=client.id))
+
+
+@clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/excluir", methods=["POST"])
+@login_required
+def delete_shopping_list_item(client_id, item_id):
+    client = Client.query.get_or_404(client_id)
+    item = ShoppingListItem.query.filter_by(id=item_id, client_id=client.id).first_or_404()
+    db.session.delete(item)
+    db.session.commit()
+    flash("Peça removida da lista de compras.", "success")
     return redirect(url_for("clients.detail", client_id=client.id))
