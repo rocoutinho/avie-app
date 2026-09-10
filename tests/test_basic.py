@@ -406,6 +406,56 @@ def test_payment_creation(app, logged_in_client):
         assert float(payment.amount) == 1500.00
 
 
+def test_payments_list_shows_all_payments_with_status_filter(app, logged_in_client, client):
+    with app.app_context():
+        lead = Client(full_name="Elisa Payments", email="elisa-payments@example.com", status="cliente_ativo")
+        db.session.add(lead)
+        db.session.commit()
+        lead_id = lead.id
+        db.session.add(
+            Payment(
+                client_id=lead_id,
+                description="Sinal da consultoria",
+                amount=500,
+                status="pago",
+            )
+        )
+        db.session.add(
+            Payment(
+                client_id=lead_id,
+                description="Saldo da consultoria",
+                amount=1000,
+                status="pendente",
+            )
+        )
+        db.session.commit()
+
+    response = logged_in_client.get("/painel/pagamentos/")
+    assert response.status_code == 200
+    assert b"Elisa Payments" in response.data
+    assert response.data.count(b"Elisa Payments") == 2
+
+    response = logged_in_client.get("/painel/pagamentos/?status=pago")
+    assert response.status_code == 200
+    assert response.data.count(b"Elisa Payments") == 1
+
+    # Cliente (não-staff) não acessa a listagem interna.
+    with app.app_context():
+        portal_client = Client(full_name="Cliente Pagamentos", email="cliente-pagamentos@example.com", status="lead")
+        portal_client.set_password("senha-cliente-123")
+        db.session.add(portal_client)
+        db.session.commit()
+
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "cliente-pagamentos@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/painel/pagamentos/", follow_redirects=False)
+    assert response.status_code == 403
+
+
 def test_full_client_journey_from_instagram_ad_to_delivered_dossier(app, client):
     """Ponta a ponta com uma cliente fictícia: chega por um anúncio no
     Instagram, abandona o formulário na 1ª etapa (e ainda vira lead),

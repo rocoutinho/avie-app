@@ -15,7 +15,7 @@ def require_staff():
     internas (/painel/*) — staff e cliente compartilham o mesmo /login,
     então isolar por tipo de conta precisa ser explícito. Usado como
     before_request nos blueprints internos (dashboard, clients, reports,
-    sessions, blog, ebooks)."""
+    sessions, payments, blog, ebooks)."""
     if not current_user.is_authenticated:
         return current_app.login_manager.unauthorized()
     if not isinstance(current_user, User):
