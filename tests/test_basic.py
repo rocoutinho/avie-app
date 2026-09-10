@@ -1185,3 +1185,43 @@ def test_delete_report_removes_preliminary_report_but_blocks_dossie(app, logged_
     with app.app_context():
         assert db.session.get(StyleReport, dossie_report_id) is not None
 
+
+def test_dossies_list_shows_only_dossies_with_filled_services(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_obj = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = client_obj.id
+        db.session.add(
+            StyleReport(
+                client_id=client_id,
+                title="Diagnóstico preliminar — não é dossiê",
+                content="rascunho",
+                status="rascunho",
+            )
+        )
+        db.session.commit()
+
+    response = logged_in_client.get("/painel/dossies/")
+    assert response.status_code == 200
+    assert "Estilo".encode() in response.data
+    assert "Biotipo".encode() in response.data
+    assert "Cores".encode() in response.data
+    # O relatório avulso (não-dossiê) não deve aparecer na listagem.
+    assert "não é dossiê".encode() not in response.data
+
+    # Cliente (não-staff) não acessa a listagem interna.
+    with app.app_context():
+        portal_client = Client(full_name="Cliente Dossies", email="cliente-dossies@example.com", status="lead")
+        portal_client.set_password("senha-cliente-123")
+        db.session.add(portal_client)
+        db.session.commit()
+
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "cliente-dossies@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/painel/dossies/", follow_redirects=False)
+    assert response.status_code == 403
+
