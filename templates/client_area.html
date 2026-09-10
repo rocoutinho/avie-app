@@ -83,6 +83,15 @@
 <div id="{{ journey[1].anchor }}" class="card mb-4">
   <div class="card-header">{{ journey[1].title }}</div>
   <div class="card-body">
+    {% if client.style_assessment %}
+    <dl class="mb-4 pb-4 border-bottom">
+      {% if client.style_assessment.estacao_cor %}<dt>Estação de cor</dt><dd>{{ client.style_assessment.estacao_cor }}</dd>{% endif %}
+      {% if client.style_assessment.paleta_principal %}<dt>Paleta principal</dt><dd>{{ client.style_assessment.paleta_principal }}</dd>{% endif %}
+      {% if client.style_assessment.estilo_predominante %}<dt>Estilo predominante</dt><dd>{{ client.style_assessment.estilo_predominante }}</dd>{% endif %}
+      {% if client.style_assessment.estilo_complementar %}<dt>Estilo complementar</dt><dd>{{ client.style_assessment.estilo_complementar }}</dd>{% endif %}
+      {% if client.style_assessment.mensagem_desejada %}<dt class="mb-0">Mensagem que você transmite</dt><dd class="mb-0">{{ client.style_assessment.mensagem_desejada }}</dd>{% endif %}
+    </dl>
+    {% endif %}
     {% if client.profile %}
     <dl class="mb-0">
       <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>

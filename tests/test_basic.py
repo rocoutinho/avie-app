@@ -15,6 +15,7 @@ from models import (
     Look,
     Payment,
     ShoppingListItem,
+    StyleAssessment,
     StyleProfile,
     StyleReport,
     User,
@@ -1454,7 +1455,7 @@ def test_build_journey_for_empty_client_is_all_not_started(app):
         assert steps[3]["next_consultation"] is None
 
 
-def test_build_journey_uses_dossie_as_diagnostic_proxy_but_not_identity(app):
+def test_build_journey_dossie_no_longer_proxies_identity_or_diagnostico(app):
     with app.app_context():
         c = Client(full_name="Cliente Dossiê", email="dossie-journey@example.com")
         db.session.add(c)
@@ -1472,12 +1473,29 @@ def test_build_journey_uses_dossie_as_diagnostic_proxy_but_not_identity(app):
 
         steps = build_journey(c)
         by_key = {s["key"]: s for s in steps}
-        # Dossiê é só proxy de diagnóstico — identidade tem sinal próprio
-        # (campos narrativos de Client), que essa cliente ainda não tem.
+        # Desde a PR4, nem identidade nem diagnóstico usam mais o dossiê como
+        # proxy — cada etapa tem sinal real e independente.
         assert by_key["identidade"]["status"] == "nao_iniciado"
-        assert by_key["diagnostico"]["status"] == "concluido"
+        assert by_key["diagnostico"]["status"] == "nao_iniciado"
         assert by_key["looks"]["status"] == "nao_iniciado"
         assert by_key["evolucao"]["status"] == "nao_iniciado"
+
+
+def test_build_journey_diagnostico_status_reflects_style_assessment(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Diagnóstico", email="diagnostico-journey@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "diagnostico")["status"] == "nao_iniciado"
+
+        assessment = StyleAssessment(client_id=c.id, estacao_cor="Outono suave")
+        db.session.add(assessment)
+        db.session.commit()
+
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "diagnostico")["status"] == "concluido"
 
 
 def test_build_journey_identity_status_reflects_narrative_fields(app):
@@ -1555,6 +1573,7 @@ def test_client_area_shows_journey_cards(app, client):
             estilo_pessoal="Clássico contemporâneo",
         )
         db.session.add(report)
+        db.session.add(StyleAssessment(client_id=c.id, estacao_cor="Outono suave"))
         db.session.commit()
 
     client.post(
@@ -1747,4 +1766,75 @@ def test_client_cannot_favorite_another_clients_look(app, client):
     )
     response = client.post(f"/minha-area/looks/{look_id}/favoritar")
     assert response.status_code == 404
+
+
+def test_staff_creates_and_edits_style_assessment(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Camila Diagnóstico", email="camila-diagnostico@example.com", status="cliente_ativo")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/diagnostico-estruturado/editar",
+        data={
+            "estacao_cor": "Outono suave",
+            "paleta_principal": "tons terrosos e neutros",
+            "estilo_predominante": "Elegante contemporâneo",
+            "estilo_complementar": "",
+            "mensagem_desejada": "confiança e sofisticação",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Outono suave".encode() in response.data
+
+    with app.app_context():
+        assessment = StyleAssessment.query.filter_by(client_id=client_id).first()
+        assert assessment is not None
+        assert assessment.paleta_principal == "tons terrosos e neutros"
+
+    # Editar de novo não cria um segundo registro (1:1).
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/diagnostico-estruturado/editar",
+        data={
+            "estacao_cor": "Inverno profundo",
+            "paleta_principal": "tons frios e contrastantes",
+            "estilo_predominante": "Elegante contemporâneo",
+            "estilo_complementar": "",
+            "mensagem_desejada": "confiança e sofisticação",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert StyleAssessment.query.filter_by(client_id=client_id).count() == 1
+        assert StyleAssessment.query.filter_by(client_id=client_id).first().estacao_cor == "Inverno profundo"
+
+
+def test_client_sees_style_assessment_on_journey_home(app, client):
+    with app.app_context():
+        c = Client(full_name="Denise Diagnóstico", email="denise-diagnostico@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        assessment = StyleAssessment(
+            client_id=c.id,
+            estacao_cor="Primavera clara",
+            paleta_principal="tons quentes e luminosos",
+            estilo_predominante="Romântico moderno",
+            mensagem_desejada="leveza e frescor",
+        )
+        db.session.add(assessment)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "denise-diagnostico@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/")
+    assert response.status_code == 200
+    assert "Primavera clara".encode() in response.data
+    assert "leveza e frescor".encode() in response.data
 

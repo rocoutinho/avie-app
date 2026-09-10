@@ -1,12 +1,8 @@
 """A Jornada de Transformação da cliente — camada de apresentação calculada,
 sem tabela própria. `build_journey(client)` lê dados que já existem em outros
-modelos (Client, StyleProfile, StyleReport, Consultation, Look, e futuramente
-StyleAssessment) e devolve as 4 etapas fixas do MVP com status computado.
-
-Ver plano da sessão: até o StyleAssessment (PR4) existir, a etapa
-"diagnóstico" usa um proxy (perfil do wizard ou dossiê entregue) — a Jornada
-fica com sinal parcial nesse meio-tempo, isso é uma decisão aceita, não um
-bug. "Identidade" (PR2) e "looks" (PR3) já usam sinal real."""
+modelos (Client, StyleReport, Consultation, Look, StyleAssessment) e devolve
+as 4 etapas fixas do MVP com status computado. As 4 etapas usam sinal real
+desde a PR4 — nenhuma mais depende de proxy."""
 
 from datetime import datetime
 
@@ -22,8 +18,6 @@ JOURNEY_STATUS_LABELS = {
 
 
 def build_journey(client):
-    has_diagnostic_proxy = bool(client.profile or client.dossie_report)
-
     identity_fields_filled = sum(
         bool(v) for v in (client.identidade_rotina, client.identidade_objetivo, client.identidade_estilo)
     )
@@ -49,7 +43,7 @@ def build_journey(client):
         evolucao_status = JOURNEY_STATUS_NAO_INICIADO
 
     diagnostico_status = (
-        JOURNEY_STATUS_CONCLUIDO if has_diagnostic_proxy else JOURNEY_STATUS_NAO_INICIADO
+        JOURNEY_STATUS_CONCLUIDO if client.style_assessment is not None else JOURNEY_STATUS_NAO_INICIADO
     )
 
     steps = [

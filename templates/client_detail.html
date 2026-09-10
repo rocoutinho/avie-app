@@ -55,6 +55,26 @@
     </div>
 
     <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Diagnóstico estruturado
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_style_assessment', client_id=client.id) }}">{{ "Editar" if client.style_assessment else "Preencher" }}</a>
+      </div>
+      <div class="card-body">
+        {% if client.style_assessment %}
+        <dl class="mb-0">
+          <dt>Estação de cor</dt><dd>{{ client.style_assessment.estacao_cor or "—" }}</dd>
+          <dt>Paleta principal</dt><dd>{{ client.style_assessment.paleta_principal or "—" }}</dd>
+          <dt>Estilo predominante</dt><dd>{{ client.style_assessment.estilo_predominante or "—" }}</dd>
+          <dt>Estilo complementar</dt><dd>{{ client.style_assessment.estilo_complementar or "—" }}</dd>
+          <dt class="mb-0">Mensagem desejada</dt><dd class="mb-0">{{ client.style_assessment.mensagem_desejada or "—" }}</dd>
+        </dl>
+        {% else %}
+        <p class="text-muted mb-0">Ainda sem diagnóstico estruturado — não duplica o dossiê, é um resumo curto (estação de cor, estilo, mensagem) pra exibição rápida e uso futuro em filtros.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card mb-4">
       <div class="card-header">Notas internas</div>
       <div class="card-body">
         <p class="mb-0">{{ client.notes or "Sem notas." }}</p>

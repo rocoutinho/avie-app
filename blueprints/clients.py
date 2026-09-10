@@ -19,6 +19,7 @@ from forms import (
     PaymentForm,
     SetClientPasswordForm,
     ShoppingListItemForm,
+    StyleAssessmentForm,
 )
 from models import (
     CLIENT_STATUSES,
@@ -29,6 +30,7 @@ from models import (
     LookItem,
     Payment,
     ShoppingListItem,
+    StyleAssessment,
     StyleReport,
 )
 
@@ -444,3 +446,27 @@ def delete_look(client_id, look_id):
     db.session.commit()
     flash("Look removido.", "success")
     return redirect(url_for("clients.detail", client_id=client.id))
+
+
+@clients_bp.route("/<int:client_id>/diagnostico-estruturado/editar", methods=["GET", "POST"])
+@login_required
+def edit_style_assessment(client_id):
+    """Cria ou edita o StyleAssessment do cliente — 1 registro por cliente,
+    mesmo padrão 1:1 de edit_dossie, mas aqui a primeira submissão já cria o
+    registro (não existe rota separada de "novo")."""
+    client = Client.query.get_or_404(client_id)
+    assessment = client.style_assessment
+    form = StyleAssessmentForm(obj=assessment)
+    if form.validate_on_submit():
+        if assessment is None:
+            assessment = StyleAssessment(client_id=client.id)
+            db.session.add(assessment)
+        assessment.estacao_cor = form.estacao_cor.data
+        assessment.paleta_principal = form.paleta_principal.data
+        assessment.estilo_predominante = form.estilo_predominante.data
+        assessment.estilo_complementar = form.estilo_complementar.data
+        assessment.mensagem_desejada = form.mensagem_desejada.data
+        db.session.commit()
+        flash("Diagnóstico estruturado atualizado.", "success")
+        return redirect(url_for("clients.detail", client_id=client.id))
+    return render_template("style_assessment_form.html", form=form, client=client)

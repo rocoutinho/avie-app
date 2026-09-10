@@ -286,6 +286,27 @@ class ShoppingListItemForm(FlaskForm):
     submit = SubmitField("Salvar")
 
 
+class StyleAssessmentForm(FlaskForm):
+    estacao_cor = StringField(
+        "Estação de cor (ex: Outono suave)", validators=[Optional(), Length(max=100)]
+    )
+    paleta_principal = StringField(
+        "Paleta principal (ex: tons terrosos e neutros)", validators=[Optional(), Length(max=255)]
+    )
+    estilo_predominante = StringField(
+        "Estilo predominante (ex: Elegante contemporâneo)",
+        validators=[Optional(), Length(max=100)],
+    )
+    estilo_complementar = StringField(
+        "Estilo complementar (opcional)", validators=[Optional(), Length(max=100)]
+    )
+    mensagem_desejada = StringField(
+        "Mensagem que a cliente quer transmitir (ex: confiança e sofisticação)",
+        validators=[Optional(), Length(max=255)],
+    )
+    submit = SubmitField("Salvar")
+
+
 class LookForm(FlaskForm):
     nome = StringField("Nome do look", validators=[DataRequired(), Length(max=150)])
     photo_url = StringField(
