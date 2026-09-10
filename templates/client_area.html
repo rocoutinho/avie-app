@@ -51,7 +51,7 @@
   <div class="row g-3">
     {% for step in journey %}
     <div class="col-sm-6 col-lg-3">
-      <a href="#{{ step.anchor }}" class="card h-100 text-decoration-none text-reset">
+      <a href="{{ url_for('client_area.identity') if step.key == 'identidade' else '#' ~ step.anchor }}" class="card h-100 text-decoration-none text-reset">
         <div class="card-body d-flex flex-column">
           <span class="badge {{ journey_badge_class[step.status] }} align-self-start mb-2">{{ step.status_label }}</span>
           <h3 class="h6 mb-2">{{ step.title }}</h3>
@@ -66,11 +66,12 @@
 <div id="{{ journey[0].anchor }}" class="card mb-4">
   <div class="card-header">{{ journey[0].title }}</div>
   <div class="card-body">
-    {% if client.profile or dossie_services %}
-    <p class="mb-0">Sua consultora já começou a te conhecer — sua ficha completa de identidade visual chega em breve nesta área.</p>
+    {% if client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo %}
+    <p class="mb-2">Sua consultora já escreveu como ela te vê — quem você é, como quer ser percebida e qual é o seu estilo.</p>
     {% else %}
-    <p class="text-muted mb-0">Ainda não começamos a conhecer sua identidade — isso acontece na sua primeira consultoria.</p>
+    <p class="text-muted mb-2">Sua consultora ainda não escreveu sua identidade visual — isso acontece ao longo do acompanhamento.</p>
     {% endif %}
+    <a href="{{ url_for('client_area.identity') }}" class="btn btn-brand btn-sm">Ver minha identidade visual</a>
   </div>
 </div>
 

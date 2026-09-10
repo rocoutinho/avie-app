@@ -15,6 +15,19 @@
       {{ render_field(form.status) }}
       {{ render_field(form.notes) }}
       {{ render_field(form.style_notes) }}
+
+      <hr class="my-4">
+      <h2 class="h6 text-muted text-uppercase mb-3">Minha identidade visual</h2>
+      <div class="row">
+        <div class="col-md-4">{{ render_field(form.idade) }}</div>
+        <div class="col-md-4">{{ render_field(form.profissao) }}</div>
+        <div class="col-md-4">{{ render_field(form.cidade) }}</div>
+      </div>
+      {{ render_field(form.foto_perfil) }}
+      {{ render_field(form.identidade_rotina) }}
+      {{ render_field(form.identidade_objetivo) }}
+      {{ render_field(form.identidade_estilo) }}
+
       <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
     </form>
   </div>

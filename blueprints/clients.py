@@ -91,6 +91,13 @@ def new_client():
             status=form.status.data,
             notes=form.notes.data,
             style_notes=form.style_notes.data,
+            idade=form.idade.data,
+            profissao=form.profissao.data,
+            cidade=form.cidade.data,
+            foto_perfil=form.foto_perfil.data,
+            identidade_rotina=form.identidade_rotina.data,
+            identidade_objetivo=form.identidade_objetivo.data,
+            identidade_estilo=form.identidade_estilo.data,
         )
         db.session.add(client)
         db.session.commit()
@@ -230,6 +237,13 @@ def edit_client(client_id):
         client.status = form.status.data
         client.notes = form.notes.data
         client.style_notes = form.style_notes.data
+        client.idade = form.idade.data
+        client.profissao = form.profissao.data
+        client.cidade = form.cidade.data
+        client.foto_perfil = form.foto_perfil.data
+        client.identidade_rotina = form.identidade_rotina.data
+        client.identidade_objetivo = form.identidade_objetivo.data
+        client.identidade_estilo = form.identidade_estilo.data
         db.session.commit()
         flash("Dados atualizados.", "success")
         return redirect(url_for("clients.detail", client_id=client.id))

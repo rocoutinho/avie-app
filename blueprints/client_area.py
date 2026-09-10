@@ -71,3 +71,9 @@ def index():
         closet_items=current_user.closet_items,
         shopping_list_items=current_user.shopping_list_items,
     )
+
+
+@client_area_bp.route("/identidade")
+@login_required
+def identity():
+    return render_template("client_area_identity.html", client=current_user)

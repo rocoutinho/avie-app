@@ -68,6 +68,26 @@
       </div>
     </div>
 
+    <div class="card mb-4">
+      <div class="card-header">Minha identidade visual</div>
+      <div class="card-body">
+        {% if client.idade or client.profissao or client.cidade %}
+        <p class="text-muted small mb-3">
+          {{ client.idade ~ " anos" if client.idade }}{{ " · " if client.idade and (client.profissao or client.cidade) }}{{ client.profissao }}{{ " · " if client.profissao and client.cidade }}{{ client.cidade }}
+        </p>
+        {% endif %}
+        {% if client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo %}
+        <dl class="mb-0">
+          <dt>Quem sou</dt><dd>{{ client.identidade_rotina or "—" }}</dd>
+          <dt>Como quero ser percebida</dt><dd>{{ client.identidade_objetivo or "—" }}</dd>
+          <dt class="mb-0">Meu estilo</dt><dd class="mb-0">{{ client.identidade_estilo or "—" }}</dd>
+        </dl>
+        {% else %}
+        <p class="text-muted mb-0">Ainda sem conteúdo de identidade — edite os dados da cliente pra preencher.</p>
+        {% endif %}
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header">Acesso à área do cliente</div>
       <div class="card-body">
