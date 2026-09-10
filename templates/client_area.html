@@ -149,7 +149,7 @@
   <div class="card-body">
     {% set next_consultation = journey[3].next_consultation %}
     {% if next_consultation %}
-    <p class="mb-0">Sua próxima consultoria ({{ label_for(CONSULTATION_MODALIDADES, next_consultation.modalidade)|lower }}) está agendada para <strong>{{ next_consultation.scheduled_at.strftime('%d/%m/%Y às %H:%M') }}</strong>.</p>
+    <p class="mb-0">Sua próxima consultoria está agendada para <strong>{{ next_consultation.scheduled_at.strftime('%d/%m/%Y às %H:%M') }}</strong>.</p>
     {% elif journey[3].status == "concluido" %}
     <p class="text-muted mb-0">Você já passou por consultorias com sua consultora — combine a próxima quando quiser dar continuidade.</p>
     {% else %}

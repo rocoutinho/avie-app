@@ -19,7 +19,6 @@ from models import (
     BUDGET_RANGES,
     CLIENT_STATUSES,
     CLOSET_ITEM_CATEGORIES,
-    CONSULTATION_MODALIDADES,
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
     LEAD_SOURCES,
@@ -206,7 +205,6 @@ class ResetPasswordForm(FlaskForm):
 
 class ConsultationForm(FlaskForm):
     tipo = SelectField("Tipo de consulta", choices=CONSULTATION_TYPES)
-    modalidade = SelectField("Modalidade", choices=CONSULTATION_MODALIDADES)
     scheduled_at = DateTimeLocalField(
         "Data e hora", format="%Y-%m-%dT%H:%M", validators=[DataRequired()]
     )

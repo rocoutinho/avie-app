@@ -27,11 +27,6 @@ CONSULTATION_TYPES = [
     ("outro", "Outro"),
 ]
 
-CONSULTATION_MODALIDADES = [
-    ("presencial", "Presencial"),
-    ("online", "Online"),
-]
-
 CONSULTATION_STATUSES = [
     ("agendada", "Agendada"),
     ("realizada", "Realizada"),
@@ -356,11 +351,6 @@ class Consultation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
     tipo = db.Column(db.String(30), default="consultoria_imagem")
-    # Presencial ou online alimentando a mesma Jornada — não são dois
-    # produtos/fluxos separados, só um dado a mais sobre a mesma consulta
-    # (ver diretriz "plataforma omnichannel"). Sem infraestrutura de entrega
-    # online (videochamada, pagamento) — o campo só registra o formato.
-    modalidade = db.Column(db.String(20), default="presencial", nullable=False)
     scheduled_at = db.Column(db.DateTime, nullable=False)
     duration_minutes = db.Column(db.Integer, default=60)
     status = db.Column(db.String(20), default="agendada")
