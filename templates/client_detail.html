@@ -16,6 +16,9 @@
       {% if client.utm_medium %}
       <span class="badge text-bg-light border">Mídia: {{ client.utm_medium }}</span>
       {% endif %}
+      {% if client.is_recorrente %}
+      <span class="badge text-bg-light border">★ Cliente recorrente</span>
+      {% endif %}
     </div>
   </div>
   <div class="d-flex gap-2 align-items-center">
@@ -154,7 +157,7 @@
       <ul class="list-group list-group-flush">
         {% for con in client.consultations %}
         <li class="list-group-item d-flex justify-content-between">
-          <span>{{ label_for(CONSULTATION_TYPES, con.tipo) }} — {{ label_for(CONSULTATION_STATUSES, con.status) }}</span>
+          <span>{{ label_for(CONSULTATION_TYPES, con.tipo) }} ({{ label_for(CONSULTATION_MODALIDADES, con.modalidade) }}) — {{ label_for(CONSULTATION_STATUSES, con.status) }}</span>
           <span class="text-muted small">{{ con.scheduled_at.strftime('%d/%m/%Y %H:%M') }}</span>
         </li>
         {% else %}

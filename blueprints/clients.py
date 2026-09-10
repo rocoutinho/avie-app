@@ -309,6 +309,7 @@ def new_consultation(client_id):
         consultation = Consultation(
             client_id=client.id,
             tipo=form.tipo.data,
+            modalidade=form.modalidade.data,
             scheduled_at=form.scheduled_at.data,
             duration_minutes=form.duration_minutes.data,
             status=form.status.data,

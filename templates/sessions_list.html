@@ -26,6 +26,7 @@
       <tr>
         <th>Cliente</th>
         <th>Tipo</th>
+        <th>Modalidade</th>
         <th>Data/Hora</th>
         <th>Duração</th>
         <th>Status</th>
@@ -36,12 +37,13 @@
       <tr class="cursor-pointer" onclick="window.location='{{ url_for('clients.detail', client_id=con.client_id) }}'" style="cursor:pointer;">
         <td>{{ con.client.full_name }}</td>
         <td>{{ label_for(CONSULTATION_TYPES, con.tipo) }}</td>
+        <td>{{ label_for(CONSULTATION_MODALIDADES, con.modalidade) }}</td>
         <td>{{ con.scheduled_at.strftime('%d/%m/%Y %H:%M') }}</td>
         <td>{{ con.duration_minutes }} min</td>
         <td>{{ label_for(CONSULTATION_STATUSES, con.status) }}</td>
       </tr>
       {% else %}
-      <tr><td colspan="5" class="text-muted text-center py-4">Nenhuma sessão encontrada.</td></tr>
+      <tr><td colspan="6" class="text-muted text-center py-4">Nenhuma sessão encontrada.</td></tr>
       {% endfor %}
     </tbody>
   </table>

@@ -27,6 +27,11 @@ CONSULTATION_TYPES = [
     ("outro", "Outro"),
 ]
 
+CONSULTATION_MODALIDADES = [
+    ("presencial", "Presencial"),
+    ("online", "Online"),
+]
+
 CONSULTATION_STATUSES = [
     ("agendada", "Agendada"),
     ("realizada", "Realizada"),
@@ -277,6 +282,15 @@ class Client(UserMixin, db.Model):
         conteúdo que já aparece no card de Dossiê."""
         return [r for r in self.reports if not r.is_dossie]
 
+    @property
+    def is_recorrente(self):
+        """Sinal de "cliente recorrente" pro funil Atração→Recorrência da
+        diretriz "plataforma omnichannel" — calculado, não armazenado (mesmo
+        princípio de journey.py: evita crescer CLIENT_STATUSES e deixa a
+        definição fácil de ajustar depois sem migração/dado histórico).
+        Definição atual: 2 ou mais consultas já realizadas."""
+        return sum(1 for c in self.consultations if c.status == "realizada") >= 2
+
     profile = db.relationship(
         "StyleProfile", backref="client", uselist=False, cascade="all, delete-orphan"
     )
@@ -342,6 +356,11 @@ class Consultation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
     tipo = db.Column(db.String(30), default="consultoria_imagem")
+    # Presencial ou online alimentando a mesma Jornada — não são dois
+    # produtos/fluxos separados, só um dado a mais sobre a mesma consulta
+    # (ver diretriz "plataforma omnichannel"). Sem infraestrutura de entrega
+    # online (videochamada, pagamento) — o campo só registra o formato.
+    modalidade = db.Column(db.String(20), default="presencial", nullable=False)
     scheduled_at = db.Column(db.DateTime, nullable=False)
     duration_minutes = db.Column(db.Integer, default=60)
     status = db.Column(db.String(20), default="agendada")

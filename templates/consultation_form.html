@@ -9,6 +9,7 @@
     <form method="post" novalidate>
       {{ form.hidden_tag() }}
       {{ render_field(form.tipo) }}
+      {{ render_field(form.modalidade) }}
       {{ render_field(form.scheduled_at) }}
       {{ render_field(form.duration_minutes) }}
       {{ render_field(form.status) }}
