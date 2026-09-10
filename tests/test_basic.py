@@ -5,7 +5,7 @@ import pytest
 from app import create_app
 from config import TestConfig
 from extensions import db
-from models import BlogPost, Campaign, Client, Consultation, Ebook, Payment, StyleProfile, StyleReport, User
+from models import BlogPost, Client, Consultation, Ebook, Payment, StyleProfile, StyleReport, User
 
 
 @pytest.fixture
@@ -53,17 +53,6 @@ def marketing_client(app, client):
         follow_redirects=True,
     )
     return client
-
-
-def _campaign_payload(**overrides):
-    payload = {
-        "internal_name": "Instagram Agosto",
-        "slug": "instagram-agosto",
-        "hero_title": "Título de teste",
-        "embed_url": "https://exemplo-canva.my.canva.site/instagram-agosto",
-    }
-    payload.update(overrides)
-    return payload
 
 
 def test_landing_page_loads(client):
@@ -516,101 +505,6 @@ def test_full_client_journey_from_instagram_ad_to_delivered_dossier(app, client)
         assert report.sent_at is not None
         assert "Paleta em verde petróleo" in report.content
         assert delivered.status == "proposta_enviada"
-
-
-def test_marketing_creates_campaign_but_cannot_approve_it(app, marketing_client):
-    response = marketing_client.post(
-        "/painel/campanhas/novo", data=_campaign_payload(), follow_redirects=True
-    )
-    assert response.status_code == 200
-
-    with app.app_context():
-        campaign = Campaign.query.filter_by(slug="instagram-agosto").first()
-        assert campaign is not None
-        assert campaign.status == "rascunho"
-        campaign_id = campaign.id
-
-    response = marketing_client.post(
-        f"/painel/campanhas/{campaign_id}/enviar-revisao", follow_redirects=True
-    )
-    assert response.status_code == 200
-    with app.app_context():
-        assert db.session.get(Campaign, campaign_id).status == "em_revisao"
-
-    # Marketing não pode aprovar — só o owner.
-    response = marketing_client.post(f"/painel/campanhas/{campaign_id}/aprovar")
-    assert response.status_code == 403
-
-    # A página pública ainda não existe, porque não foi aprovada.
-    response = marketing_client.get("/lp/instagram-agosto")
-    assert response.status_code == 404
-
-
-def test_owner_approves_campaign_and_it_goes_live(app, logged_in_client):
-    with app.app_context():
-        marketing_user = User(name="Fabiana Marketing", email="mkt2@example.com", role="marketing")
-        marketing_user.set_password("senha-forte-123")
-        db.session.add(marketing_user)
-        db.session.commit()
-        campaign = Campaign(
-            slug="black-friday",
-            internal_name="Black Friday",
-            hero_title="Título Black Friday",
-            embed_url="https://exemplo-canva.my.canva.site/black-friday",
-            status="em_revisao",
-            created_by_id=marketing_user.id,
-        )
-        db.session.add(campaign)
-        db.session.commit()
-        campaign_id = campaign.id
-
-    response = logged_in_client.post(
-        f"/painel/campanhas/{campaign_id}/aprovar", follow_redirects=True
-    )
-    assert response.status_code == 200
-
-    with app.app_context():
-        approved = db.session.get(Campaign, campaign_id)
-        assert approved.status == "publicado"
-        assert approved.published_at is not None
-        assert approved.reviewed_by_id is not None
-
-    response = logged_in_client.get("/lp/black-friday", follow_redirects=False)
-    assert response.status_code == 302
-    assert response.headers["Location"] == "https://exemplo-canva.my.canva.site/black-friday"
-
-
-def test_owner_rejects_campaign_back_to_draft_with_note(app, logged_in_client):
-    with app.app_context():
-        marketing_user = User(name="Fabiana Marketing", email="mkt3@example.com", role="marketing")
-        marketing_user.set_password("senha-forte-123")
-        db.session.add(marketing_user)
-        db.session.commit()
-        campaign = Campaign(
-            slug="natal",
-            internal_name="Natal",
-            hero_title="Título Natal",
-            status="em_revisao",
-            created_by_id=marketing_user.id,
-        )
-        db.session.add(campaign)
-        db.session.commit()
-        campaign_id = campaign.id
-
-    response = logged_in_client.post(
-        f"/painel/campanhas/{campaign_id}/recusar",
-        data={"review_note": "Trocar a imagem do topo"},
-        follow_redirects=True,
-    )
-    assert response.status_code == 200
-
-    with app.app_context():
-        rejected = db.session.get(Campaign, campaign_id)
-        assert rejected.status == "rascunho"
-        assert rejected.review_note == "Trocar a imagem do topo"
-
-    response = logged_in_client.get("/lp/natal")
-    assert response.status_code == 404
 
 
 def test_seed_admin_noop_without_env_vars(app, monkeypatch):
@@ -1191,57 +1085,3 @@ def test_delete_report_removes_preliminary_report_but_blocks_dossie(app, logged_
     with app.app_context():
         assert db.session.get(StyleReport, dossie_report_id) is not None
 
-
-def test_published_campaign_with_embed_url_redirects_instead_of_hero(app, client):
-    with app.app_context():
-        user = User(name="Fabiana", email="owner-embed@example.com", role="owner")
-        user.set_password("senha-forte-123")
-        db.session.add(user)
-        db.session.commit()
-        campaign = Campaign(
-            slug="canvas-teste",
-            internal_name="Campanha Canvas",
-            hero_title="Campanha Canvas",
-            embed_url="https://exemplo-canva.my.canva.site/",
-            status="publicado",
-            created_by_id=user.id,
-        )
-        db.session.add(campaign)
-        db.session.commit()
-
-    response = client.get("/lp/canvas-teste", follow_redirects=False)
-    assert response.status_code == 302
-    assert response.headers["Location"] == "https://exemplo-canva.my.canva.site/"
-
-
-def test_campanha_slug_also_resolves_at_root_path(app, client):
-    with app.app_context():
-        user = User(name="Fabiana", email="owner-campanha@example.com", role="owner")
-        user.set_password("senha-forte-123")
-        db.session.add(user)
-        db.session.commit()
-        campaign = Campaign(
-            slug="campanha",
-            internal_name="Campanha Principal",
-            hero_title="Hero da campanha principal",
-            embed_url="https://exemplo-canva.my.canva.site/principal",
-            status="publicado",
-            created_by_id=user.id,
-        )
-        db.session.add(campaign)
-        db.session.commit()
-
-    response = client.get("/campanha", follow_redirects=False)
-    assert response.status_code == 302
-    assert response.headers["Location"] == "https://exemplo-canva.my.canva.site/principal"
-
-    # /lp/campanha continua funcionando — o Werkzeug redireciona primeiro
-    # pra URL canônica /campanha (evita conteúdo duplicado em duas URLs).
-    response = client.get("/lp/campanha", follow_redirects=False)
-    assert response.status_code == 308
-    assert response.headers["Location"].endswith("/campanha")
-
-
-def test_unpublished_campanha_slug_returns_404_at_root_path(client):
-    response = client.get("/campanha")
-    assert response.status_code == 404

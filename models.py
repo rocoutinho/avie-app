@@ -65,15 +65,8 @@ BUDGET_RANGES = [
 ]
 
 USER_ROLES = [
-    ("owner", "Owner (aprova e publica campanhas)"),
-    ("marketing", "Marketing (cria e edita campanhas)"),
-]
-
-CAMPAIGN_STATUSES = [
-    ("rascunho", "Rascunho"),
-    ("em_revisao", "Em revisão"),
-    ("publicado", "Publicado"),
-    ("arquivado", "Arquivado"),
+    ("owner", "Owner (aprova e publica posts do blog)"),
+    ("marketing", "Marketing (cria e edita posts do blog)"),
 ]
 
 BLOG_POST_STATUSES = [
@@ -111,45 +104,11 @@ class User(UserMixin, db.Model):
         return True
 
 
-class Campaign(db.Model):
-    """Um criativo de campanha: um título (pro <title>/compartilhamento) e
-    um link externo pro qual a URL própria (/lp/<slug>) redireciona (ex:
-    uma landing desenhada no Canva/Canvas) — ver
-    blueprints/public.py:landing_campaign. É um redirect, não um iframe:
-    a maioria dos criadores de site (Canva incluso) bloqueia incorporação
-    em outro domínio via X-Frame-Options/CSP, então embutir num iframe
-    embaixo da navbar do Avie não funcionava (tentado e revertido). Fluxo
-    de aprovação: marketing cria como rascunho -> envia para revisão ->
-    owner aprova (publica) ou recusa (volta pra rascunho, com um motivo
-    opcional)."""
-
-    id = db.Column(db.Integer, primary_key=True)
-    slug = db.Column(db.String(80), unique=True, nullable=False)
-    internal_name = db.Column(db.String(150), nullable=False)
-    status = db.Column(db.String(20), default="rascunho", nullable=False)
-
-    hero_title = db.Column(db.String(255), nullable=False)
-    embed_url = db.Column(db.String(500))
-
-    review_note = db.Column(db.Text)
-
-    created_by_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    reviewed_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    submitted_at = db.Column(db.DateTime)
-    published_at = db.Column(db.DateTime)
-
-    created_by = db.relationship("User", foreign_keys=[created_by_id])
-    reviewed_by = db.relationship("User", foreign_keys=[reviewed_by_id])
-
-
 class BlogPost(db.Model):
     """Um artigo do blog — testado publicado em /blog antes de ser reaproveitado
-    manualmente no LinkedIn da Fabiana. Mesmo fluxo de aprovação da Campaign:
-    marketing cria como rascunho -> envia para revisão -> owner aprova
-    (publica) ou recusa (volta pra rascunho, com um motivo opcional)."""
+    manualmente no LinkedIn da Fabiana. Fluxo de aprovação: marketing cria
+    como rascunho -> envia para revisão -> owner aprova (publica) ou recusa
+    (volta pra rascunho, com um motivo opcional)."""
 
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(120), unique=True, nullable=False)
@@ -178,9 +137,9 @@ class Ebook(db.Model):
     """Isca digital: um PDF/material hospedado externamente (Google Drive,
     etc. — não é upload de arquivo, ver comentário em blueprints/ebooks.py)
     usado pra capturar leads em /ebook. Sem fluxo de aprovação (diferente
-    de Campaign/BlogPost) — é um material de marketing simples, qualquer
-    staff cria/edita direto. Só o Ebook com active=True (o mais recente)
-    aparece na página pública."""
+    de BlogPost) — é um material de marketing simples, qualquer staff
+    cria/edita direto. Só o Ebook com active=True (o mais recente) aparece
+    na página pública."""
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
