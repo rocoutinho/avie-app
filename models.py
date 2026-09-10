@@ -55,6 +55,16 @@ CLOSET_ITEM_CATEGORIES = [
     ("outro", "Outro"),
 ]
 
+# Fluxo do Personal Shopper (ver ShoppingListItem) — curadoria estratégica,
+# não um marketplace: o valor está no motivo da recomendação, não em link de
+# compra/preço/loja (deliberadamente fora de escopo).
+PERSONAL_SHOPPER_STATUSES = [
+    ("recomendada", "Recomendada"),
+    ("aprovada", "Aprovada"),
+    ("comprada", "Comprada"),
+    ("incorporada", "Incorporada"),
+]
+
 LEAD_SOURCES = [
     ("instagram", "Instagram"),
     ("google", "Google"),
@@ -407,19 +417,28 @@ class ClosetItem(db.Model):
 
 
 class ShoppingListItem(db.Model):
-    """Peça sugerida que a cliente deveria adquirir — companheira direta do
-    Closet (mesmo contexto de dados/categorias), pensada pra evitar que a
-    cliente compre errado ou em excesso. Cadastrada pela equipe; a cliente
-    só visualiza (sem edição) na área dela, igual ao Closet. `purchased`
-    deixa marcar o que já foi comprado sem precisar excluir o item (fica
-    como histórico do que foi sugerido)."""
+    """Uma recomendação do Personal Shopper — peça que a consultora sugere a
+    cliente adquirir, companheira direta do Closet (mesmo contexto de
+    dados/categorias). Cadastrada pela equipe; a cliente só visualiza (sem
+    edição) na área dela, igual ao Closet. O nome da classe e as rotas
+    (`/lista-compras/...`) ficaram do desenho anterior ("Lista de compras");
+    o produto foi renomeado pra "Personal Shopper" e o modelo evoluiu — não
+    houve rename de código pra manter o diff pequeno, ver CLAUDE.md.
+
+    `motivo` é o porquê da recomendação (o valor está na curadoria, não no
+    link de compra — por isso não há campo de loja/link/preço aqui, decisão
+    deliberada). `status` substitui o antigo booleano `purchased`: o fluxo é
+    recomendada → aprovada → comprada → incorporada, mas a consultora pode
+    mover pra qualquer estágio livremente (sem forçar ordem estrita — ver
+    blueprints/clients.py:set_shopping_list_item_status)."""
 
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
     category = db.Column(db.String(30), default="outro", nullable=False)
     description = db.Column(db.String(255), nullable=False)
+    motivo = db.Column(db.Text)
     notes = db.Column(db.Text)
-    purchased = db.Column(db.Boolean, default=False, nullable=False)
+    status = db.Column(db.String(20), default="recomendada", nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 

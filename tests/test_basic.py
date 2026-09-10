@@ -1396,7 +1396,7 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
 
     response = logged_in_client.post(
         f"/painel/clientes/{client_id}/lista-compras/novo",
-        data={"category": "sapato", "description": "Scarpin nude", "notes": ""},
+        data={"category": "sapato", "description": "Scarpin nude", "motivo": "Falta um sapato neutro pra fechar looks de trabalho.", "notes": ""},
         follow_redirects=True,
     )
     assert response.status_code == 200
@@ -1405,16 +1405,18 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
     with app.app_context():
         item = ShoppingListItem.query.filter_by(client_id=client_id).first()
         assert item is not None
-        assert item.purchased is False
+        assert item.status == "recomendada"
         item_id = item.id
 
-    # Marca como comprado.
+    # Avança o status pra comprada.
     response = logged_in_client.post(
-        f"/painel/clientes/{client_id}/lista-compras/{item_id}/comprado", follow_redirects=True
+        f"/painel/clientes/{client_id}/lista-compras/{item_id}/status",
+        data={"status": "comprada"},
+        follow_redirects=True,
     )
     assert response.status_code == 200
     with app.app_context():
-        assert db.session.get(ShoppingListItem, item_id).purchased is True
+        assert db.session.get(ShoppingListItem, item_id).status == "comprada"
 
     # Aparece na área do cliente, sem opção de editar/excluir.
     client.get("/logout")
@@ -1426,6 +1428,8 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
     response = client.get("/minha-area/")
     assert response.status_code == 200
     assert "Scarpin nude".encode() in response.data
+    assert "Falta um sapato neutro".encode() in response.data
+    assert "Comprada".encode() in response.data
     assert b"Excluir" not in response.data
 
     # Volta como staff e remove a sugestão.
@@ -1441,6 +1445,26 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
     assert response.status_code == 200
     with app.app_context():
         assert db.session.get(ShoppingListItem, item_id) is None
+
+
+def test_shopping_list_item_status_rejects_invalid_value(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Rita Compras", email="rita-compras@example.com", status="cliente_ativo")
+        db.session.add(c)
+        db.session.commit()
+        item = ShoppingListItem(client_id=c.id, category="sapato", description="Scarpin nude")
+        db.session.add(item)
+        db.session.commit()
+        client_id, item_id = c.id, item.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/lista-compras/{item_id}/status",
+        data={"status": "nao-existe"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ShoppingListItem, item_id).status == "recomendada"
 
 
 def test_build_journey_for_empty_client_is_all_not_started(app):
