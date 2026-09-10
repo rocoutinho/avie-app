@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}Diagnóstico estruturado{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <h1 class="h3 mb-1">Diagnóstico estruturado</h1>
+    <p class="text-muted mb-4">Cliente: {{ client.full_name }}</p>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.estacao_cor) }}
+      {{ render_field(form.paleta_principal) }}
+      {{ render_field(form.estilo_predominante) }}
+      {{ render_field(form.estilo_complementar) }}
+      {{ render_field(form.mensagem_desejada) }}
+      <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

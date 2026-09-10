@@ -306,6 +306,9 @@ class Client(UserMixin, db.Model):
         cascade="all, delete-orphan",
         order_by="Look.created_at.desc()",
     )
+    style_assessment = db.relationship(
+        "StyleAssessment", backref="client", uselist=False, cascade="all, delete-orphan"
+    )
 
 
 class StyleProfile(db.Model):
@@ -450,3 +453,25 @@ class LookItem(db.Model):
     closet_item_id = db.Column(db.Integer, db.ForeignKey("closet_item.id"), nullable=False)
 
     closet_item = db.relationship("ClosetItem", backref="look_items")
+
+
+class StyleAssessment(db.Model):
+    """Diagnóstico técnico estruturado — módulo "Meu Diagnóstico" (MVP Minha
+    Imagem). Um registro por cliente (1:1, mesmo padrão de StyleProfile),
+    editado pela consultora. Campos curtos e opcionais de propósito — a
+    taxonomia real (estações, tipos de estilo) só fica clara com uso real;
+    fixar choices cedo demais arrisca não bater com a metodologia própria da
+    Fabiana. Não duplica StyleReport (dossiê narrativo, texto corrido) — é
+    dado estruturado, pensado pra exibição em card e filtros/IA futuros."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), unique=True, nullable=False)
+
+    estacao_cor = db.Column(db.String(100))
+    paleta_principal = db.Column(db.String(255))
+    estilo_predominante = db.Column(db.String(100))
+    estilo_complementar = db.Column(db.String(100))
+    mensagem_desejada = db.Column(db.String(255))
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
