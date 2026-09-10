@@ -9,6 +9,7 @@ from flask_login import login_required
 from blueprints.auth import require_staff
 from emails import send_client_access_email
 from extensions import db
+from image_upload import upload_image
 from forms import (
     ClientDossieForm,
     ClientForm,
@@ -108,7 +109,7 @@ def new_client():
             idade=form.idade.data,
             profissao=form.profissao.data,
             cidade=form.cidade.data,
-            foto_perfil=form.foto_perfil.data,
+            foto_perfil=upload_image(form.foto_perfil_arquivo.data) or form.foto_perfil.data,
             identidade_rotina=form.identidade_rotina.data,
             identidade_objetivo=form.identidade_objetivo.data,
             identidade_estilo=form.identidade_estilo.data,
@@ -254,7 +255,7 @@ def edit_client(client_id):
         client.idade = form.idade.data
         client.profissao = form.profissao.data
         client.cidade = form.cidade.data
-        client.foto_perfil = form.foto_perfil.data
+        client.foto_perfil = upload_image(form.foto_perfil_arquivo.data) or form.foto_perfil.data
         client.identidade_rotina = form.identidade_rotina.data
         client.identidade_objetivo = form.identidade_objetivo.data
         client.identidade_estilo = form.identidade_estilo.data
@@ -353,7 +354,7 @@ def new_closet_item(client_id):
             client_id=client.id,
             category=form.category.data,
             description=form.description.data.strip(),
-            photo_url=form.photo_url.data,
+            photo_url=upload_image(form.photo_file.data) or form.photo_url.data,
             notes=form.notes.data,
         )
         db.session.add(item)
@@ -427,7 +428,7 @@ def new_look(client_id):
         look = Look(
             client_id=client.id,
             nome=form.nome.data.strip(),
-            photo_url=form.photo_url.data,
+            photo_url=upload_image(form.photo_file.data) or form.photo_url.data,
             ocasiao=form.ocasiao.data,
             descricao=form.descricao.data,
             mensagem_transmitida=form.mensagem_transmitida.data,

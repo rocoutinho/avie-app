@@ -45,6 +45,12 @@ class Config:
 
     RATELIMIT_ENABLED = True
 
+    # Upload de imagem via Cloudinary (perfil, looks, closet). Sem isso
+    # configurado, os formulários caem de volta pro campo de link externo
+    # (mesmo padrão MAIL_SERVER-gated no-op usado em emails.py) — ver
+    # image_upload.py. Formato: "cloudinary://<api_key>:<api_secret>@<cloud_name>".
+    CLOUDINARY_URL = os.environ.get("CLOUDINARY_URL")
+
     # E-mail transacional (confirmação de diagnóstico). Se MAIL_SERVER não
     # estiver configurado, o sistema apenas registra a mensagem no log em
     # vez de falhar — assim o formulário público funciona mesmo antes de
