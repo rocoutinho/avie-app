@@ -55,6 +55,7 @@ def create_app(config_class=Config):
             return User.query.get(int(raw_id))
         return None
 
+    from blueprints.analytics import analytics_bp
     from blueprints.auth import auth_bp
     from blueprints.blog import blog_bp
     from blueprints.client_area import client_area_bp
@@ -75,6 +76,7 @@ def create_app(config_class=Config):
     app.register_blueprint(sessions_bp)
     app.register_blueprint(payments_bp)
     app.register_blueprint(dossies_bp)
+    app.register_blueprint(analytics_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(ebooks_bp)
     app.register_blueprint(client_area_bp)

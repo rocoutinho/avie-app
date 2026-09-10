@@ -1225,3 +1225,52 @@ def test_dossies_list_shows_only_dossies_with_filled_services(app, logged_in_cli
     response = client.get("/painel/dossies/", follow_redirects=False)
     assert response.status_code == 403
 
+
+def test_analytics_aggregates_clients_payments_and_sessions(app, logged_in_client, client):
+    with app.app_context():
+        active = Client(
+            full_name="Fernanda Analytics", email="fernanda-analytics@example.com",
+            status="cliente_ativo", source="instagram",
+        )
+        lead = Client(
+            full_name="Gustavo Analytics", email="gustavo-analytics@example.com",
+            status="lead", source="google",
+        )
+        db.session.add_all([active, lead])
+        db.session.commit()
+        active_id = active.id
+
+        db.session.add(Payment(client_id=active_id, description="Pago", amount=1000, status="pago"))
+        db.session.add(Payment(client_id=active_id, description="Pendente", amount=200, status="pendente"))
+        db.session.add(Payment(client_id=active_id, description="Atrasado", amount=50, status="atrasado"))
+        db.session.add(
+            Consultation(
+                client_id=active_id,
+                tipo="consultoria_imagem",
+                scheduled_at=datetime(2026, 9, 1, 14, 0),
+                status="agendada",
+            )
+        )
+        db.session.commit()
+
+    response = logged_in_client.get("/painel/analytics/")
+    assert response.status_code == 200
+    assert "R$ 1000.00".encode() in response.data
+    assert "R$ 250.00".encode() in response.data  # 200 pendente + 50 atrasado
+
+    # Cliente (não-staff) não acessa a listagem interna.
+    with app.app_context():
+        portal_client = Client(full_name="Cliente Analytics", email="cliente-analytics@example.com", status="lead")
+        portal_client.set_password("senha-cliente-123")
+        db.session.add(portal_client)
+        db.session.commit()
+
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "cliente-analytics@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/painel/analytics/", follow_redirects=False)
+    assert response.status_code == 403
+
