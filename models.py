@@ -277,6 +277,15 @@ class Client(UserMixin, db.Model):
         conteúdo que já aparece no card de Dossiê."""
         return [r for r in self.reports if not r.is_dossie]
 
+    @property
+    def is_recorrente(self):
+        """Sinal de "cliente recorrente" pro funil Atração→Recorrência da
+        diretriz "plataforma omnichannel" — calculado, não armazenado (mesmo
+        princípio de journey.py: evita crescer CLIENT_STATUSES e deixa a
+        definição fácil de ajustar depois sem migração/dado histórico).
+        Definição atual: 2 ou mais consultas já realizadas."""
+        return sum(1 for c in self.consultations if c.status == "realizada") >= 2
+
     profile = db.relationship(
         "StyleProfile", backref="client", uselist=False, cascade="all, delete-orphan"
     )

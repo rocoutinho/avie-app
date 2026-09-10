@@ -1862,3 +1862,33 @@ def test_client_sees_style_assessment_on_journey_home(app, client):
     assert "Primavera clara".encode() in response.data
     assert "leveza e frescor".encode() in response.data
 
+
+def test_client_is_recorrente_needs_two_realized_consultations(app):
+    with app.app_context():
+        c = Client(full_name="Fernanda Recorrente", email="fernanda-recorrente@example.com")
+        db.session.add(c)
+        db.session.commit()
+        assert c.is_recorrente is False
+
+        db.session.add(Consultation(client_id=c.id, scheduled_at=datetime(2026, 1, 1, 10, 0), status="realizada"))
+        db.session.commit()
+        assert c.is_recorrente is False
+
+        db.session.add(Consultation(client_id=c.id, scheduled_at=datetime(2026, 3, 1, 10, 0), status="realizada"))
+        db.session.commit()
+        assert c.is_recorrente is True
+
+
+def test_analytics_shows_recurring_clients_count(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Helena Recorrente", email="helena-recorrente-analytics@example.com")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(Consultation(client_id=c.id, scheduled_at=datetime(2026, 1, 1, 10, 0), status="realizada"))
+        db.session.add(Consultation(client_id=c.id, scheduled_at=datetime(2026, 3, 1, 10, 0), status="realizada"))
+        db.session.commit()
+
+    response = logged_in_client.get("/painel/analytics/")
+    assert response.status_code == 200
+    assert "Clientes recorrentes".encode() in response.data
+

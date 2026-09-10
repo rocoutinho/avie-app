@@ -16,6 +16,9 @@
       {% if client.utm_medium %}
       <span class="badge text-bg-light border">Mídia: {{ client.utm_medium }}</span>
       {% endif %}
+      {% if client.is_recorrente %}
+      <span class="badge text-bg-light border">★ Cliente recorrente</span>
+      {% endif %}
     </div>
   </div>
   <div class="d-flex gap-2 align-items-center">

@@ -18,6 +18,8 @@ def index():
     revenue_pending = sum(p.amount for p in Payment.query.filter_by(status="pendente").all())
     revenue_overdue = sum(p.amount for p in Payment.query.filter_by(status="atrasado").all())
 
+    recurring_clients = sum(1 for c in Client.query.all() if c.is_recorrente)
+
     return render_template(
         "analytics.html",
         total_clients=Client.query.count(),
@@ -27,4 +29,5 @@ def index():
         revenue_pending=revenue_pending,
         revenue_overdue=revenue_overdue,
         upcoming_sessions=Consultation.query.filter_by(status="agendada").count(),
+        recurring_clients=recurring_clients,
     )
