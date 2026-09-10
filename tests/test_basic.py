@@ -1453,7 +1453,7 @@ def test_build_journey_for_empty_client_is_all_not_started(app):
         assert steps[3]["next_consultation"] is None
 
 
-def test_build_journey_uses_dossie_as_identity_and_diagnostic_proxy(app):
+def test_build_journey_uses_dossie_as_diagnostic_proxy_but_not_identity(app):
     with app.app_context():
         c = Client(full_name="Cliente Dossiê", email="dossie-journey@example.com")
         db.session.add(c)
@@ -1471,10 +1471,33 @@ def test_build_journey_uses_dossie_as_identity_and_diagnostic_proxy(app):
 
         steps = build_journey(c)
         by_key = {s["key"]: s for s in steps}
-        assert by_key["identidade"]["status"] == "concluido"
+        # Dossiê é só proxy de diagnóstico — identidade tem sinal próprio
+        # (campos narrativos de Client), que essa cliente ainda não tem.
+        assert by_key["identidade"]["status"] == "nao_iniciado"
         assert by_key["diagnostico"]["status"] == "concluido"
         assert by_key["looks"]["status"] == "nao_iniciado"
         assert by_key["evolucao"]["status"] == "nao_iniciado"
+
+
+def test_build_journey_identity_status_reflects_narrative_fields(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Identidade", email="identidade-journey@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "identidade")["status"] == "nao_iniciado"
+
+        c.identidade_rotina = "Rotina corrida entre reuniões e academia."
+        db.session.commit()
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "identidade")["status"] == "em_andamento"
+
+        c.identidade_objetivo = "Quer transmitir mais autoridade."
+        c.identidade_estilo = "Gosta de alfaiataria e cores neutras."
+        db.session.commit()
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "identidade")["status"] == "concluido"
 
 
 def test_build_journey_with_future_consultation_is_em_andamento(app):
@@ -1546,4 +1569,72 @@ def test_client_area_shows_journey_cards(app, client):
     assert "Minha assinatura visual".encode() in response.data
     assert "Minha evolução contínua".encode() in response.data
     assert "Concluído".encode() in response.data
+
+
+def test_staff_saves_identity_fields_via_client_edit(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Renata Identidade", email="renata-identidade@example.com", status="cliente_ativo")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/editar",
+        data={
+            "full_name": "Renata Identidade",
+            "email": "renata-identidade@example.com",
+            "phone": "",
+            "instagram": "",
+            "source": "indicacao",
+            "status": "cliente_ativo",
+            "notes": "",
+            "style_notes": "",
+            "idade": "34",
+            "profissao": "Advogada",
+            "cidade": "São Paulo",
+            "foto_perfil": "https://example.com/renata.jpg",
+            "identidade_rotina": "Rotina corrida entre audiências e reuniões.",
+            "identidade_objetivo": "Quer transmitir mais autoridade sem perder a leveza.",
+            "identidade_estilo": "Alfaiataria com toques contemporâneos.",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Alfaiataria com toques contemporâneos".encode() in response.data
+
+    with app.app_context():
+        c = db.session.get(Client, client_id)
+        assert c.idade == 34
+        assert c.profissao == "Advogada"
+        assert c.cidade == "São Paulo"
+        assert c.identidade_objetivo == "Quer transmitir mais autoridade sem perder a leveza."
+
+
+def test_client_sees_own_identity_page(app, client):
+    with app.app_context():
+        c = Client(full_name="Beatriz Identidade", email="beatriz-identidade@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        c.idade = 29
+        c.profissao = "Médica"
+        c.identidade_rotina = "Plantões alternados com pouco tempo pra se cuidar."
+        c.identidade_objetivo = "Quer se sentir confiante mesmo com rotina corrida."
+        c.identidade_estilo = "Peças práticas que também sirvam pra ocasiões formais."
+        db.session.add(c)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "beatriz-identidade@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/identidade")
+    assert response.status_code == 200
+    assert "Plantões alternados".encode() in response.data
+    assert "Quer se sentir confiante".encode() in response.data
+    assert "Peças práticas".encode() in response.data
+
+
+def test_client_area_identity_route_blocked_for_staff(app, logged_in_client):
+    response = logged_in_client.get("/minha-area/identidade")
+    assert response.status_code == 403
 

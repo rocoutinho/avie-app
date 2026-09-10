@@ -106,6 +106,29 @@ class ClientForm(FlaskForm):
     style_notes = TextAreaField(
         "Sobre a cliente (silhueta, formato do rosto, visagismo...)", validators=[Optional()]
     )
+
+    # "Minha Identidade" (MVP Minha Imagem) — ver models.py:Client.
+    idade = IntegerField("Idade", validators=[Optional(), NumberRange(min=0, max=120)])
+    profissao = StringField("Profissão", validators=[Optional(), Length(max=150)])
+    cidade = StringField("Cidade", validators=[Optional(), Length(max=100)])
+    foto_perfil = StringField(
+        "Link da foto de perfil (opcional — Google Drive, Dropbox etc.)",
+        validators=[Optional(), Length(max=500)],
+    )
+    identidade_rotina = TextAreaField(
+        "Quem sou (rotina, momentos importantes)", validators=[Optional()], render_kw={"rows": 4}
+    )
+    identidade_objetivo = TextAreaField(
+        "Como quero ser percebida (objetivos, imagem desejada, desafios)",
+        validators=[Optional()],
+        render_kw={"rows": 4},
+    )
+    identidade_estilo = TextAreaField(
+        "Meu estilo (referências, preferências, marcas, inspirações)",
+        validators=[Optional()],
+        render_kw={"rows": 4},
+    )
+
     submit = SubmitField("Salvar")
 
 

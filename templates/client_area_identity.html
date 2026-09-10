@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Minha identidade visual{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('client_area.index') }}" class="text-muted small text-decoration-none">&larr; Voltar pra minha jornada</a>
+  <p class="eyebrow mb-1 mt-2" style="color: var(--avie-gold);">Minha jornada</p>
+  <h1 class="h3 mb-0">Minha identidade visual</h1>
+</div>
+
+<div class="row g-4">
+  {% if client.foto_perfil %}
+  <div class="col-md-3">
+    <img src="{{ client.foto_perfil }}" alt="Foto de {{ client.full_name }}" class="img-fluid rounded" style="width: 100%; object-fit: cover; aspect-ratio: 1;">
+  </div>
+  <div class="col-md-9">
+  {% else %}
+  <div class="col-12">
+  {% endif %}
+
+  {% if client.idade or client.profissao or client.cidade %}
+  <p class="text-muted mb-4">
+    {{ client.idade ~ " anos" if client.idade }}{{ " · " if client.idade and (client.profissao or client.cidade) }}{{ client.profissao }}{{ " · " if client.profissao and client.cidade }}{{ client.cidade }}
+  </p>
+  {% endif %}
+
+  {% if client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo %}
+  <div class="card mb-4">
+    <div class="card-header">Quem sou</div>
+    <div class="card-body">
+      <p class="mb-0" style="white-space: pre-line;">{{ client.identidade_rotina or "Sua consultora ainda vai escrever essa seção." }}</p>
+    </div>
+  </div>
+  <div class="card mb-4">
+    <div class="card-header">Como quero ser percebida</div>
+    <div class="card-body">
+      <p class="mb-0" style="white-space: pre-line;">{{ client.identidade_objetivo or "Sua consultora ainda vai escrever essa seção." }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">Meu estilo</div>
+    <div class="card-body">
+      <p class="mb-0" style="white-space: pre-line;">{{ client.identidade_estilo or "Sua consultora ainda vai escrever essa seção." }}</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="card-body">
+      <p class="text-muted mb-0">Sua consultora ainda não escreveu sua identidade visual — isso acontece ao longo do acompanhamento.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  </div>
+</div>
+{% endblock %}

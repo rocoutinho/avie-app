@@ -197,6 +197,19 @@ class Client(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # "Minha Identidade" (MVP Minha Imagem, módulo 2) — narrativa escrita pela
+    # consultora, disponível pra toda cliente (diferente de StyleProfile, que só
+    # existe pra quem veio pelo funil público /diagnostico). Não substitui
+    # StyleReport (dossiê) nem style_notes (uso interno de curadoria) — ver
+    # CLAUDE.md.
+    idade = db.Column(db.Integer)
+    profissao = db.Column(db.String(150))
+    cidade = db.Column(db.String(100))
+    foto_perfil = db.Column(db.String(500))
+    identidade_rotina = db.Column(db.Text)
+    identidade_objetivo = db.Column(db.Text)
+    identidade_estilo = db.Column(db.Text)
+
     # Acesso à área do cliente (opcional — ver docstring acima).
     password_hash = db.Column(db.String(255))
     last_login_at = db.Column(db.DateTime)
