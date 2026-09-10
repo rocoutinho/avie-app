@@ -15,11 +15,22 @@ from forms import (
     ClosetItemForm,
     ConsultationForm,
     EditDossieForm,
+    LookForm,
     PaymentForm,
     SetClientPasswordForm,
     ShoppingListItemForm,
 )
-from models import CLIENT_STATUSES, Client, ClosetItem, Consultation, Payment, ShoppingListItem, StyleReport
+from models import (
+    CLIENT_STATUSES,
+    Client,
+    ClosetItem,
+    Consultation,
+    Look,
+    LookItem,
+    Payment,
+    ShoppingListItem,
+    StyleReport,
+)
 
 clients_bp = Blueprint("clients", __name__, url_prefix="/painel/clientes")
 clients_bp.before_request(require_staff)
@@ -397,4 +408,39 @@ def delete_shopping_list_item(client_id, item_id):
     db.session.delete(item)
     db.session.commit()
     flash("Peça removida da lista de compras.", "success")
+    return redirect(url_for("clients.detail", client_id=client.id))
+
+
+@clients_bp.route("/<int:client_id>/looks/novo", methods=["GET", "POST"])
+@login_required
+def new_look(client_id):
+    client = Client.query.get_or_404(client_id)
+    form = LookForm()
+    form.closet_item_ids.choices = [(item.id, item.description) for item in client.closet_items]
+    if form.validate_on_submit():
+        look = Look(
+            client_id=client.id,
+            nome=form.nome.data.strip(),
+            photo_url=form.photo_url.data,
+            ocasiao=form.ocasiao.data,
+            descricao=form.descricao.data,
+            mensagem_transmitida=form.mensagem_transmitida.data,
+        )
+        for closet_item_id in form.closet_item_ids.data:
+            look.items.append(LookItem(closet_item_id=closet_item_id))
+        db.session.add(look)
+        db.session.commit()
+        flash("Look criado.", "success")
+        return redirect(url_for("clients.detail", client_id=client.id))
+    return render_template("look_form.html", form=form, client=client)
+
+
+@clients_bp.route("/<int:client_id>/looks/<int:look_id>/excluir", methods=["POST"])
+@login_required
+def delete_look(client_id, look_id):
+    client = Client.query.get_or_404(client_id)
+    look = Look.query.filter_by(id=look_id, client_id=client.id).first_or_404()
+    db.session.delete(look)
+    db.session.commit()
+    flash("Look removido.", "success")
     return redirect(url_for("clients.detail", client_id=client.id))

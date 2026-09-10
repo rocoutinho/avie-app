@@ -5,11 +5,12 @@ outros clientes nem dá acesso a nada de /painel."""
 
 from datetime import datetime
 
-from flask import Blueprint, abort, current_app, render_template, session
+from flask import Blueprint, abort, current_app, redirect, render_template, session, url_for
 from flask_login import current_user, login_required
 
+from extensions import db
 from journey import build_journey
-from models import Client
+from models import Client, Look
 
 client_area_bp = Blueprint("client_area", __name__, url_prefix="/minha-area")
 
@@ -77,3 +78,21 @@ def index():
 @login_required
 def identity():
     return render_template("client_area_identity.html", client=current_user)
+
+
+@client_area_bp.route("/looks")
+@login_required
+def looks():
+    return render_template("client_area_looks.html", client=current_user)
+
+
+@client_area_bp.route("/looks/<int:look_id>/favoritar", methods=["POST"])
+@login_required
+def toggle_look_favorite(look_id):
+    # Só a própria cliente favorita os próprios looks — nunca recebe
+    # client_id por parâmetro, sempre filtra pelo current_user (ver guard
+    # require_client acima).
+    look = Look.query.filter_by(id=look_id, client_id=current_user.id).first_or_404()
+    look.favorited = not look.favorited
+    db.session.commit()
+    return redirect(url_for("client_area.looks"))

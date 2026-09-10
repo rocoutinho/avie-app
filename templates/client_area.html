@@ -33,6 +33,11 @@
   "concluido": "bg-success",
 } %}
 
+{% set journey_step_urls = {
+  "identidade": url_for('client_area.identity'),
+  "looks": url_for('client_area.looks'),
+} %}
+
 {% block content %}
 <div class="mb-4">
   <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
@@ -51,7 +56,7 @@
   <div class="row g-3">
     {% for step in journey %}
     <div class="col-sm-6 col-lg-3">
-      <a href="{{ url_for('client_area.identity') if step.key == 'identidade' else '#' ~ step.anchor }}" class="card h-100 text-decoration-none text-reset">
+      <a href="{{ journey_step_urls[step.key] if step.key in journey_step_urls else '#' ~ step.anchor }}" class="card h-100 text-decoration-none text-reset">
         <div class="card-body d-flex flex-column">
           <span class="badge {{ journey_badge_class[step.status] }} align-self-start mb-2">{{ step.status_label }}</span>
           <h3 class="h6 mb-2">{{ step.title }}</h3>
@@ -121,7 +126,12 @@
 <div id="{{ journey[2].anchor }}" class="card mb-4">
   <div class="card-header">{{ journey[2].title }}</div>
   <div class="card-body">
-    <p class="text-muted mb-0">Em breve, sua consultora vai montar aqui looks completos a partir do seu closet digital.</p>
+    {% if client.looks %}
+    <p class="mb-2">Sua consultora já montou {{ client.looks|length }} look{{ "s" if client.looks|length != 1 }} pra você a partir do seu closet.</p>
+    {% else %}
+    <p class="text-muted mb-2">Em breve, sua consultora vai montar aqui looks completos a partir do seu closet digital.</p>
+    {% endif %}
+    <a href="{{ url_for('client_area.looks') }}" class="btn btn-brand btn-sm">Ver meus looks</a>
   </div>
 </div>
 
