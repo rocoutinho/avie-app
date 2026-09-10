@@ -255,6 +255,13 @@ class ClosetItemForm(FlaskForm):
     submit = SubmitField("Salvar")
 
 
+class ShoppingListItemForm(FlaskForm):
+    category = SelectField("Categoria", choices=CLOSET_ITEM_CATEGORIES)
+    description = StringField("Peça sugerida", validators=[DataRequired(), Length(max=255)])
+    notes = TextAreaField("Notas (opcional)", validators=[Optional()])
+    submit = SubmitField("Salvar")
+
+
 class EbookForm(FlaskForm):
     title = StringField("Título do ebook", validators=[DataRequired(), Length(max=255)])
     description = TextAreaField(

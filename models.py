@@ -281,6 +281,12 @@ class Client(UserMixin, db.Model):
         cascade="all, delete-orphan",
         order_by="ClosetItem.created_at.desc()",
     )
+    shopping_list_items = db.relationship(
+        "ShoppingListItem",
+        backref="client",
+        cascade="all, delete-orphan",
+        order_by="ShoppingListItem.created_at.desc()",
+    )
 
 
 class StyleProfile(db.Model):
@@ -375,4 +381,21 @@ class ClosetItem(db.Model):
     description = db.Column(db.String(255), nullable=False)
     photo_url = db.Column(db.String(500))
     notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class ShoppingListItem(db.Model):
+    """Peça sugerida que a cliente deveria adquirir — companheira direta do
+    Closet (mesmo contexto de dados/categorias), pensada pra evitar que a
+    cliente compre errado ou em excesso. Cadastrada pela equipe; a cliente
+    só visualiza (sem edição) na área dela, igual ao Closet. `purchased`
+    deixa marcar o que já foi comprado sem precisar excluir o item (fica
+    como histórico do que foi sugerido)."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
+    category = db.Column(db.String(30), default="outro", nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    notes = db.Column(db.Text)
+    purchased = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

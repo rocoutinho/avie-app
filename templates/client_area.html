@@ -135,4 +135,18 @@
   </ul>
 </div>
 {% endif %}
+
+{% if shopping_list_items %}
+<div class="card mt-4">
+  <div class="card-header">Sua lista de compras</div>
+  <ul class="list-group list-group-flush">
+    {% for item in shopping_list_items %}
+    <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+      <span class="{{ 'text-decoration-line-through text-muted' if item.purchased }}">{{ item.description }}</span>
+      <span class="text-muted small">{{ "Já comprado" if item.purchased else label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
 {% endblock %}

@@ -5,7 +5,18 @@ import pytest
 from app import create_app
 from config import TestConfig
 from extensions import db
-from models import BlogPost, Client, ClosetItem, Consultation, Ebook, Payment, StyleProfile, StyleReport, User
+from models import (
+    BlogPost,
+    Client,
+    ClosetItem,
+    Consultation,
+    Ebook,
+    Payment,
+    ShoppingListItem,
+    StyleProfile,
+    StyleReport,
+    User,
+)
 
 
 @pytest.fixture
@@ -1370,4 +1381,61 @@ def test_staff_manages_closet_items_and_client_sees_them_read_only(app, logged_i
     assert response.status_code == 200
     with app.app_context():
         assert db.session.get(ClosetItem, item_id) is None
+
+
+def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in_client, client):
+    with app.app_context():
+        c = Client(full_name="Julia Compras", email="julia-compras@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/lista-compras/novo",
+        data={"category": "sapato", "description": "Scarpin nude", "notes": ""},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Scarpin nude".encode() in response.data
+
+    with app.app_context():
+        item = ShoppingListItem.query.filter_by(client_id=client_id).first()
+        assert item is not None
+        assert item.purchased is False
+        item_id = item.id
+
+    # Marca como comprado.
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/lista-compras/{item_id}/comprado", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ShoppingListItem, item_id).purchased is True
+
+    # Aparece na área do cliente, sem opção de editar/excluir.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "julia-compras@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/")
+    assert response.status_code == 200
+    assert "Scarpin nude".encode() in response.data
+    assert b"Excluir" not in response.data
+
+    # Volta como staff e remove a sugestão.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "staff@example.com", "password": "senha-forte-123"},
+        follow_redirects=True,
+    )
+    response = client.post(
+        f"/painel/clientes/{client_id}/lista-compras/{item_id}/excluir", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ShoppingListItem, item_id) is None
 
