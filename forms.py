@@ -8,6 +8,7 @@ from wtforms import (
     IntegerField,
     PasswordField,
     SelectField,
+    SelectMultipleField,
     StringField,
     SubmitField,
     TextAreaField,
@@ -282,6 +283,22 @@ class ShoppingListItemForm(FlaskForm):
     category = SelectField("Categoria", choices=CLOSET_ITEM_CATEGORIES)
     description = StringField("Peça sugerida", validators=[DataRequired(), Length(max=255)])
     notes = TextAreaField("Notas (opcional)", validators=[Optional()])
+    submit = SubmitField("Salvar")
+
+
+class LookForm(FlaskForm):
+    nome = StringField("Nome do look", validators=[DataRequired(), Length(max=150)])
+    photo_url = StringField(
+        "Link da foto principal (opcional)", validators=[Optional(), Length(max=500)]
+    )
+    ocasiao = StringField("Ocasião (opcional)", validators=[Optional(), Length(max=150)])
+    descricao = TextAreaField("Descrição (opcional)", validators=[Optional()])
+    mensagem_transmitida = StringField(
+        "Mensagem que o look transmite (opcional)", validators=[Optional(), Length(max=255)]
+    )
+    closet_item_ids = SelectMultipleField(
+        "Peças do closet usadas neste look", coerce=int, validators=[Optional()]
+    )
     submit = SubmitField("Salvar")
 
 

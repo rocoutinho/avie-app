@@ -12,6 +12,7 @@ from models import (
     ClosetItem,
     Consultation,
     Ebook,
+    Look,
     Payment,
     ShoppingListItem,
     StyleProfile,
@@ -1637,4 +1638,113 @@ def test_client_sees_own_identity_page(app, client):
 def test_client_area_identity_route_blocked_for_staff(app, logged_in_client):
     response = logged_in_client.get("/minha-area/identidade")
     assert response.status_code == 403
+
+
+def test_build_journey_looks_status_reflects_real_look(app):
+    with app.app_context():
+        c = Client(full_name="Cliente Looks", email="looks-journey@example.com")
+        db.session.add(c)
+        db.session.commit()
+
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "looks")["status"] == "nao_iniciado"
+
+        look = Look(client_id=c.id, nome="Reunião executiva")
+        db.session.add(look)
+        db.session.commit()
+
+        steps = build_journey(c)
+        assert next(s for s in steps if s["key"] == "looks")["status"] == "concluido"
+
+
+def test_staff_creates_look_with_closet_items_and_client_favorites_it(app, logged_in_client, client):
+    with app.app_context():
+        c = Client(full_name="Paula Looks", email="paula-looks@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+        item1 = ClosetItem(client_id=client_id, category="blazer", description="Blazer preto")
+        item2 = ClosetItem(client_id=client_id, category="calca", description="Calça alfaiataria bege")
+        db.session.add_all([item1, item2])
+        db.session.commit()
+        item1_id, item2_id = item1.id, item2.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/looks/novo",
+        data={
+            "nome": "Reunião executiva",
+            "photo_url": "https://example.com/look1.jpg",
+            "ocasiao": "Reunião com investidores",
+            "descricao": "Combinação estruturada e confiante.",
+            "mensagem_transmitida": "Autoridade",
+            "closet_item_ids": [str(item1_id), str(item2_id)],
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Reunião executiva".encode() in response.data
+    assert "usada em 1 look".encode() in response.data
+
+    with app.app_context():
+        look = Look.query.filter_by(client_id=client_id).first()
+        assert look is not None
+        assert len(look.items) == 2
+        assert look.favorited is False
+        look_id = look.id
+
+    # Cliente vê o look e favorita.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "paula-looks@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/looks")
+    assert response.status_code == 200
+    assert "Reunião executiva".encode() in response.data
+    assert "Blazer preto".encode() in response.data
+
+    response = client.post(f"/minha-area/looks/{look_id}/favoritar", follow_redirects=True)
+    assert response.status_code == 200
+    assert "★ Favorito".encode() in response.data
+    with app.app_context():
+        assert db.session.get(Look, look_id).favorited is True
+
+    # Volta como staff e remove o look.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "staff@example.com", "password": "senha-forte-123"},
+        follow_redirects=True,
+    )
+    response = client.post(f"/painel/clientes/{client_id}/looks/{look_id}/excluir", follow_redirects=True)
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(Look, look_id) is None
+
+
+def test_client_cannot_favorite_another_clients_look(app, client):
+    with app.app_context():
+        owner = Client(full_name="Dona do Look", email="dona-look@example.com", status="cliente_ativo")
+        owner.set_password("senha-cliente-123")
+        outsider = Client(full_name="Outra Cliente", email="outra-cliente@example.com", status="cliente_ativo")
+        outsider.set_password("senha-cliente-123")
+        db.session.add_all([owner, outsider])
+        db.session.commit()
+        owner_id = owner.id
+
+        look = Look(client_id=owner_id, nome="Look privado")
+        db.session.add(look)
+        db.session.commit()
+        look_id = look.id
+
+    client.post(
+        "/login",
+        data={"email": "outra-cliente@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.post(f"/minha-area/looks/{look_id}/favoritar")
+    assert response.status_code == 404
 

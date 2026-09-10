@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block title %}Novo look{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <h1 class="h3 mb-1">Novo look</h1>
+    <p class="text-muted mb-4">Cliente: {{ client.full_name }}</p>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      {{ render_field(form.nome) }}
+      {{ render_field(form.photo_url) }}
+      {{ render_field(form.ocasiao) }}
+      {{ render_field(form.descricao) }}
+      {{ render_field(form.mensagem_transmitida) }}
+      {% if form.closet_item_ids.choices %}
+        {{ render_field(form.closet_item_ids) }}
+      {% else %}
+        <p class="text-muted small">Esta cliente ainda não tem peças cadastradas no closet — o look pode ser criado mesmo assim e as peças associadas depois.</p>
+      {% endif %}
+      <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

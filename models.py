@@ -300,6 +300,12 @@ class Client(UserMixin, db.Model):
         cascade="all, delete-orphan",
         order_by="ShoppingListItem.created_at.desc()",
     )
+    looks = db.relationship(
+        "Look",
+        backref="client",
+        cascade="all, delete-orphan",
+        order_by="Look.created_at.desc()",
+    )
 
 
 class StyleProfile(db.Model):
@@ -412,3 +418,35 @@ class ShoppingListItem(db.Model):
     notes = db.Column(db.Text)
     purchased = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Look(db.Model):
+    """Uma combinação de peças do closet digital, montada pela equipe pra
+    cliente — módulo "Meus Looks" (MVP Minha Imagem). A cliente só visualiza
+    e pode favoritar os próprios looks (favorited); quem monta é sempre a
+    equipe, sem editor visual — seleção simples de peças já cadastradas no
+    Closet (ver LookItem)."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
+    nome = db.Column(db.String(150), nullable=False)
+    photo_url = db.Column(db.String(500))
+    ocasiao = db.Column(db.String(150))
+    descricao = db.Column(db.Text)
+    mensagem_transmitida = db.Column(db.String(255))
+    favorited = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    items = db.relationship("LookItem", backref="look", cascade="all, delete-orphan")
+
+
+class LookItem(db.Model):
+    """Associação N:N entre Look e ClosetItem. Sem cascade do lado do
+    ClosetItem — apagar uma peça do closet remove só a associação com o
+    look, não o look inteiro."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    look_id = db.Column(db.Integer, db.ForeignKey("look.id"), nullable=False)
+    closet_item_id = db.Column(db.Integer, db.ForeignKey("closet_item.id"), nullable=False)
+
+    closet_item = db.relationship("ClosetItem", backref="look_items")

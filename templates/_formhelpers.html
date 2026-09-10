@@ -3,6 +3,9 @@
     {{ field.label(class_="form-label fw-semibold") }}
     {% if field.type == "SelectField" %}
       {{ field(class_="form-select" + (" is-invalid" if field.errors else "")) }}
+    {% elif field.type == "SelectMultipleField" %}
+      {{ field(class_="form-select" + (" is-invalid" if field.errors else ""), size=6) }}
+      <div class="form-text">Segure Ctrl (ou Cmd no Mac) pra selecionar mais de uma peça.</div>
     {% elif field.type == "TextAreaField" %}
       {{ field(class_="form-control" + (" is-invalid" if field.errors else ""), rows=field.render_kw.rows if field.render_kw and field.render_kw.rows else 4) }}
     {% else %}

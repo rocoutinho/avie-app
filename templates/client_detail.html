@@ -228,6 +228,9 @@
           <span>
             {% if item.photo_url %}<a href="{{ item.photo_url }}" target="_blank" rel="noopener">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}
             <span class="text-muted small">· {{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+            {% if item.look_items %}
+            <span class="badge text-bg-light border">usada em {{ item.look_items|length }} look{{ "s" if item.look_items|length > 1 }}</span>
+            {% endif %}
           </span>
           <form method="post" action="{{ url_for('clients.delete_closet_item', client_id=client.id, item_id=item.id) }}" onsubmit="return confirm('Remover esta peça do closet?');">
             <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
@@ -262,6 +265,30 @@
         </li>
         {% else %}
         <li class="list-group-item text-muted">Nenhuma sugestão de compra registrada.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Looks
+        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_look', client_id=client.id) }}">+ Novo look</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for look in client.looks %}
+        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+          <span>
+            {% if look.photo_url %}<a href="{{ look.photo_url }}" target="_blank" rel="noopener">{{ look.nome }}</a>{% else %}{{ look.nome }}{% endif %}
+            {% if look.ocasiao %}<span class="text-muted small">· {{ look.ocasiao }}</span>{% endif %}
+            {% if look.favorited %}<span class="badge text-bg-light border">★ favorito da cliente</span>{% endif %}
+            <span class="text-muted small">· {{ look.items|length }} peça{{ "s" if look.items|length != 1 }}</span>
+          </span>
+          <form method="post" action="{{ url_for('clients.delete_look', client_id=client.id, look_id=look.id) }}" onsubmit="return confirm('Remover este look?');">
+            <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhum look criado ainda.</li>
         {% endfor %}
       </ul>
     </div>
