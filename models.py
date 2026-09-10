@@ -422,6 +422,14 @@ class ClosetItem(db.Model):
     description = db.Column(db.String(255), nullable=False)
     photo_url = db.Column(db.String(500))
     notes = db.Column(db.Text)
+    # Campos preparatórios da diretriz "plataforma omnichannel" (Fase 3) —
+    # nullable, sem tela nova nesta rodada, só a base de dado pronta pra
+    # quando cadastro/filtro por esses atributos fizer sentido de verdade.
+    cor = db.Column(db.String(100))
+    marca = db.Column(db.String(100))
+    ocasiao = db.Column(db.String(100))
+    estacao = db.Column(db.String(100))
+    estilo = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
