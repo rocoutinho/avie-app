@@ -117,37 +117,11 @@ valores para a atribuição automática funcionar: `instagram`, `google` ou
 diagnóstico:
 `https://SEUDOMINIO/diagnostico?utm_source=instagram&utm_medium=paid_social&utm_campaign=NOME_DA_CAMPANHA`.
 
-## Campanhas com redirecionamento externo (Canva, Canvas etc.)
-
-Uma campanha é um redirecionamento simples: no formulário de criativo
-(`/painel/campanhas`), preencha **nome interno** (só pra identificar no
-painel), **slug** (define a URL `/lp/o-que-escrever-aqui`), **título**
-(usado na aba do navegador e ao compartilhar o link) e **link** — a URL
-pública da página pronta em outra ferramenta (Canva, Canvas etc.). Quando
-publicado, a página ao vivo do criativo (`/lp/<slug>`) redireciona direto
-pra esse link — a pessoa sai do site do Avie e vê só a página externa. O
-fluxo de aprovação é o mesmo de sempre (rascunho → revisão → publicado,
-só `owner` aprova).
-
-**É redirecionamento, não incorporação (iframe)**: a primeira versão
-desse recurso tentava mostrar a página externa dentro de um `<iframe>`,
-mantendo a navbar/rodapé do Avie por cima — mas a maioria dos criadores
-de site (Canva incluso) bloqueia esse tipo de incorporação por padrão
-(cabeçalho `X-Frame-Options`/`Content-Security-Policy: frame-ancestors`),
-então a página simplesmente não carregava. Redirecionar é o que garante
-que funciona sempre, com a troca de perder a navbar/rodapé nessa página
-específica.
-
-O criativo com slug `campanha` fica disponível também direto na raiz do
-site, em `/campanha` (além de `/lp/campanha`) — pensado pra ter uma URL
-curta de campanha "principal" pra divulgar. Todo outro slug continua só
-em `/lp/<slug>`.
-
 ## Blog e funil de conteúdo para o LinkedIn
 
 Um artigo é escrito e testado no blog do site antes de ser reaproveitado
-manualmente no LinkedIn da Fabiana — mesmo fluxo de aprovação das
-campanhas (`/painel/campanhas`):
+manualmente no LinkedIn da Fabiana — mesmo fluxo de rascunho → revisão →
+publicado usado no resto do painel:
 
 1. **Rascunho** — em `/painel/blog/novo`, `marketing` (ou `owner`) escreve
    título, resumo, imagem de capa (URL) e o conteúdo em **Markdown**
@@ -181,9 +155,8 @@ pelo sistema seria apagado no próximo deploy e quebraria o link que já
 foi enviado por e-mail para quem baixou. Só um ebook fica **ativo** por
 vez (botão "Ativar" na listagem) — é ele que aparece em `/ebook`.
 
-Sem fluxo de aprovação (diferente de campanhas e blog) — é tratado como
-um material de marketing simples, não como conteúdo público que precisa
-de revisão.
+Sem fluxo de aprovação (diferente do blog) — é tratado como um material
+de marketing simples, não como conteúdo público que precisa de revisão.
 
 Fluxo de quem baixa: em `/ebook`, a pessoa informa nome, e-mail, telefone
 e opcionalmente marca "quero receber um diagnóstico gratuito, sem
@@ -250,11 +223,11 @@ mostrar, de onde vêm as dicas etc.).
 app.py              # application factory + comandos flask (create-admin, backup-db)
 config.py           # configuração (lê .env; exige SECRET_KEY em produção)
 extensions.py       # instâncias do SQLAlchemy, Flask-Login, Flask-Migrate, Flask-Limiter
-models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleReport, Payment, Campaign, BlogPost
+models.py           # tabelas: User, Client, StyleProfile, Consultation, StyleReport, Payment, BlogPost
 forms.py            # formulários (Flask-WTF)
 reports_engine.py   # gera o rascunho do relatório personalizado
 blog_engine.py       # renderiza Markdown -> HTML e formata datas em pt-BR pro blog
-blueprints/          # rotas: auth, public, dashboard, clients, reports, campaigns, blog, ebooks, client_area
+blueprints/          # rotas: auth, public, dashboard, clients, reports, blog, ebooks, client_area
 templates/           # HTML (Jinja + Bootstrap)
 static/vendor/        # Bootstrap CSS/JS vendorizado (sem CDN)
 static/fonts/         # fontes auto-hospedadas (Inter, Cormorant Garamond)

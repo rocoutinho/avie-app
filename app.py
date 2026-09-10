@@ -12,7 +12,6 @@ from config import Config, IS_PRODUCTION
 from extensions import db, limiter, login_manager, mail, migrate
 from models import (
     BLOG_POST_STATUSES,
-    CAMPAIGN_STATUSES,
     CLIENT_STATUSES,
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
@@ -58,7 +57,6 @@ def create_app(config_class=Config):
 
     from blueprints.auth import auth_bp
     from blueprints.blog import blog_bp
-    from blueprints.campaigns import campaigns_bp
     from blueprints.client_area import client_area_bp
     from blueprints.clients import clients_bp
     from blueprints.dashboard import dashboard_bp
@@ -71,7 +69,6 @@ def create_app(config_class=Config):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(clients_bp)
     app.register_blueprint(reports_bp)
-    app.register_blueprint(campaigns_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(ebooks_bp)
     app.register_blueprint(client_area_bp)
@@ -88,7 +85,6 @@ def create_app(config_class=Config):
             REPORT_STATUSES=REPORT_STATUSES,
             PAYMENT_STATUSES=PAYMENT_STATUSES,
             LEAD_SOURCES=LEAD_SOURCES,
-            CAMPAIGN_STATUSES=CAMPAIGN_STATUSES,
             BLOG_POST_STATUSES=BLOG_POST_STATUSES,
             label_for=lambda choices, key: dict(choices).get(key, key),
             current_year=datetime.utcnow().year,
@@ -115,7 +111,7 @@ def register_cli(app):
         email = click.prompt("E-mail").strip().lower()
         password = click.prompt("Senha", hide_input=True, confirmation_prompt=True)
         role = click.prompt(
-            "Papel (owner = acesso total e aprova campanhas / marketing = cria e edita campanhas)",
+            "Papel (owner = acesso total e aprova posts do blog / marketing = cria e edita posts do blog)",
             default="owner",
             type=click.Choice(["owner", "marketing"]),
         )

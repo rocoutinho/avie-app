@@ -1,6 +1,6 @@
 """CRUD do material de captura (ebook) — sem fluxo de aprovação (diferente
-de campanhas/blog): é um ativo de marketing simples, qualquer staff
-logado cria/edita/ativa. `file_url` é sempre um link externo (Google
+do blog): é um ativo de marketing simples, qualquer staff logado
+cria/edita/ativa. `file_url` é sempre um link externo (Google
 Drive, Dropbox etc.), nunca um upload de arquivo pelo sistema — o disco
 do Render (plano free) é efêmero, um PDF salvo localmente seria apagado
 no próximo deploy e quebraria a isca silenciosamente para quem já tem o

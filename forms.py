@@ -195,38 +195,6 @@ class ReportForm(FlaskForm):
     submit = SubmitField("Salvar relatório")
 
 
-class CampaignForm(FlaskForm):
-    internal_name = StringField(
-        "Nome interno (só para identificar no painel)", validators=[DataRequired(), Length(max=150)]
-    )
-    slug = StringField(
-        "Slug (define a URL: /o-que-escrever-aqui)",
-        validators=[
-            DataRequired(),
-            Length(max=80),
-            Regexp(
-                r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                message="Use apenas letras minúsculas, números e hífens (ex: black-friday-2026).",
-            ),
-        ],
-    )
-    hero_title = StringField(
-        "Título (usado na aba do navegador e ao compartilhar o link)",
-        validators=[DataRequired(), Length(max=255)],
-    )
-    embed_url = StringField(
-        "Link (página pronta no Canva, Canvas etc.) — a página da campanha "
-        "redireciona direto pra cá",
-        validators=[DataRequired(), Length(max=500)],
-    )
-    submit = SubmitField("Salvar rascunho")
-
-
-class CampaignReviewForm(FlaskForm):
-    review_note = TextAreaField("Motivo da recusa (opcional)", validators=[Optional(), Length(max=2000)])
-    submit = SubmitField("Recusar")
-
-
 class BlogPostForm(FlaskForm):
     slug = StringField(
         "Slug (define a URL: /blog/o-que-voce-escrever-aqui)",
