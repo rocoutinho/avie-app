@@ -185,6 +185,17 @@ h1, h2, h3, .font-serif {
   box-shadow: var(--avie-shadow);
 }
 
+/* .btn-brand's padding is tuned for prominent CTAs (hero, final CTA) and
+   overrides Bootstrap's .btn-sm padding when both classes are combined
+   (same specificity, .btn-brand comes later in the cascade) — that's what
+   was blowing up the small card-header action buttons across the painel
+   (client_detail, dashboard, clients_list, etc). Scale it back down here
+   so .btn-sm.btn-brand actually renders at "sm" size. */
+.btn-sm.btn-brand {
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+}
+
 .btn-outline-secondary {
   border-radius: 999px;
 }
