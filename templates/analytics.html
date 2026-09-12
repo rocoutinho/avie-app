@@ -50,17 +50,6 @@
 
 <div class="row g-4">
   <div class="col-md-6">
-    <h2 class="h5">Clientes por estágio</h2>
-    <ul class="list-group">
-      {% for key, label in CLIENT_STATUSES %}
-      <li class="list-group-item d-flex justify-content-between">
-        <span>{{ label }}</span>
-        <span class="badge bg-light text-dark">{{ clients_by_status[key] }}</span>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-  <div class="col-md-6">
     <h2 class="h5">Leads por origem</h2>
     <ul class="list-group">
       {% for key, label in LEAD_SOURCES %}
@@ -72,4 +61,7 @@
     </ul>
   </div>
 </div>
+<p class="text-muted small mt-3">
+  Contagem de clientes por estágio do funil já está nas colunas do <a href="{{ url_for('dashboard.index') }}">Painel</a>.
+</p>
 {% endblock %}
