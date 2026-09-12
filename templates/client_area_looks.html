@@ -8,7 +8,7 @@
   <h1 class="h3 mb-1">Minha assinatura visual</h1>
   {% set summary_bits = [] %}
   {% if client.looks %}{% set _ = summary_bits.append(client.looks|length ~ " look" ~ ("s" if client.looks|length != 1) ~ " montado" ~ ("s" if client.looks|length != 1)) %}{% endif %}
-  {% if closet_items %}{% set _ = summary_bits.append(closet_items|length ~ " peça" ~ ("s" if closet_items|length != 1) ~ " no seu closet") %}{% endif %}
+  {% if client.closet_items %}{% set _ = summary_bits.append(client.closet_items|length ~ " peça" ~ ("s" if client.closet_items|length != 1) ~ " no seu closet") %}{% endif %}
   {% if shopping_list_items %}{% set _ = summary_bits.append(shopping_list_items|length ~ " sugest" ~ ("ão" if shopping_list_items|length == 1 else "ões") ~ " de compra") %}{% endif %}
   {% if summary_bits %}
   <p class="text-muted mb-0">{{ summary_bits|join(" · ") }}</p>
@@ -79,24 +79,52 @@
 
 <h2 class="h5 mb-1 mt-5">Meu closet</h2>
 <p class="text-muted small mb-3">As peças por trás dos seus looks, catalogadas pela sua consultora.</p>
+{% if client.closet_items %}
+<ul class="nav nav-pills mb-4 flex-wrap gap-2">
+  <li class="nav-item">
+    <a class="nav-link {% if not active_categoria %}active{% endif %}" href="{{ url_for('client_area.looks') }}#closet">
+      Todas <span class="badge bg-light text-dark">{{ client.closet_items|length }}</span>
+    </a>
+  </li>
+  {% for key, label in CLOSET_ITEM_CATEGORIES %}
+  {% if categoria_counts[key] %}
+  <li class="nav-item">
+    <a class="nav-link {% if active_categoria == key %}active{% endif %}" href="{{ url_for('client_area.looks', categoria=key) }}#closet">
+      {{ label }} <span class="badge bg-light text-dark">{{ categoria_counts[key] }}</span>
+    </a>
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>
+{% endif %}
+
 {% if closet_items %}
-<div class="card mb-4">
-  <ul class="list-group list-group-flush">
-    {% for item in closet_items %}
-    <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
-      <span>
-        {% if item.photo_url %}<a href="{{ item.photo_url }}" target="_blank" rel="noopener">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}
-        <span class="text-muted small">· {{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+<div class="row g-4 mb-4" id="closet">
+  {% for item in closet_items %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      {% if item.photo_url %}
+      <img src="{{ item.photo_url }}" alt="{{ item.description }}" class="card-img-top" style="aspect-ratio: 3/4; object-fit: cover;">
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <span class="badge text-bg-light border align-self-start mb-2">{{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
+        <h3 class="h6 mb-1">{{ item.description }}</h3>
         {% if item.look_items %}
-        <span class="badge text-bg-light border">usada em {{ item.look_items|length }} look{{ "s" if item.look_items|length > 1 }}</span>
+        <p class="text-muted small mb-0 mt-auto">usada em {{ item.look_items|length }} look{{ "s" if item.look_items|length > 1 }}</p>
         {% endif %}
-      </span>
-    </li>
-    {% endfor %}
-  </ul>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% elif client.closet_items %}
+<div class="card mb-4" id="closet">
+  <div class="card-body">
+    <p class="text-muted mb-0">Nenhuma peça dessa categoria ainda.</p>
+  </div>
 </div>
 {% else %}
-<div class="card mb-4">
+<div class="card mb-4" id="closet">
   <div class="card-body">
     <p class="text-muted mb-0">Sua consultora ainda não cadastrou seu closet digital — isso acontece ao longo do acompanhamento.</p>
   </div>
