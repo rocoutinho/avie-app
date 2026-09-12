@@ -45,6 +45,14 @@ PAYMENT_STATUSES = [
     ("atrasado", "Atrasado"),
 ]
 
+LOOK_MOMENTS = [
+    ("dia_a_dia", "Dia a dia"),
+    ("trabalho", "Trabalho"),
+    ("fim_de_semana", "Fim de semana"),
+    ("evento", "Evento especial"),
+    ("viagem", "Viagem"),
+]
+
 CLOSET_ITEM_CATEGORIES = [
     ("blazer", "Blazer/Casaco"),
     ("camisa", "Camisa/Blusa"),
@@ -470,6 +478,12 @@ class Look(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
     nome = db.Column(db.String(150), nullable=False)
     photo_url = db.Column(db.String(500))
+    # momento (LOOK_MOMENTS) é a categoria fixa pra filtrar a galeria de looks
+    # na área da cliente; ocasiao continua sendo o detalhe livre dentro desse
+    # momento (ex: momento="trabalho", ocasiao="Reunião com investidores").
+    # Nullable pra não quebrar looks já existentes — a área da cliente trata
+    # ausência de momento como "sem categoria" em vez de esconder o look.
+    momento = db.Column(db.String(30))
     ocasiao = db.Column(db.String(150))
     descricao = db.Column(db.Text)
     mensagem_transmitida = db.Column(db.String(255))

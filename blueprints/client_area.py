@@ -5,12 +5,12 @@ outros clientes nem dá acesso a nada de /painel."""
 
 from datetime import datetime
 
-from flask import Blueprint, abort, current_app, redirect, render_template, session, url_for
+from flask import Blueprint, abort, current_app, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required
 
 from extensions import db
 from journey import build_journey
-from models import Client, Look
+from models import Client, Look, LOOK_MOMENTS
 
 client_area_bp = Blueprint("client_area", __name__, url_prefix="/minha-area")
 
@@ -111,9 +111,17 @@ def diagnostico():
 @client_area_bp.route("/looks")
 @login_required
 def looks():
+    active_momento = request.args.get("momento") or None
+    looks = current_user.looks
+    if active_momento:
+        looks = [l for l in looks if l.momento == active_momento]
+    momento_counts = {key: sum(1 for l in current_user.looks if l.momento == key) for key, _label in LOOK_MOMENTS}
     return render_template(
         "client_area_looks.html",
         client=current_user,
+        looks=looks,
+        active_momento=active_momento,
+        momento_counts=momento_counts,
         closet_items=current_user.closet_items,
         shopping_list_items=current_user.shopping_list_items,
     )

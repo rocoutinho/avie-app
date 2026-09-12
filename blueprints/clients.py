@@ -478,6 +478,7 @@ def new_look(client_id):
             client_id=client.id,
             nome=form.nome.data.strip(),
             photo_url=upload_image(form.photo_file.data) or form.photo_url.data,
+            momento=form.momento.data,
             ocasiao=form.ocasiao.data,
             descricao=form.descricao.data,
             mensagem_transmitida=form.mensagem_transmitida.data,

@@ -1724,6 +1724,7 @@ def test_staff_creates_look_with_closet_items_and_client_favorites_it(app, logge
         data={
             "nome": "Reunião executiva",
             "photo_url": "https://example.com/look1.jpg",
+            "momento": "trabalho",
             "ocasiao": "Reunião com investidores",
             "descricao": "Combinação estruturada e confiante.",
             "mensagem_transmitida": "Autoridade",
@@ -1774,6 +1775,31 @@ def test_staff_creates_look_with_closet_items_and_client_favorites_it(app, logge
     assert response.status_code == 200
     with app.app_context():
         assert db.session.get(Look, look_id) is None
+
+
+def test_client_filters_looks_by_momento(app, client):
+    with app.app_context():
+        c = Client(full_name="Marcia Momentos", email="marcia-momentos@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(Look(client_id=c.id, nome="Blazer de reunião", momento="trabalho"))
+        db.session.add(Look(client_id=c.id, nome="Vestido de festa", momento="evento"))
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "marcia-momentos@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+
+    response = client.get("/minha-area/looks")
+    assert "Blazer de reunião".encode() in response.data
+    assert "Vestido de festa".encode() in response.data
+
+    response = client.get("/minha-area/looks?momento=trabalho")
+    assert "Blazer de reunião".encode() in response.data
+    assert "Vestido de festa".encode() not in response.data
 
 
 def test_client_cannot_favorite_another_clients_look(app, client):
