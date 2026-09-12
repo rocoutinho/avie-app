@@ -1,32 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Minha jornada{% endblock %}
 
-{% macro service_icon(key) %}
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  {%- if key == "estilo" %}
-  <path d="M9 4 12 6 15 4"/>
-  <path d="M9 4 4 7l1.3 3.5L4 20h16l-1.3-9.5L20 7l-5-3"/>
-  <path d="M9 4l1.2 15M15 4 13.8 19"/>
-  {%- elif key == "biotipo" %}
-  <path d="M7.5 3h9M7.5 21h9"/>
-  <path d="M7.5 3c0 4.8 4.5 5.8 4.5 9s-4.5 4.2-4.5 9"/>
-  <path d="M16.5 3c0 4.8-4.5 5.8-4.5 9s4.5 4.2 4.5 9"/>
-  {%- elif key == "cores" %}
-  <rect x="3.3" y="6.5" width="6" height="13" rx="1.2" transform="rotate(-16 6.3 13)"/>
-  <rect x="9" y="5.3" width="6" height="13.4" rx="1.2"/>
-  <rect x="14.7" y="6.5" width="6" height="13" rx="1.2" transform="rotate(16 17.7 13)"/>
-  {%- elif key == "visagismo" %}
-  <path d="M9.5 20.5v-3.3c-2.6-1-4.2-3.4-4.2-6.7 0-4.4 3.4-7.5 7.4-7.5 3.3 0 6.1 2.1 7 5 .3.9.4.9 1.1.9a1 1 0 1 1 0 2c-.5 0-.7.2-.9.8-.6 1.9-1.9 3.5-3.6 4.4v4.4"/>
-  <circle cx="13.6" cy="9.3" r="0.6" fill="currentColor" stroke="none"/>
-  {%- elif key == "arquetipos" %}
-  <path d="M12 3v2.3M10.6 4.3h2.8"/>
-  <path d="M9.3 9.3c0-1.6 1.3-2.6 2.7-2.6s2.7 1 2.7 2.6c0 1-.5 1.9-1.4 2.5l.9 3.4H9.8l.9-3.4c-.9-.6-1.4-1.5-1.4-2.5Z"/>
-  <path d="M7.3 20.5c0-2.6 1-4.3 2-4.9h5.4c1 .6 2 2.3 2 4.9"/>
-  <path d="M6.3 20.5h11.4"/>
-  {%- endif %}
-</svg>
-{% endmacro %}
-
 {% set journey_badge_class = {
   "nao_iniciado": "bg-secondary",
   "em_andamento": "bg-warning text-dark",
@@ -35,14 +9,20 @@
 
 {% set journey_step_urls = {
   "identidade": url_for('client_area.identity'),
+  "diagnostico": url_for('client_area.diagnostico'),
   "looks": url_for('client_area.looks'),
+  "evolucao": url_for('client_area.evolucao'),
 } %}
 
 {% block content %}
 <div class="mb-4">
   <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
   <p class="text-muted mb-0">
-    {% if previous_login %}
+    {% if journey[3].next_consultation %}
+      Sua próxima consultoria é dia <strong>{{ journey[3].next_consultation.scheduled_at.strftime('%d/%m/%Y') }}</strong>.
+    {% elif has_news %}
+      Você tem novidades desde sua última visita — dá uma olhada nas suas etapas abaixo.
+    {% elif previous_login %}
       Seu último acesso foi em {{ previous_login.strftime('%d/%m/%Y às %H:%M') }}.
     {% else %}
       Este é seu primeiro acesso à sua área.
@@ -50,151 +30,43 @@
   </p>
 </div>
 
-<div class="mb-5">
+<div class="mb-3">
   <p class="eyebrow mb-1" style="color: var(--avie-gold);">Sua jornada</p>
   <h2 class="h4 mb-4">Sua jornada de transformação</h2>
   <div class="row g-3">
     {% for step in journey %}
     <div class="col-sm-6 col-lg-3">
-      <a href="{{ journey_step_urls[step.key] if step.key in journey_step_urls else '#' ~ step.anchor }}" class="card h-100 text-decoration-none text-reset">
+      <a href="{{ journey_step_urls[step.key] }}" class="card h-100 text-decoration-none text-reset">
         <div class="card-body d-flex flex-column">
           <span class="badge {{ journey_badge_class[step.status] }} align-self-start mb-2">{{ step.status_label }}</span>
           <h3 class="h6 mb-2">{{ step.title }}</h3>
-          <p class="text-muted small mb-0">{{ step.description }}</p>
+          <p class="text-muted small mb-0">
+            {%- if step.key == "identidade" -%}
+              {%- set id_count = (client.identidade_rotina and 1 or 0) + (client.identidade_objetivo and 1 or 0) + (client.identidade_estilo and 1 or 0) -%}
+              {%- if id_count == 3 -%}Identidade completa
+              {%- elif id_count > 0 -%}{{ id_count }} de 3 seções preenchidas
+              {%- else -%}Ainda não preenchida{%- endif -%}
+            {%- elif step.key == "diagnostico" -%}
+              {%- if client.style_assessment and (client.style_assessment.estacao_cor or client.style_assessment.estilo_predominante) -%}
+                {{ [client.style_assessment.estacao_cor, client.style_assessment.estilo_predominante]|select|join(' · ') }}
+              {%- elif dossie_services -%}Dossiê disponível pra consulta
+              {%- elif client.profile -%}Diagnóstico do formulário preenchido
+              {%- else -%}Ainda não preenchido{%- endif -%}
+            {%- elif step.key == "looks" -%}
+              {%- if client.looks -%}
+                {%- set fav_count = client.looks|selectattr('favorited')|list|length -%}
+                {{ client.looks|length }} look{{ 's' if client.looks|length != 1 }}{% if fav_count %}, {{ fav_count }} favorito{{ 's' if fav_count != 1 }}{% endif %}
+              {%- else -%}Ainda não montada{%- endif -%}
+            {%- elif step.key == "evolucao" -%}
+              {%- if step.next_consultation -%}Próxima: {{ step.next_consultation.scheduled_at.strftime('%d/%m') }}
+              {%- elif step.status == "concluido" -%}Última consultoria concluída
+              {%- else -%}Ainda não começou{%- endif -%}
+            {%- endif -%}
+          </p>
         </div>
       </a>
     </div>
     {% endfor %}
   </div>
 </div>
-
-<div id="{{ journey[0].anchor }}" class="card mb-4">
-  <div class="card-header">{{ journey[0].title }}</div>
-  <div class="card-body">
-    {% if client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo %}
-    <p class="mb-2">Sua consultora já escreveu como ela te vê — quem você é, como quer ser percebida e qual é o seu estilo.</p>
-    {% else %}
-    <p class="text-muted mb-2">Sua consultora ainda não escreveu sua identidade visual — isso acontece ao longo do acompanhamento.</p>
-    {% endif %}
-    <a href="{{ url_for('client_area.identity') }}" class="btn btn-brand btn-sm">Ver minha identidade visual</a>
-  </div>
-</div>
-
-<div id="{{ journey[1].anchor }}" class="card mb-4">
-  <div class="card-header">{{ journey[1].title }}</div>
-  <div class="card-body">
-    {% if client.style_assessment %}
-    <dl class="mb-4 pb-4 border-bottom">
-      {% if client.style_assessment.estacao_cor %}<dt>Estação de cor</dt><dd>{{ client.style_assessment.estacao_cor }}</dd>{% endif %}
-      {% if client.style_assessment.paleta_principal %}<dt>Paleta principal</dt><dd>{{ client.style_assessment.paleta_principal }}</dd>{% endif %}
-      {% if client.style_assessment.estilo_predominante %}<dt>Estilo predominante</dt><dd>{{ client.style_assessment.estilo_predominante }}</dd>{% endif %}
-      {% if client.style_assessment.estilo_complementar %}<dt>Estilo complementar</dt><dd>{{ client.style_assessment.estilo_complementar }}</dd>{% endif %}
-      {% if client.style_assessment.mensagem_desejada %}<dt class="mb-0">Mensagem que você transmite</dt><dd class="mb-0">{{ client.style_assessment.mensagem_desejada }}</dd>{% endif %}
-    </dl>
-    {% endif %}
-    {% if client.profile %}
-    <dl class="mb-0">
-      <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>
-      <dt>Momento de carreira</dt><dd>{{ client.profile.momento_carreira }}</dd>
-      <dt>Como quer ser percebida</dt><dd>{{ client.profile.como_quer_ser_percebida }}</dd>
-      <dt>Desafios de imagem</dt><dd>{{ client.profile.desafios_imagem }}</dd>
-      <dt>Ambiente de trabalho</dt><dd>{{ client.profile.ambiente_trabalho or "—" }}</dd>
-      <dt>Estilo atual</dt><dd>{{ client.profile.estilo_atual or "—" }}</dd>
-      <dt>Cores preferidas</dt><dd>{{ client.profile.cores_preferidas or "—" }}</dd>
-      <dt class="mb-0">Referências</dt><dd class="mb-0">{{ client.profile.referencias_estilo or "—" }}</dd>
-    </dl>
-    {% elif dossie_services %}
-    <div class="dossie-services-grid">
-      {% for service in dossie_services %}
-      <div class="dossie-service-card">
-        <div class="dossie-service-icon">{{ service_icon(service.icon) }}</div>
-        <h3 class="h6 mb-2">{{ service.label }}</h3>
-        <div class="dossie-service-text">{{ service.text }}</div>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <p class="text-muted mb-2">Você ainda não preencheu seu diagnóstico.</p>
-    <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-sm">Fazer meu diagnóstico</a>
-    {% endif %}
-
-    {% if other_reports %}
-    <hr class="my-4">
-    <h3 class="h6 mb-3">Recomendações da consultoria</h3>
-    {% for report in other_reports %}
-    <div class="{{ 'mb-4 pb-4 border-bottom' if not loop.last else 'mb-0' }}">
-      <h4 class="h6 mb-1">{{ report.title }}</h4>
-      <p class="text-muted small mb-2">Enviado em {{ report.sent_at.strftime('%d/%m/%Y') if report.sent_at else "—" }}</p>
-      <div style="white-space: pre-line;">{{ report.content }}</div>
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-</div>
-
-<div id="{{ journey[2].anchor }}" class="card mb-4">
-  <div class="card-header">{{ journey[2].title }}</div>
-  <div class="card-body">
-    {% if client.looks %}
-    <p class="mb-2">Sua consultora já montou {{ client.looks|length }} look{{ "s" if client.looks|length != 1 }} pra você a partir do seu closet.</p>
-    {% else %}
-    <p class="text-muted mb-2">Em breve, sua consultora vai montar aqui looks completos a partir do seu closet digital.</p>
-    {% endif %}
-    <a href="{{ url_for('client_area.looks') }}" class="btn btn-brand btn-sm">Ver meus looks</a>
-  </div>
-</div>
-
-<div id="{{ journey[3].anchor }}" class="card mb-4">
-  <div class="card-header">{{ journey[3].title }}</div>
-  <div class="card-body">
-    {% set next_consultation = journey[3].next_consultation %}
-    {% if next_consultation %}
-    <p class="mb-0">Sua próxima consultoria está agendada para <strong>{{ next_consultation.scheduled_at.strftime('%d/%m/%Y às %H:%M') }}</strong>.</p>
-    {% elif journey[3].status == "concluido" %}
-    <p class="text-muted mb-0">Você já passou por consultorias com sua consultora — combine a próxima quando quiser dar continuidade.</p>
-    {% else %}
-    <p class="text-muted mb-0">Sua jornada de evolução contínua começa na sua primeira consultoria.</p>
-    {% endif %}
-  </div>
-</div>
-
-{% if closet_items or shopping_list_items %}
-<div class="mb-3 mt-5">
-  <p class="eyebrow mb-1" style="color: var(--avie-gold);">Nos bastidores</p>
-  <h2 class="h4 mb-0">Seu closet digital</h2>
-</div>
-
-{% if closet_items %}
-<div class="card mb-4">
-  <div class="card-header">Seu closet</div>
-  <ul class="list-group list-group-flush">
-    {% for item in closet_items %}
-    <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
-      <span>
-        {% if item.photo_url %}<a href="{{ item.photo_url }}" target="_blank" rel="noopener">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}
-      </span>
-      <span class="text-muted small">{{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
-    </li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
-
-{% if shopping_list_items %}
-<div class="card mb-4">
-  <div class="card-header">Sugestões do seu personal shopper</div>
-  <ul class="list-group list-group-flush">
-    {% for item in shopping_list_items %}
-    <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
-      <span class="{{ 'text-decoration-line-through text-muted' if item.status == 'incorporada' }}">
-        {{ item.description }}
-        {% if item.motivo %}<br><span class="text-muted small">{{ item.motivo }}</span>{% endif %}
-      </span>
-      <span class="text-muted small flex-shrink-0">{{ label_for(PERSONAL_SHOPPER_STATUSES, item.status) }}</span>
-    </li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
-{% endif %}
 {% endblock %}

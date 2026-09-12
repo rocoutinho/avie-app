@@ -1087,11 +1087,12 @@ def test_dossie_client_sees_service_cards_instead_of_diagnostic_cta(app, logged_
         created.set_password("senha-cliente-final")
         db.session.commit()
 
-    response = client.post(
+    client.post(
         "/login",
         data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
         follow_redirects=True,
     )
+    response = client.get("/minha-area/diagnostico")
     assert response.status_code == 200
     assert "Fazer meu diagnóstico".encode() not in response.data
     assert "Estilo".encode() in response.data
@@ -1150,11 +1151,12 @@ def test_staff_edits_dossie_and_client_area_reflects_it(app, logged_in_client, c
 
     logged_in_client.get("/logout")
     client.get("/logout")
-    response = client.post(
+    client.post(
         "/login",
         data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
         follow_redirects=True,
     )
+    response = client.get("/minha-area/diagnostico")
     assert "Estilo editado depois do cadastro.".encode() in response.data
     assert "Arquétipo Sábia.".encode() in response.data
 
@@ -1328,7 +1330,7 @@ def test_staff_manages_closet_items_and_client_sees_them_read_only(app, logged_i
         data={"email": "isabela-closet@example.com", "password": "senha-cliente-123"},
         follow_redirects=True,
     )
-    response = client.get("/minha-area/")
+    response = client.get("/minha-area/looks")
     assert response.status_code == 200
     assert "Blazer preto alfaiataria".encode() in response.data
     assert b"Excluir" not in response.data
@@ -1387,7 +1389,7 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
         data={"email": "julia-compras@example.com", "password": "senha-cliente-123"},
         follow_redirects=True,
     )
-    response = client.get("/minha-area/")
+    response = client.get("/minha-area/looks")
     assert response.status_code == 200
     assert "Scarpin nude".encode() in response.data
     assert "Falta um sapato neutro".encode() in response.data
@@ -1645,6 +1647,47 @@ def test_client_area_identity_route_blocked_for_staff(app, logged_in_client):
     assert response.status_code == 403
 
 
+def test_client_area_diagnostico_route_blocked_for_staff(app, logged_in_client):
+    response = logged_in_client.get("/minha-area/diagnostico")
+    assert response.status_code == 403
+
+
+def test_client_area_evolucao_route_blocked_for_staff(app, logged_in_client):
+    response = logged_in_client.get("/minha-area/evolucao")
+    assert response.status_code == 403
+
+
+def test_client_sees_next_and_past_consultations_on_evolucao_page(app, client):
+    with app.app_context():
+        c = Client(full_name="Vera Evolução", email="vera-evolucao@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(
+            Consultation(
+                client_id=c.id, tipo="consultoria_imagem",
+                scheduled_at=datetime(2030, 1, 10, 14, 0), status="agendada",
+            )
+        )
+        db.session.add(
+            Consultation(
+                client_id=c.id, tipo="diagnostico_gratuito",
+                scheduled_at=datetime(2020, 1, 5, 10, 0), status="realizada",
+            )
+        )
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "vera-evolucao@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/evolucao")
+    assert response.status_code == 200
+    assert "10/01/2030".encode() in response.data
+    assert "05/01/2020".encode() in response.data
+
+
 def test_build_journey_looks_status_reflects_real_look(app):
     with app.app_context():
         c = Client(full_name="Cliente Looks", email="looks-journey@example.com")
@@ -1801,7 +1844,7 @@ def test_staff_creates_and_edits_style_assessment(app, logged_in_client):
         assert StyleAssessment.query.filter_by(client_id=client_id).first().estacao_cor == "Inverno profundo"
 
 
-def test_client_sees_style_assessment_on_journey_home(app, client):
+def test_client_sees_style_assessment_on_diagnostico_page(app, client):
     with app.app_context():
         c = Client(full_name="Denise Diagnóstico", email="denise-diagnostico@example.com", status="cliente_ativo")
         c.set_password("senha-cliente-123")
@@ -1822,7 +1865,7 @@ def test_client_sees_style_assessment_on_journey_home(app, client):
         data={"email": "denise-diagnostico@example.com", "password": "senha-cliente-123"},
         follow_redirects=True,
     )
-    response = client.get("/minha-area/")
+    response = client.get("/minha-area/diagnostico")
     assert response.status_code == 200
     assert "Primavera clara".encode() in response.data
     assert "leveza e frescor".encode() in response.data
