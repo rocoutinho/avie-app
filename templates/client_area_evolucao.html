@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Minha evolução contínua{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('client_area.index') }}" class="text-muted small text-decoration-none">&larr; Voltar pra minha jornada</a>
+  <p class="eyebrow mb-1 mt-2" style="color: var(--avie-gold);">Minha jornada</p>
+  <h1 class="h3 mb-0">Minha evolução contínua</h1>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">Próxima consultoria</div>
+  <div class="card-body">
+    {% if next_consultation %}
+    <p class="mb-0">Sua próxima consultoria está agendada para <strong>{{ next_consultation.scheduled_at.strftime('%d/%m/%Y às %H:%M') }}</strong>.</p>
+    {% else %}
+    <p class="text-muted mb-0">Nenhuma consultoria agendada no momento — combine a próxima com sua consultora quando quiser dar continuidade.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if past_consultations %}
+<div class="card">
+  <div class="card-header">Consultorias anteriores</div>
+  <ul class="list-group list-group-flush">
+    {% for con in past_consultations %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ label_for(CONSULTATION_TYPES, con.tipo) }}</span>
+      <span class="text-muted small">{{ con.scheduled_at.strftime('%d/%m/%Y') }} · {{ label_for(CONSULTATION_STATUSES, con.status) }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
