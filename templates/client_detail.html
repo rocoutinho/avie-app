@@ -1,155 +1,116 @@
 {% extends "base.html" %}
 {% block title %}{{ client.full_name }}{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
-  <div>
-    <h1 class="h3 mb-1">{{ client.full_name }}</h1>
-    <div class="text-muted">
-      {{ client.email }} · {{ client.phone or "sem telefone" }}
-      {% if client.instagram %} · @{{ client.instagram }}{% endif %}
-    </div>
-    <div class="mt-1">
-      <span class="badge text-bg-light border">Origem: {{ label_for(LEAD_SOURCES, client.source) }}</span>
-      {% if client.utm_campaign %}
-      <span class="badge text-bg-light border">Campanha: {{ client.utm_campaign }}</span>
-      {% endif %}
-      {% if client.utm_medium %}
-      <span class="badge text-bg-light border">Mídia: {{ client.utm_medium }}</span>
-      {% endif %}
-      {% if client.is_recorrente %}
-      <span class="badge text-bg-light border">★ Cliente recorrente</span>
-      {% endif %}
-    </div>
+<div class="mb-4">
+  <h1 class="h3 mb-1">{{ client.full_name }}</h1>
+  <div class="text-muted">
+    {{ client.email }} · {{ client.phone or "sem telefone" }}
+    {% if client.instagram %} · @{{ client.instagram }}{% endif %}
   </div>
-  <div class="d-flex gap-2 align-items-center">
+  <div class="mt-1">
+    <span class="badge text-bg-light border">{{ label_for(CLIENT_STATUSES, client.status) }}</span>
+    <span class="badge text-bg-light border">Origem: {{ label_for(LEAD_SOURCES, client.source) }}</span>
+    {% if client.utm_campaign %}
+    <span class="badge text-bg-light border">Campanha: {{ client.utm_campaign }}</span>
+    {% endif %}
+    {% if client.utm_medium %}
+    <span class="badge text-bg-light border">Mídia: {{ client.utm_medium }}</span>
+    {% endif %}
+    {% if client.is_recorrente %}
+    <span class="badge text-bg-light border">★ Cliente recorrente</span>
+    {% endif %}
+  </div>
+</div>
+
+<details class="manage-disclosure">
+  <summary>Gerenciar</summary>
+  <div class="manage-actions">
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_client', client_id=client.id) }}">Editar dados</a>
+    {% if whatsapp_link %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Contato (WhatsApp)</a>
+    {% else %}
+    <button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Cadastre um telefone pra habilitar">Contato (WhatsApp)</button>
+    {% endif %}
     <form method="post" action="{{ url_for('clients.update_status', client_id=client.id) }}" class="d-flex gap-2">
       <select name="status" class="form-select form-select-sm">
         {% for key, label in CLIENT_STATUSES %}
         <option value="{{ key }}" {% if key == client.status %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
-      <button class="btn btn-sm btn-outline-secondary" type="submit">Atualizar</button>
+      <button class="btn btn-sm btn-outline-secondary text-nowrap" type="submit">Atualizar status</button>
     </form>
-    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_client', client_id=client.id) }}">Editar dados</a>
   </div>
+</details>
+
+{% set diag_bits = [] %}
+{% if client.profile %}{% set _ = diag_bits.append("diagnóstico público") %}{% endif %}
+{% if client.style_assessment %}{% set _ = diag_bits.append("estruturado") %}{% endif %}
+{% if client.other_reports %}{% set _ = diag_bits.append(client.other_reports|length ~ " preliminar" ~ ("es" if client.other_reports|length != 1 else "")) %}{% endif %}
+{% set has_personal_data = client.notes or client.style_notes or client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo or client.idade or client.profissao or client.cidade %}
+
+<div class="journey-grid">
+  <a class="journey-card" href="{{ url_for('clients.diagnostico', client_id=client.id) }}">
+    <span class="journey-card-status {{ 'is-filled' if diag_bits }}"></span>
+    <div class="journey-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M15 15l5 5"/></svg>
+    </div>
+    <div class="journey-card-title">Diagnóstico</div>
+    <div class="journey-card-sub">{{ diag_bits|join(" · ") if diag_bits else "Ainda não preenchido" }}</div>
+  </a>
+
+  <a class="journey-card" href="{{ url_for('clients.dossie', client_id=client.id) }}">
+    <span class="journey-card-status {{ 'is-filled' if client.dossie_report }}"></span>
+    <div class="journey-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+    </div>
+    <div class="journey-card-title">Dossiê</div>
+    <div class="journey-card-sub">
+      {% if client.dossie_report %}Enviado em {{ client.dossie_report.sent_at.strftime('%d/%m/%Y') if client.dossie_report.sent_at else "—" }}{% else %}Ainda não cadastrado{% endif %}
+    </div>
+  </a>
+
+  <a class="journey-card" href="{{ url_for('clients.looks', client_id=client.id) }}">
+    <span class="journey-card-status {{ 'is-filled' if client.looks }}"></span>
+    <div class="journey-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a1.5 1.5 0 1 1 1.5 1.5c-.7 0-1.5.5-1.5 1.5v1"/><path d="M12 7l8.5 6.2c1 .8.4 2.3-.8 2.3H4.3c-1.2 0-1.8-1.5-.8-2.3L12 7Z"/></svg>
+    </div>
+    <div class="journey-card-title">Looks</div>
+    <div class="journey-card-sub">{{ client.looks|length ~ " look" ~ ("s" if client.looks|length != 1) if client.looks else "Nenhum look ainda" }}</div>
+  </a>
+
+  <a class="journey-card" href="{{ url_for('clients.closet', client_id=client.id) }}">
+    <span class="journey-card-status {{ 'is-filled' if client.closet_items }}"></span>
+    <div class="journey-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3L4 6l1.5 2.5L8 7v13h8V7l2.5 1.5L20 6l-4-3-2 2h-4z"/></svg>
+    </div>
+    <div class="journey-card-title">Closet</div>
+    <div class="journey-card-sub">{{ client.closet_items|length ~ " peça" ~ ("s" if client.closet_items|length != 1) if client.closet_items else "Nenhuma peça ainda" }}</div>
+  </a>
+
+  <a class="journey-card" href="{{ url_for('clients.personal_shopper', client_id=client.id) }}">
+    <span class="journey-card-status {{ 'is-filled' if client.shopping_list_items }}"></span>
+    <div class="journey-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    </div>
+    <div class="journey-card-title">Personal Shopper</div>
+    <div class="journey-card-sub">
+      {% if client.shopping_list_items %}{{ client.shopping_list_items|length }} recomendaç{{ "ão" if client.shopping_list_items|length == 1 else "ões" }}{% else %}Nenhuma recomendação ainda{% endif %}
+    </div>
+  </a>
+
+  <a class="journey-card" href="{{ url_for('clients.dados_pessoais', client_id=client.id) }}">
+    <span class="journey-card-status {{ 'is-filled' if has_personal_data or client.password_hash }}"></span>
+    <div class="journey-card-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c0-1.5 1.5-2.5 3-2.5s3 1 3 2.5"/><path d="M14 10h4M14 13h4"/></svg>
+    </div>
+    <div class="journey-card-title">Dados pessoais</div>
+    <div class="journey-card-sub">{{ "Acesso ativo" if client.password_hash else "Sem acesso à área do cliente" }}</div>
+  </a>
 </div>
 
 <div class="row g-4">
-  <div class="col-lg-5">
-    <div class="card mb-4">
-      <div class="card-header">Diagnóstico de autoconhecimento e estilo</div>
-      <div class="card-body">
-        {% if client.profile %}
-        <dl class="mb-0">
-          <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>
-          <dt>Momento de carreira</dt><dd>{{ client.profile.momento_carreira }}</dd>
-          <dt>Como quer ser percebida</dt><dd>{{ client.profile.como_quer_ser_percebida }}</dd>
-          <dt>Desafios de imagem</dt><dd>{{ client.profile.desafios_imagem }}</dd>
-          <dt>Ambiente de trabalho</dt><dd>{{ client.profile.ambiente_trabalho or "—" }}</dd>
-          <dt>Estilo atual</dt><dd>{{ client.profile.estilo_atual or "—" }}</dd>
-          <dt>Cores preferidas</dt><dd>{{ client.profile.cores_preferidas or "—" }}</dd>
-          <dt>Referências</dt><dd>{{ client.profile.referencias_estilo or "—" }}</dd>
-          <dt class="mb-0">Faixa de investimento</dt><dd class="mb-0">{{ client.profile.orcamento_faixa or "—" }}</dd>
-        </dl>
-        {% else %}
-        <p class="text-muted mb-0">Este cliente ainda não preencheu o diagnóstico.</p>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Diagnóstico estruturado
-        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_style_assessment', client_id=client.id) }}">{{ "Editar" if client.style_assessment else "Preencher" }}</a>
-      </div>
-      <div class="card-body">
-        {% if client.style_assessment %}
-        <dl class="mb-0">
-          <dt>Estação de cor</dt><dd>{{ client.style_assessment.estacao_cor or "—" }}</dd>
-          <dt>Paleta principal</dt><dd>{{ client.style_assessment.paleta_principal or "—" }}</dd>
-          <dt>Estilo predominante</dt><dd>{{ client.style_assessment.estilo_predominante or "—" }}</dd>
-          <dt>Estilo complementar</dt><dd>{{ client.style_assessment.estilo_complementar or "—" }}</dd>
-          <dt class="mb-0">Mensagem desejada</dt><dd class="mb-0">{{ client.style_assessment.mensagem_desejada or "—" }}</dd>
-        </dl>
-        {% else %}
-        <p class="text-muted mb-0">Ainda sem diagnóstico estruturado — não duplica o dossiê, é um resumo curto (estação de cor, estilo, mensagem) pra exibição rápida e uso futuro em filtros.</p>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">Notas internas</div>
-      <div class="card-body">
-        <p class="mb-0">{{ client.notes or "Sem notas." }}</p>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">Sobre a cliente</div>
-      <div class="card-body">
-        <p class="mb-0">{{ client.style_notes or "Sem notas de estilo (silhueta, formato do rosto, visagismo...)." }}</p>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">Minha identidade visual</div>
-      <div class="card-body">
-        {% if client.idade or client.profissao or client.cidade %}
-        <p class="text-muted small mb-3">
-          {{ client.idade ~ " anos" if client.idade }}{{ " · " if client.idade and (client.profissao or client.cidade) }}{{ client.profissao }}{{ " · " if client.profissao and client.cidade }}{{ client.cidade }}
-        </p>
-        {% endif %}
-        {% if client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo %}
-        <dl class="mb-0">
-          <dt>Quem sou</dt><dd>{{ client.identidade_rotina or "—" }}</dd>
-          <dt>Como quero ser percebida</dt><dd>{{ client.identidade_objetivo or "—" }}</dd>
-          <dt class="mb-0">Meu estilo</dt><dd class="mb-0">{{ client.identidade_estilo or "—" }}</dd>
-        </dl>
-        {% else %}
-        <p class="text-muted mb-0">Ainda sem conteúdo de identidade — edite os dados da cliente pra preencher.</p>
-        {% endif %}
-      </div>
-    </div>
-
+  <div class="col-lg-6">
     <div class="card">
-      <div class="card-header">Acesso à área do cliente</div>
-      <div class="card-body">
-        {% if client.password_hash %}
-          <p class="mb-2">
-            <span class="badge text-bg-success">Acesso ativo</span>
-            {% if client.last_login_at %}
-              <span class="text-muted small">· último acesso em {{ client.last_login_at.strftime('%d/%m/%Y %H:%M') }}</span>
-            {% else %}
-              <span class="text-muted small">· ainda não acessou</span>
-            {% endif %}
-          </p>
-        {% else %}
-          <p class="text-muted mb-2">Este cliente ainda não tem acesso à área dele.</p>
-        {% endif %}
-
-        <form method="post" action="{{ url_for('clients.set_client_password', client_id=client.id) }}" class="d-flex gap-2 mb-2">
-          {{ password_form.hidden_tag() }}
-          {{ password_form.password(class_="form-control form-control-sm", placeholder="Nova senha (mín. 8 caracteres)") }}
-          <button type="submit" class="btn btn-outline-secondary btn-sm text-nowrap">
-            {{ "Redefinir" if client.password_hash else "Definir acesso" }}
-          </button>
-        </form>
-        {% if client.password_hash %}
-        <form method="post" action="{{ url_for('clients.remove_client_password', client_id=client.id) }}" onsubmit="return confirm('Remover o acesso deste cliente à área dele?');">
-          <button type="submit" class="btn btn-link btn-sm text-danger p-0">Remover acesso</button>
-        </form>
-        {% endif %}
-        <p class="text-muted small mt-2 mb-0">
-          O cliente loga em <code>{{ url_for('auth.login', _external=False) }}</code> com o e-mail
-          <strong>{{ client.email }}</strong> e a senha que você definir aqui — repasse por
-          WhatsApp ou e-mail.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-7">
-    <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         Consultas
         <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_consultation', client_id=client.id) }}">+ Agendar</a>
@@ -165,65 +126,10 @@
         {% endfor %}
       </ul>
     </div>
+  </div>
 
-    <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Dossiê
-        {% if client.dossie_report %}
-        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_dossie', client_id=client.id) }}">Editar dossiê</a>
-        {% else %}
-        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_client_with_dossie', full_name=client.full_name, email=client.email, phone=client.phone or '') }}">+ Adicionar dossiê</a>
-        {% endif %}
-      </div>
-      <div class="card-body">
-        {% if client.dossie_report %}
-        {% set dossie = client.dossie_report %}
-        <p class="text-muted small mb-3">
-          {{ dossie.title }} · Enviado em {{ dossie.sent_at.strftime('%d/%m/%Y') if dossie.sent_at else "—" }}
-          {% if dossie.pdf_url %}
-          · <a href="{{ dossie.pdf_url }}" target="_blank" rel="noopener">Baixar PDF do dossiê</a>
-          {% endif %}
-        </p>
-        <dl class="mb-0">
-          {% if dossie.estilo_pessoal %}<dt>Estilo</dt><dd>{{ dossie.estilo_pessoal }}</dd>{% endif %}
-          {% if dossie.proporcoes %}<dt>Biotipo</dt><dd>{{ dossie.proporcoes }}</dd>{% endif %}
-          {% if dossie.coloracao %}<dt>Cores</dt><dd>{{ dossie.coloracao }}</dd>{% endif %}
-          {% if dossie.visagismo %}<dt>Visagismo</dt><dd>{{ dossie.visagismo }}</dd>{% endif %}
-          {% if dossie.arquetipos %}<dt class="mb-0">Arquétipos</dt><dd class="mb-0">{{ dossie.arquetipos }}</dd>{% endif %}
-        </dl>
-        <p class="text-muted small mb-0 mt-2">
-          Essas informações também aparecem na área do cliente — editar aqui atualiza os dois lugares.
-        </p>
-        {% else %}
-        <p class="text-muted mb-0">Este cliente ainda não tem um dossiê registrado.</p>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Diagnóstico preliminar
-        <a class="btn btn-sm btn-brand" href="{{ url_for('reports.new_report', client_id=client.id) }}">+ Gerar diagnóstico preliminar</a>
-      </div>
-      <ul class="list-group list-group-flush">
-        {% for r in client.other_reports %}
-        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
-          <a href="{{ url_for('reports.view_report', client_id=client.id, report_id=r.id) }}" class="text-truncate">{{ r.title }}</a>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="badge {{ 'bg-success' if r.status=='enviado' else 'bg-secondary' }}">{{ label_for(REPORT_STATUSES, r.status) }}</span>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.edit_report', client_id=client.id, report_id=r.id) }}">Editar</a>
-            <form method="post" action="{{ url_for('reports.delete_report', client_id=client.id, report_id=r.id) }}" onsubmit="return confirm('Excluir este relatório?');">
-              <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
-            </form>
-          </div>
-        </li>
-        {% else %}
-        <li class="list-group-item text-muted">Nenhum diagnóstico preliminar gerado.</li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="card mb-4">
+  <div class="col-lg-6">
+    <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         Pagamentos
         <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_payment', client_id=client.id) }}">+ Novo</a>
@@ -236,87 +142,6 @@
         </li>
         {% else %}
         <li class="list-group-item text-muted">Nenhum pagamento registrado.</li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Closet
-        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_closet_item', client_id=client.id) }}">+ Nova peça</a>
-      </div>
-      <ul class="list-group list-group-flush">
-        {% for item in client.closet_items %}
-        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
-          <span>
-            {% if item.photo_url %}<a href="{{ item.photo_url }}" target="_blank" rel="noopener">{{ item.description }}</a>{% else %}{{ item.description }}{% endif %}
-            <span class="text-muted small">· {{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
-            {% if item.look_items %}
-            <span class="badge text-bg-light border">usada em {{ item.look_items|length }} look{{ "s" if item.look_items|length > 1 }}</span>
-            {% endif %}
-          </span>
-          <form method="post" action="{{ url_for('clients.delete_closet_item', client_id=client.id, item_id=item.id) }}" onsubmit="return confirm('Remover esta peça do closet?');">
-            <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
-          </form>
-        </li>
-        {% else %}
-        <li class="list-group-item text-muted">Nenhuma peça cadastrada ainda.</li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Personal Shopper
-        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_shopping_list_item', client_id=client.id) }}">+ Nova recomendação</a>
-      </div>
-      <ul class="list-group list-group-flush">
-        {% for item in client.shopping_list_items %}
-        <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
-          <span class="{{ 'text-decoration-line-through text-muted' if item.status == 'incorporada' }}">
-            {{ item.description }}
-            <span class="text-muted small">· {{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</span>
-            {% if item.motivo %}<br><span class="text-muted small">{{ item.motivo }}</span>{% endif %}
-          </span>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <form method="post" action="{{ url_for('clients.set_shopping_list_item_status', client_id=client.id, item_id=item.id) }}" class="d-flex gap-1">
-              <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                {% for key, label in PERSONAL_SHOPPER_STATUSES %}
-                <option value="{{ key }}" {% if key == item.status %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-              </select>
-            </form>
-            <form method="post" action="{{ url_for('clients.delete_shopping_list_item', client_id=client.id, item_id=item.id) }}" onsubmit="return confirm('Remover esta recomendação?');">
-              <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
-            </form>
-          </div>
-        </li>
-        {% else %}
-        <li class="list-group-item text-muted">Nenhuma recomendação registrada.</li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="card mt-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Looks
-        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_look', client_id=client.id) }}">+ Novo look</a>
-      </div>
-      <ul class="list-group list-group-flush">
-        {% for look in client.looks %}
-        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
-          <span>
-            {% if look.photo_url %}<a href="{{ look.photo_url }}" target="_blank" rel="noopener">{{ look.nome }}</a>{% else %}{{ look.nome }}{% endif %}
-            {% if look.ocasiao %}<span class="text-muted small">· {{ look.ocasiao }}</span>{% endif %}
-            {% if look.favorited %}<span class="badge text-bg-light border">★ favorito da cliente</span>{% endif %}
-            <span class="text-muted small">· {{ look.items|length }} peça{{ "s" if look.items|length != 1 }}</span>
-          </span>
-          <form method="post" action="{{ url_for('clients.delete_look', client_id=client.id, look_id=look.id) }}" onsubmit="return confirm('Remover este look?');">
-            <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
-          </form>
-        </li>
-        {% else %}
-        <li class="list-group-item text-muted">Nenhum look criado ainda.</li>
         {% endfor %}
       </ul>
     </div>

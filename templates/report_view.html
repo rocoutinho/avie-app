@@ -25,7 +25,7 @@
       <button type="submit" class="btn btn-outline-secondary text-danger">Excluir</button>
     </form>
     {% endif %}
-    <a href="{{ url_for('clients.detail', client_id=client.id) }}" class="btn btn-link">Voltar ao cliente</a>
+    <a href="{{ url_for('clients.diagnostico', client_id=client.id) }}" class="btn btn-link">Voltar ao diagnóstico</a>
   </div>
 </div>
 {% endblock %}

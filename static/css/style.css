@@ -251,6 +251,149 @@ h1, h2, h3, .font-serif {
   height: 100%;
 }
 
+/* Ficha da cliente: disclosure "Gerenciar" (ações rápidas) + grade de
+   cards da jornada (client_detail.html e as páginas client_<recurso>.html
+   que cada card abre). Usa <details>/<summary> nativo em vez de JS pra
+   abrir/fechar — sem dependência extra, funciona sem JavaScript. */
+.manage-disclosure {
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  background: #fff;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.manage-disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--avie-navy);
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.manage-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.manage-disclosure > summary::before {
+  content: "\25B8"; /* ▸ */
+  color: var(--avie-gold);
+  transition: transform 0.15s ease;
+  display: inline-block;
+}
+
+.manage-disclosure[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.manage-disclosure .manage-actions {
+  padding: 0 1rem 1rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-top: 1px solid var(--avie-border);
+  padding-top: 1rem;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.journey-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 1.1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.journey-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--avie-shadow);
+  border-color: var(--avie-gold);
+  color: inherit;
+}
+
+.journey-card-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--avie-navy-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.journey-card-icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke: var(--avie-gold-light);
+}
+
+.journey-card-title {
+  font-weight: 700;
+  color: var(--avie-navy);
+  margin-bottom: 0.2rem;
+}
+
+.journey-card-sub {
+  font-size: 0.8rem;
+  color: var(--avie-text-muted);
+  line-height: 1.35;
+}
+
+.journey-card-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--avie-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.journey-card-status.is-filled {
+  background: var(--avie-gold);
+  border-color: var(--avie-gold);
+}
+
+.journey-card-status.is-filled::after {
+  content: "\2713"; /* checkmark */
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.section-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--avie-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.section-back-link:hover {
+  color: var(--avie-navy);
+}
+
 /* Formulários */
 .form-label {
   font-size: 0.85rem;
