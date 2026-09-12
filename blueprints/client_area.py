@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 
 from extensions import db
 from journey import build_journey
-from models import Client, Look, LOOK_MOMENTS
+from models import Client, CLOSET_ITEM_CATEGORIES, Look, LOOK_MOMENTS
 
 client_area_bp = Blueprint("client_area", __name__, url_prefix="/minha-area")
 
@@ -116,13 +116,24 @@ def looks():
     if active_momento:
         looks = [l for l in looks if l.momento == active_momento]
     momento_counts = {key: sum(1 for l in current_user.looks if l.momento == key) for key, _label in LOOK_MOMENTS}
+
+    active_categoria = request.args.get("categoria") or None
+    closet_items = current_user.closet_items
+    if active_categoria:
+        closet_items = [i for i in closet_items if i.category == active_categoria]
+    categoria_counts = {
+        key: sum(1 for i in current_user.closet_items if i.category == key) for key, _label in CLOSET_ITEM_CATEGORIES
+    }
+
     return render_template(
         "client_area_looks.html",
         client=current_user,
         looks=looks,
         active_momento=active_momento,
         momento_counts=momento_counts,
-        closet_items=current_user.closet_items,
+        closet_items=closet_items,
+        active_categoria=active_categoria,
+        categoria_counts=categoria_counts,
         shopping_list_items=current_user.shopping_list_items,
     )
 

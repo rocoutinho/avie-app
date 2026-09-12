@@ -1802,6 +1802,31 @@ def test_client_filters_looks_by_momento(app, client):
     assert "Vestido de festa".encode() not in response.data
 
 
+def test_client_filters_closet_by_categoria(app, client):
+    with app.app_context():
+        c = Client(full_name="Carla Categorias", email="carla-categorias@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(ClosetItem(client_id=c.id, category="blazer", description="Blazer estruturado"))
+        db.session.add(ClosetItem(client_id=c.id, category="calca", description="Calça pantalona"))
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "carla-categorias@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+
+    response = client.get("/minha-area/looks")
+    assert "Blazer estruturado".encode() in response.data
+    assert "Calça pantalona".encode() in response.data
+
+    response = client.get("/minha-area/looks?categoria=blazer")
+    assert "Blazer estruturado".encode() in response.data
+    assert "Calça pantalona".encode() not in response.data
+
+
 def test_client_cannot_favorite_another_clients_look(app, client):
     with app.app_context():
         owner = Client(full_name="Dona do Look", email="dona-look@example.com", status="cliente_ativo")
