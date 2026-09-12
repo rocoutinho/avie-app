@@ -276,7 +276,19 @@ def closet(client_id):
 @login_required
 def personal_shopper(client_id):
     client = Client.query.get_or_404(client_id)
-    return render_template("client_personal_shopper.html", client=client)
+    # Link pra consultora avisar a cliente que tem uma recomendação com link
+    # de compra pronta — mesmo padrão de _whatsapp_link usado no resto do
+    # hub, mas por item (só faz sentido pra quem já tem link_compra).
+    whatsapp_links = {
+        item.id: _whatsapp_link(
+            client.phone,
+            f"Olá, {client.full_name.split(' ')[0]}! Separei uma recomendação de compra pra você: "
+            f"{item.description} — {item.link_compra}",
+        )
+        for item in client.shopping_list_items
+        if item.link_compra
+    }
+    return render_template("client_personal_shopper.html", client=client, whatsapp_links=whatsapp_links)
 
 
 @clients_bp.route("/<int:client_id>/dados-pessoais")
@@ -435,6 +447,8 @@ def new_shopping_list_item(client_id):
             category=form.category.data,
             description=form.description.data.strip(),
             motivo=form.motivo.data,
+            photo_url=upload_image(form.photo_file.data) or form.photo_url.data,
+            link_compra=form.link_compra.data,
             notes=form.notes.data,
         )
         db.session.add(item)
@@ -442,6 +456,25 @@ def new_shopping_list_item(client_id):
         flash("Recomendação adicionada.", "success")
         return redirect(url_for("clients.personal_shopper", client_id=client.id))
     return render_template("shopping_list_item_form.html", form=form, client=client)
+
+
+@clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/editar", methods=["GET", "POST"])
+@login_required
+def edit_shopping_list_item(client_id, item_id):
+    client = Client.query.get_or_404(client_id)
+    item = ShoppingListItem.query.filter_by(id=item_id, client_id=client.id).first_or_404()
+    form = ShoppingListItemForm(obj=item)
+    if form.validate_on_submit():
+        item.category = form.category.data
+        item.description = form.description.data.strip()
+        item.motivo = form.motivo.data
+        item.photo_url = upload_image(form.photo_file.data) or form.photo_url.data
+        item.link_compra = form.link_compra.data
+        item.notes = form.notes.data
+        db.session.commit()
+        flash("Recomendação atualizada.", "success")
+        return redirect(url_for("clients.personal_shopper", client_id=client.id))
+    return render_template("shopping_list_item_form.html", form=form, client=client, item=item)
 
 
 @clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/status", methods=["POST"])

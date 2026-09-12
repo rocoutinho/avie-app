@@ -1431,6 +1431,106 @@ def test_shopping_list_item_status_rejects_invalid_value(app, logged_in_client):
         assert db.session.get(ShoppingListItem, item_id).status == "recomendada"
 
 
+def test_staff_edits_shopping_list_item_with_purchase_link(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Marina Link", email="marina-link@example.com", status="cliente_ativo")
+        db.session.add(c)
+        db.session.commit()
+        item = ShoppingListItem(client_id=c.id, category="sapato", description="Scarpin nude")
+        db.session.add(item)
+        db.session.commit()
+        client_id, item_id = c.id, item.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/lista-compras/{item_id}/editar",
+        data={
+            "category": "sapato",
+            "description": "Scarpin nude",
+            "motivo": "Fecha looks de trabalho.",
+            "photo_url": "https://example.com/scarpin.jpg",
+            "link_compra": "https://parceiro.example.com/scarpin-nude",
+            "notes": "",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        item = db.session.get(ShoppingListItem, item_id)
+        assert item.link_compra == "https://parceiro.example.com/scarpin-nude"
+        assert item.photo_url == "https://example.com/scarpin.jpg"
+
+
+def test_client_accepts_shopping_list_item_recommendation(app, client):
+    with app.app_context():
+        c = Client(full_name="Paula Aceita", email="paula-aceita@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        with_link = ShoppingListItem(
+            client_id=c.id,
+            category="sapato",
+            description="Scarpin nude",
+            link_compra="https://parceiro.example.com/scarpin-nude",
+        )
+        no_link = ShoppingListItem(client_id=c.id, category="acessorio", description="Bolsa estruturada")
+        db.session.add_all([with_link, no_link])
+        db.session.commit()
+        item_id_with_link, item_id_no_link = with_link.id, no_link.id
+
+    client.post(
+        "/login",
+        data={"email": "paula-aceita@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+
+    response = client.get("/minha-area/looks")
+    assert "Aceitar recomendação".encode() in response.data
+    assert "Ver produto".encode() in response.data
+
+    response = client.post(
+        f"/minha-area/lista-compras/{item_id_with_link}/aceitar", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ShoppingListItem, item_id_with_link).status == "aprovada"
+
+    # Sem link_compra, aceitar não tem efeito (rota só existe pro fluxo com link).
+    response = client.post(
+        f"/minha-area/lista-compras/{item_id_no_link}/aceitar", follow_redirects=True
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ShoppingListItem, item_id_no_link).status == "recomendada"
+
+
+def test_client_cannot_accept_another_clients_shopping_list_item(app, client):
+    with app.app_context():
+        owner = Client(full_name="Dona Item", email="dona-item@example.com", status="cliente_ativo")
+        intruder = Client(full_name="Outra Cliente", email="outra-cliente@example.com", status="cliente_ativo")
+        intruder.set_password("senha-cliente-123")
+        db.session.add_all([owner, intruder])
+        db.session.commit()
+        item = ShoppingListItem(
+            client_id=owner.id,
+            category="sapato",
+            description="Scarpin da Dona Item",
+            link_compra="https://parceiro.example.com/scarpin",
+        )
+        db.session.add(item)
+        db.session.commit()
+        item_id = item.id
+
+    client.post(
+        "/login",
+        data={"email": "outra-cliente@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.post(f"/minha-area/lista-compras/{item_id}/aceitar")
+    assert response.status_code == 404
+    with app.app_context():
+        assert db.session.get(ShoppingListItem, item_id).status == "recomendada"
+
+
 def test_build_journey_for_empty_client_is_all_not_started(app):
     with app.app_context():
         c = Client(full_name="Cliente Vazia", email="vazia@example.com")

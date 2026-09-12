@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 
 from extensions import db
 from journey import build_journey
-from models import Client, CLOSET_ITEM_CATEGORIES, Look, LOOK_MOMENTS
+from models import Client, CLOSET_ITEM_CATEGORIES, Look, LOOK_MOMENTS, ShoppingListItem
 
 client_area_bp = Blueprint("client_area", __name__, url_prefix="/minha-area")
 
@@ -169,4 +169,19 @@ def toggle_look_favorite(look_id):
     look = Look.query.filter_by(id=look_id, client_id=current_user.id).first_or_404()
     look.favorited = not look.favorited
     db.session.commit()
+    return redirect(url_for("client_area.looks"))
+
+
+@client_area_bp.route("/lista-compras/<int:item_id>/aceitar", methods=["POST"])
+@login_required
+def accept_shopping_list_item(item_id):
+    """Primeira ação de escrita da cliente no Personal Shopper: só pra
+    recomendações com link_compra e ainda "recomendada" — aceitar move pro
+    status "aprovada" já existente (mesmo vocabulário que a consultora usa
+    manualmente), não cria estado novo. Filtra sempre por current_user, nunca
+    recebe client_id (mesmo padrão de segurança de toggle_look_favorite)."""
+    item = ShoppingListItem.query.filter_by(id=item_id, client_id=current_user.id).first_or_404()
+    if item.link_compra and item.status == "recomendada":
+        item.status = "aprovada"
+        db.session.commit()
     return redirect(url_for("client_area.looks"))

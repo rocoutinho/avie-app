@@ -24,6 +24,12 @@ CONSULTATION_TYPES = [
     ("consultoria_imagem", "Consultoria de Imagem"),
     ("personal_branding", "Personal Branding / Posicionamento"),
     ("manutencao", "Sessão de Manutenção"),
+    # Serviço pago adicional, pedido pela cliente a partir do Personal
+    # Shopper (ver ShoppingListItem/client_area.request_shopping_day) — sai
+    # às compras em loja física ao lado da consultora. Reaproveita
+    # Consultation/Payment de ponta a ponta (agendamento, status, cobrança),
+    # sem modelo novo.
+    ("shopping_day", "Shopping Day"),
     ("outro", "Outro"),
 ]
 
@@ -63,9 +69,12 @@ CLOSET_ITEM_CATEGORIES = [
     ("outro", "Outro"),
 ]
 
-# Fluxo do Personal Shopper (ver ShoppingListItem) — curadoria estratégica,
-# não um marketplace: o valor está no motivo da recomendação, não em link de
-# compra/preço/loja (deliberadamente fora de escopo).
+# Fluxo do Personal Shopper (ver ShoppingListItem): curadoria estratégica,
+# não um marketplace — o valor está no motivo da recomendação. `link_compra`
+# foi adicionado depois, por instrução explícita, como uma segunda forma de
+# recomendação (curadoria + compra direta via link de parceiro), não como
+# substituto do motivo; a decisão original de não ter loja/preço permanece
+# (não é isso que está sendo pedido).
 PERSONAL_SHOPPER_STATUSES = [
     ("recomendada", "Recomendada"),
     ("aprovada", "Aprovada"),
@@ -450,12 +459,17 @@ class ShoppingListItem(db.Model):
     o produto foi renomeado pra "Personal Shopper" e o modelo evoluiu — não
     houve rename de código pra manter o diff pequeno, ver CLAUDE.md.
 
-    `motivo` é o porquê da recomendação (o valor está na curadoria, não no
-    link de compra — por isso não há campo de loja/link/preço aqui, decisão
-    deliberada). `status` substitui o antigo booleano `purchased`: o fluxo é
-    recomendada → aprovada → comprada → incorporada, mas a consultora pode
-    mover pra qualquer estágio livremente (sem forçar ordem estrita — ver
-    blueprints/clients.py:set_shopping_list_item_status)."""
+    `motivo` é o porquê da recomendação — o valor central é sempre a
+    curadoria, com ou sem link de compra. `status` substitui o antigo
+    booleano `purchased`: o fluxo é recomendada → aprovada → comprada →
+    incorporada, mas a consultora pode mover pra qualquer estágio livremente
+    (sem forçar ordem estrita — ver blueprints/clients.py:set_shopping_list_item_status).
+
+    `link_compra`/`photo_url` (opcionais) dão à cliente uma segunda forma de
+    recomendação: quando preenchidos, a cliente vê a peça com foto e pode
+    "Aceitar recomendação" direto na área dela (recomendada → aprovada, ver
+    client_area.accept_shopping_list_item) em vez de só ler o texto — ainda
+    sem loja/preço, que continuam fora de escopo."""
 
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
@@ -464,6 +478,8 @@ class ShoppingListItem(db.Model):
     motivo = db.Column(db.Text)
     notes = db.Column(db.Text)
     status = db.Column(db.String(20), default="recomendada", nullable=False)
+    link_compra = db.Column(db.String(500))
+    photo_url = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
