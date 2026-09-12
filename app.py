@@ -63,7 +63,6 @@ def create_app(config_class=Config):
     from blueprints.client_area import client_area_bp
     from blueprints.clients import clients_bp
     from blueprints.dashboard import dashboard_bp
-    from blueprints.dossies import dossies_bp
     from blueprints.ebooks import ebooks_bp
     from blueprints.payments import payments_bp
     from blueprints.public import public_bp
@@ -77,7 +76,6 @@ def create_app(config_class=Config):
     app.register_blueprint(reports_bp)
     app.register_blueprint(sessions_bp)
     app.register_blueprint(payments_bp)
-    app.register_blueprint(dossies_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(ebooks_bp)
