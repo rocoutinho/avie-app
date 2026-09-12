@@ -41,7 +41,7 @@ def new_report(client_id):
             client.status = "proposta_enviada"
         db.session.commit()
         flash("Relatório salvo.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.diagnostico", client_id=client.id))
 
     return render_template("report_form.html", form=form, client=client, report=None)
 
@@ -90,4 +90,4 @@ def delete_report(client_id, report_id):
     db.session.delete(report)
     db.session.commit()
     flash("Relatório excluído.", "success")
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.diagnostico", client_id=client.id))

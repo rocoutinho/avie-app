@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Dossiê — {{ client.full_name }}{% endblock %}
+{% block content %}
+{% include "_client_subpage_header.html" with context %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Dossiê
+        {% if client.dossie_report %}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_dossie', client_id=client.id) }}">Editar dossiê</a>
+        {% else %}
+        <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_client_with_dossie', full_name=client.full_name, email=client.email, phone=client.phone or '') }}">+ Adicionar dossiê</a>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if client.dossie_report %}
+        {% set dossie = client.dossie_report %}
+        <p class="text-muted small mb-3">
+          {{ dossie.title }} · Enviado em {{ dossie.sent_at.strftime('%d/%m/%Y') if dossie.sent_at else "—" }}
+          {% if dossie.pdf_url %}
+          · <a href="{{ dossie.pdf_url }}" target="_blank" rel="noopener">Baixar PDF do dossiê</a>
+          {% endif %}
+        </p>
+        <dl class="mb-0">
+          {% if dossie.estilo_pessoal %}<dt>Estilo</dt><dd>{{ dossie.estilo_pessoal }}</dd>{% endif %}
+          {% if dossie.proporcoes %}<dt>Biotipo</dt><dd>{{ dossie.proporcoes }}</dd>{% endif %}
+          {% if dossie.coloracao %}<dt>Cores</dt><dd>{{ dossie.coloracao }}</dd>{% endif %}
+          {% if dossie.visagismo %}<dt>Visagismo</dt><dd>{{ dossie.visagismo }}</dd>{% endif %}
+          {% if dossie.arquetipos %}<dt class="mb-0">Arquétipos</dt><dd class="mb-0">{{ dossie.arquetipos }}</dd>{% endif %}
+        </dl>
+        <p class="text-muted small mb-0 mt-2">
+          Essas informações também aparecem na área do cliente — editar aqui atualiza os dois lugares.
+        </p>
+        {% else %}
+        <p class="text-muted mb-0">Este cliente ainda não tem um dossiê registrado.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

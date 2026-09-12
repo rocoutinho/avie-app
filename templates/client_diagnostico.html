@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Diagnóstico — {{ client.full_name }}{% endblock %}
+{% block content %}
+{% include "_client_subpage_header.html" with context %}
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">Diagnóstico de autoconhecimento e estilo</div>
+      <div class="card-body">
+        {% if client.profile %}
+        <dl class="mb-0">
+          <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>
+          <dt>Momento de carreira</dt><dd>{{ client.profile.momento_carreira }}</dd>
+          <dt>Como quer ser percebida</dt><dd>{{ client.profile.como_quer_ser_percebida }}</dd>
+          <dt>Desafios de imagem</dt><dd>{{ client.profile.desafios_imagem }}</dd>
+          <dt>Ambiente de trabalho</dt><dd>{{ client.profile.ambiente_trabalho or "—" }}</dd>
+          <dt>Estilo atual</dt><dd>{{ client.profile.estilo_atual or "—" }}</dd>
+          <dt>Cores preferidas</dt><dd>{{ client.profile.cores_preferidas or "—" }}</dd>
+          <dt>Referências</dt><dd>{{ client.profile.referencias_estilo or "—" }}</dd>
+          <dt class="mb-0">Faixa de investimento</dt><dd class="mb-0">{{ client.profile.orcamento_faixa or "—" }}</dd>
+        </dl>
+        {% else %}
+        <p class="text-muted mb-0">Este cliente ainda não preencheu o diagnóstico.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Diagnóstico estruturado
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_style_assessment', client_id=client.id) }}">{{ "Editar" if client.style_assessment else "Preencher" }}</a>
+      </div>
+      <div class="card-body">
+        {% if client.style_assessment %}
+        <dl class="mb-0">
+          <dt>Estação de cor</dt><dd>{{ client.style_assessment.estacao_cor or "—" }}</dd>
+          <dt>Paleta principal</dt><dd>{{ client.style_assessment.paleta_principal or "—" }}</dd>
+          <dt>Estilo predominante</dt><dd>{{ client.style_assessment.estilo_predominante or "—" }}</dd>
+          <dt>Estilo complementar</dt><dd>{{ client.style_assessment.estilo_complementar or "—" }}</dd>
+          <dt class="mb-0">Mensagem desejada</dt><dd class="mb-0">{{ client.style_assessment.mensagem_desejada or "—" }}</dd>
+        </dl>
+        {% else %}
+        <p class="text-muted mb-0">Ainda sem diagnóstico estruturado — não duplica o dossiê, é um resumo curto (estação de cor, estilo, mensagem) pra exibição rápida e uso futuro em filtros.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Diagnóstico preliminar
+        <a class="btn btn-sm btn-brand" href="{{ url_for('reports.new_report', client_id=client.id) }}">+ Gerar diagnóstico preliminar</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for r in client.other_reports %}
+        <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+          <a href="{{ url_for('reports.view_report', client_id=client.id, report_id=r.id) }}" class="text-truncate">{{ r.title }}</a>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="badge {{ 'bg-success' if r.status=='enviado' else 'bg-secondary' }}">{{ label_for(REPORT_STATUSES, r.status) }}</span>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('reports.edit_report', client_id=client.id, report_id=r.id) }}">Editar</a>
+            <form method="post" action="{{ url_for('reports.delete_report', client_id=client.id, report_id=r.id) }}" onsubmit="return confirm('Excluir este relatório?');">
+              <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
+            </form>
+          </div>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">Nenhum diagnóstico preliminar gerado.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -225,7 +225,7 @@ def edit_dossie(client_id):
         report.content = _build_dossie_content(services)
         db.session.commit()
         flash("Dossiê atualizado.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.dossie", client_id=client.id))
 
     return render_template("client_dossie_edit.html", form=form, client=client)
 
@@ -233,9 +233,58 @@ def edit_dossie(client_id):
 @clients_bp.route("/<int:client_id>")
 @login_required
 def detail(client_id):
+    """Hub da cliente — cabeçalho + ações rápidas (atrás do disclosure
+    "Gerenciar") + grade de cards da jornada (Diagnóstico, Dossiê, Looks,
+    Closet, Personal Shopper, Dados pessoais), cada um levando pra sua
+    própria tela de detalhe. Consultas e Pagamentos continuam aqui direto
+    (são dado operacional/financeiro, não uma etapa da jornada de estilo)."""
+    client = Client.query.get_or_404(client_id)
+    contact_message = f"Olá, {client.full_name.split(' ')[0]}!"
+    whatsapp_link = _whatsapp_link(client.phone, contact_message) if client.phone else None
+    return render_template("client_detail.html", client=client, whatsapp_link=whatsapp_link)
+
+
+@clients_bp.route("/<int:client_id>/diagnostico")
+@login_required
+def diagnostico(client_id):
+    client = Client.query.get_or_404(client_id)
+    return render_template("client_diagnostico.html", client=client)
+
+
+@clients_bp.route("/<int:client_id>/dossie")
+@login_required
+def dossie(client_id):
+    client = Client.query.get_or_404(client_id)
+    return render_template("client_dossie.html", client=client)
+
+
+@clients_bp.route("/<int:client_id>/looks")
+@login_required
+def looks(client_id):
+    client = Client.query.get_or_404(client_id)
+    return render_template("client_looks.html", client=client)
+
+
+@clients_bp.route("/<int:client_id>/closet")
+@login_required
+def closet(client_id):
+    client = Client.query.get_or_404(client_id)
+    return render_template("client_closet.html", client=client)
+
+
+@clients_bp.route("/<int:client_id>/lista-compras")
+@login_required
+def personal_shopper(client_id):
+    client = Client.query.get_or_404(client_id)
+    return render_template("client_personal_shopper.html", client=client)
+
+
+@clients_bp.route("/<int:client_id>/dados-pessoais")
+@login_required
+def dados_pessoais(client_id):
     client = Client.query.get_or_404(client_id)
     password_form = SetClientPasswordForm()
-    return render_template("client_detail.html", client=client, password_form=password_form)
+    return render_template("client_dados_pessoais.html", client=client, password_form=password_form)
 
 
 @clients_bp.route("/<int:client_id>/editar", methods=["GET", "POST"])
@@ -261,7 +310,7 @@ def edit_client(client_id):
         client.identidade_estilo = form.identidade_estilo.data
         db.session.commit()
         flash("Dados atualizados.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.dados_pessoais", client_id=client.id))
     return render_template("client_form.html", form=form, client=client)
 
 
@@ -276,7 +325,7 @@ def set_client_password(client_id):
         flash("Senha de acesso definida — repasse pro cliente por WhatsApp ou e-mail.", "success")
     else:
         flash("Não foi possível definir a senha (mínimo 8 caracteres).", "danger")
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.dados_pessoais", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/senha/remover", methods=["POST"])
@@ -286,7 +335,7 @@ def remove_client_password(client_id):
     client.password_hash = None
     db.session.commit()
     flash("Acesso do cliente à área dele foi removido.", "success")
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.dados_pessoais", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/status", methods=["POST"])
@@ -360,7 +409,7 @@ def new_closet_item(client_id):
         db.session.add(item)
         db.session.commit()
         flash("Peça adicionada ao closet.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.closet", client_id=client.id))
     return render_template("closet_item_form.html", form=form, client=client)
 
 
@@ -372,7 +421,7 @@ def delete_closet_item(client_id, item_id):
     db.session.delete(item)
     db.session.commit()
     flash("Peça removida do closet.", "success")
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.closet", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/lista-compras/novo", methods=["GET", "POST"])
@@ -391,7 +440,7 @@ def new_shopping_list_item(client_id):
         db.session.add(item)
         db.session.commit()
         flash("Recomendação adicionada.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.personal_shopper", client_id=client.id))
     return render_template("shopping_list_item_form.html", form=form, client=client)
 
 
@@ -404,7 +453,7 @@ def set_shopping_list_item_status(client_id, item_id):
     if status in dict(PERSONAL_SHOPPER_STATUSES):
         item.status = status
         db.session.commit()
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.personal_shopper", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/lista-compras/<int:item_id>/excluir", methods=["POST"])
@@ -415,7 +464,7 @@ def delete_shopping_list_item(client_id, item_id):
     db.session.delete(item)
     db.session.commit()
     flash("Peça removida da lista de compras.", "success")
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.personal_shopper", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/looks/novo", methods=["GET", "POST"])
@@ -438,7 +487,7 @@ def new_look(client_id):
         db.session.add(look)
         db.session.commit()
         flash("Look criado.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.looks", client_id=client.id))
     return render_template("look_form.html", form=form, client=client)
 
 
@@ -450,7 +499,7 @@ def delete_look(client_id, look_id):
     db.session.delete(look)
     db.session.commit()
     flash("Look removido.", "success")
-    return redirect(url_for("clients.detail", client_id=client.id))
+    return redirect(url_for("clients.looks", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/diagnostico-estruturado/editar", methods=["GET", "POST"])
@@ -473,5 +522,5 @@ def edit_style_assessment(client_id):
         assessment.mensagem_desejada = form.mensagem_desejada.data
         db.session.commit()
         flash("Diagnóstico estruturado atualizado.", "success")
-        return redirect(url_for("clients.detail", client_id=client.id))
+        return redirect(url_for("clients.diagnostico", client_id=client.id))
     return render_template("style_assessment_form.html", form=form, client=client)

@@ -1730,6 +1730,9 @@ def test_staff_creates_look_with_closet_items_and_client_favorites_it(app, logge
     )
     assert response.status_code == 200
     assert "Reunião executiva".encode() in response.data
+
+    # O cruzamento closet -> looks aparece na página do Closet, não na de Looks.
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/closet")
     assert "usada em 1 look".encode() in response.data
 
     with app.app_context():

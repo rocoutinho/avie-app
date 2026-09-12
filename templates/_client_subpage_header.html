@@ -1,0 +1,5 @@
+{# Cabeçalho padrão das páginas de recurso da cliente (Diagnóstico, Dossiê,
+   Looks, Closet, Personal Shopper, Dados pessoais) — espera `client` e
+   `title` no contexto de quem faz include. #}
+<a href="{{ url_for('clients.detail', client_id=client.id) }}" class="section-back-link">&larr; {{ client.full_name }}</a>
+<h1 class="h4 mb-4">{{ title }}</h1>
