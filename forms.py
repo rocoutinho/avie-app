@@ -23,6 +23,7 @@ from models import (
     CONSULTATION_STATUSES,
     CONSULTATION_TYPES,
     LEAD_SOURCES,
+    LOOK_MOMENTS,
     PAYMENT_STATUSES,
     REPORT_STATUSES,
 )
@@ -332,6 +333,7 @@ class LookForm(FlaskForm):
         "...ou envie um arquivo (substitui o link acima, se preenchido)",
         validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
     )
+    momento = SelectField("Momento", choices=LOOK_MOMENTS)
     ocasiao = StringField("Ocasião (opcional)", validators=[Optional(), Length(max=150)])
     descricao = TextAreaField("Descrição (opcional)", validators=[Optional()])
     mensagem_transmitida = StringField(
