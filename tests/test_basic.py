@@ -2192,7 +2192,7 @@ def test_client_filters_closet_by_categoria(app, client):
     assert "Calça pantalona".encode() not in response.data
 
 
-def test_client_assinatura_visual_hub_links_to_the_three_sections(app, client):
+def test_client_assinatura_visual_hub_shows_looks_carousel_and_links_to_closet_personal_shopper(app, client):
     with app.app_context():
         c = Client(full_name="Helena Hub", email="helena-hub@example.com", status="cliente_ativo")
         c.set_password("senha-cliente-123")
@@ -2212,10 +2212,13 @@ def test_client_assinatura_visual_hub_links_to_the_three_sections(app, client):
     assert response.status_code == 200
     assert "Meus looks".encode() in response.data
     assert "Meu closet".encode() in response.data
-    assert "Próximas peças".encode() in response.data
-    # Hub é só navegação — conteúdo de fato (nome do look/peça) mora nas
-    # páginas de destino, não aqui.
-    assert "Look do hub".encode() not in response.data
+    assert "Personal Shopper".encode() in response.data
+    # "Meus looks" agora é um card colapsável com o carrossel dos looks
+    # embutido — o nome do look aparece direto aqui.
+    assert b'id="looksCarousel"' in response.data
+    assert "Look do hub".encode() in response.data
+    # Closet e Personal Shopper continuam só navegação — nada de conteúdo
+    # de fato (nome da peça) aparece no hub, só nas páginas de destino.
     assert "Blazer do hub".encode() not in response.data
     assert b'href="/minha-area/looks/galeria"' in response.data
     assert b'href="/minha-area/closet"' in response.data
