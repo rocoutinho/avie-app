@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Meu closet{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('client_area.looks') }}" class="text-muted small text-decoration-none">&larr; Voltar pra minha assinatura visual</a>
+  <p class="eyebrow mb-1 mt-2" style="color: var(--avie-gold);">Minha assinatura visual</p>
+  <h1 class="h3 mb-1">Meu closet</h1>
+  <p class="text-muted mb-0">As peças por trás dos seus looks, catalogadas pela sua consultora.</p>
+</div>
+
+{% if client.closet_items %}
+<ul class="nav nav-pills mb-4 flex-wrap gap-2">
+  <li class="nav-item">
+    <a class="nav-link {% if not active_categoria %}active{% endif %}" href="{{ url_for('client_area.closet') }}">
+      Todas <span class="badge bg-light text-dark">{{ client.closet_items|length }}</span>
+    </a>
+  </li>
+  {% for key, label in CLOSET_ITEM_CATEGORIES %}
+  {% if categoria_counts[key] %}
+  <li class="nav-item">
+    <a class="nav-link {% if active_categoria == key %}active{% endif %}" href="{{ url_for('client_area.closet', categoria=key) }}">
+      {{ label }} <span class="badge bg-light text-dark">{{ categoria_counts[key] }}</span>
+    </a>
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if closet_items %}
+<div class="row g-3 g-md-4">
+  {% for item in closet_items %}
+  <div class="col-6 col-lg-4">
+    <div class="card h-100">
+      {% if item.photo_url %}
+      <img src="{{ item.photo_url }}" alt="{{ item.description }}" class="card-img-top" style="aspect-ratio: 3/4; object-fit: cover;">
+      {% else %}
+      <div class="d-flex align-items-center justify-content-center text-muted small" style="aspect-ratio: 3/4; background: var(--avie-bg);">Sem foto</div>
+      {% endif %}
+      <div class="card-body">
+        <h3 class="h6 mb-1">{{ item.description }}</h3>
+        <p class="text-muted small mb-0">{{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</p>
+        {% if item.look_items %}
+        <p class="text-muted small mb-0">usada em {{ item.look_items|length }} look{{ "s" if item.look_items|length > 1 }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% elif client.closet_items %}
+<div class="card">
+  <div class="card-body">
+    <p class="text-muted mb-0">Nenhuma peça dessa categoria ainda.</p>
+  </div>
+</div>
+{% else %}
+<div class="card">
+  <div class="card-body">
+    <p class="text-muted mb-0">Sua consultora ainda não cadastrou seu closet digital — isso acontece ao longo do acompanhamento.</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
