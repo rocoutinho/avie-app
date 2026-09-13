@@ -562,6 +562,12 @@ class StyleAssessment(db.Model):
     estilo_predominante = db.Column(db.String(100))
     estilo_complementar = db.Column(db.String(100))
     mensagem_desejada = db.Column(db.String(255))
+    # 2-3 recomendações curtas (uma por linha) pro topo de "Meu Dossiê" — ver
+    # client_area_diagnostico.html. Só isso e mensagem_desejada/estacao_cor
+    # aparecem na síntese cliente-facing; os outros campos acima continuam
+    # editáveis pela equipe mas não têm mais vitrine própria do lado da
+    # cliente (corte deliberado pra manter a síntese em 3 itens).
+    pontos_chave = db.Column(db.Text)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

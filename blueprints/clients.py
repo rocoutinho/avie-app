@@ -630,6 +630,7 @@ def edit_style_assessment(client_id):
         assessment.estilo_predominante = form.estilo_predominante.data
         assessment.estilo_complementar = form.estilo_complementar.data
         assessment.mensagem_desejada = form.mensagem_desejada.data
+        assessment.pontos_chave = form.pontos_chave.data
         db.session.commit()
         flash("Diagnóstico estruturado atualizado.", "success")
         return redirect(url_for("clients.diagnostico", client_id=client.id))

@@ -2269,6 +2269,7 @@ def test_staff_creates_and_edits_style_assessment(app, logged_in_client):
             "estilo_predominante": "Elegante contemporâneo",
             "estilo_complementar": "",
             "mensagem_desejada": "confiança e sofisticação",
+            "pontos_chave": "Aposte em terracota.\nEvite tons pastel.",
         },
         follow_redirects=True,
     )
@@ -2279,6 +2280,7 @@ def test_staff_creates_and_edits_style_assessment(app, logged_in_client):
         assessment = StyleAssessment.query.filter_by(client_id=client_id).first()
         assert assessment is not None
         assert assessment.paleta_principal == "tons terrosos e neutros"
+        assert assessment.pontos_chave == "Aposte em terracota.\nEvite tons pastel."
 
     # Editar de novo não cria um segundo registro (1:1).
     response = logged_in_client.post(
@@ -2323,6 +2325,56 @@ def test_client_sees_style_assessment_on_diagnostico_page(app, client):
     assert response.status_code == 200
     assert "Primavera clara".encode() in response.data
     assert "leveza e frescor".encode() in response.data
+
+
+def test_client_sees_dossie_synthesis_above_full_content(app, client):
+    with app.app_context():
+        c = Client(full_name="Fatima Sintese", email="fatima-sintese@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(
+            StyleAssessment(
+                client_id=c.id,
+                estacao_cor="Verão suave",
+                mensagem_desejada="delicadeza e confiança",
+                pontos_chave="Aposte em tons pastel.\nEvite contrastes muito fortes.",
+            )
+        )
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "fatima-sintese@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/diagnostico")
+    assert response.status_code == 200
+    assert "Minha essência".encode() in response.data
+    assert "delicadeza e confiança".encode() in response.data
+    assert "Minha paleta".encode() in response.data
+    assert "Pontos-chave".encode() in response.data
+    assert "Aposte em tons pastel.".encode() in response.data
+    assert "Ver dossiê completo".encode() in response.data
+    assert b'href="#dossie-completo"' in response.data
+
+
+def test_client_diagnostico_has_no_synthesis_without_style_assessment(app, client):
+    with app.app_context():
+        c = Client(full_name="Gabriela Semdiagnostico", email="gabriela-semdiagnostico@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "gabriela-semdiagnostico@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/diagnostico")
+    assert response.status_code == 200
+    assert "Ver dossiê completo".encode() not in response.data
+    assert "Minha essência".encode() not in response.data
 
 
 def test_client_is_recorrente_needs_two_realized_consultations(app):
