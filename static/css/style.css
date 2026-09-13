@@ -443,6 +443,26 @@ h1, h2, h3, .font-serif {
   color: inherit;
 }
 
+/* "Minha assinatura visual": Meu closet/Personal Shopper reaproveitam
+   .home-journey-grid/.home-journey-card (ver acima), mas só 2 cards
+   dentro do cap de 480px sobravam com um vazio enorme ao lado no
+   desktop. A partir do breakpoint md, essa combinação larga o cap e os
+   cards trocam o aspect-ratio:1 (quadrado perfeito, que ficaria gigante
+   esticado até a largura toda) por uma altura fixa mais baixa — ocupam
+   a linha toda, sem sobra, sem virar quadrados enormes. No celular
+   continua idêntico ao padrão da home (2 colunas quadradas, cap de
+   480px), já que lá nunca sobrava espaço mesmo. */
+@media (min-width: 768px) {
+  .looks-hub-actions {
+    max-width: none;
+  }
+
+  .looks-hub-actions .home-journey-card {
+    aspect-ratio: auto;
+    min-height: 160px;
+  }
+}
+
 .home-journey-icon {
   width: 3rem;
   height: 3rem;
