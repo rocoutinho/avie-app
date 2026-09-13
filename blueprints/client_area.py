@@ -32,7 +32,7 @@ client_area_bp.before_request(require_client)
 DOSSIE_SERVICE_LABELS = [
     ("estilo_pessoal", "Estilo", "estilo"),
     ("proporcoes", "Biotipo", "biotipo"),
-    ("coloracao", "Cores", "cores"),
+    ("coloracao", "Coloração", "cores"),
     ("visagismo", "Visagismo", "visagismo"),
     ("arquetipos", "Arquétipos", "arquetipos"),
 ]

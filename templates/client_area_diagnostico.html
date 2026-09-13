@@ -21,22 +21,34 @@
     </dl>
     {% endif %}
     {% if client.profile %}
-    <dl class="mb-0">
-      <dt>Objetivo profissional</dt><dd>{{ client.profile.objetivo_profissional }}</dd>
-      <dt>Momento de carreira</dt><dd>{{ client.profile.momento_carreira }}</dd>
-      <dt>Como quer ser percebida</dt><dd>{{ client.profile.como_quer_ser_percebida }}</dd>
-      <dt>Desafios de imagem</dt><dd>{{ client.profile.desafios_imagem }}</dd>
-      <dt>Ambiente de trabalho</dt><dd>{{ client.profile.ambiente_trabalho or "—" }}</dd>
-      <dt>Estilo atual</dt><dd>{{ client.profile.estilo_atual or "—" }}</dd>
-      <dt>Cores preferidas</dt><dd>{{ client.profile.cores_preferidas or "—" }}</dd>
-      <dt class="mb-0">Referências</dt><dd class="mb-0">{{ client.profile.referencias_estilo or "—" }}</dd>
-    </dl>
+    {% set profile_answers = [
+      ("Objetivo profissional", client.profile.objetivo_profissional),
+      ("Momento de carreira", client.profile.momento_carreira),
+      ("Como quer ser percebida", client.profile.como_quer_ser_percebida),
+      ("Desafios de imagem", client.profile.desafios_imagem),
+      ("Ambiente de trabalho", client.profile.ambiente_trabalho or "—"),
+      ("Estilo atual", client.profile.estilo_atual or "—"),
+      ("Cores preferidas", client.profile.cores_preferidas or "—"),
+      ("Referências", client.profile.referencias_estilo or "—"),
+    ] %}
+    <div class="dossie-services-grid">
+      {% for question, answer in profile_answers %}
+      <details class="dossie-service-card">
+        <summary class="dossie-service-summary">
+          <span class="dossie-service-title">{{ question }}</span>
+        </summary>
+        <div class="dossie-service-text">{{ answer }}</div>
+      </details>
+      {% endfor %}
+    </div>
     {% elif dossie_services %}
     <div class="dossie-services-grid">
       {% for service in dossie_services %}
-      <div class="dossie-service-card">
-        <div class="dossie-service-icon">{{ service_icon(service.icon) }}</div>
-        <h3 class="h6 mb-2">{{ service.label }}</h3>
+      <details class="dossie-service-card">
+        <summary class="dossie-service-summary">
+          <span class="dossie-service-icon">{{ service_icon(service.icon) }}</span>
+          <span class="dossie-service-title">{{ service.label }}</span>
+        </summary>
         <div class="dossie-service-text">{{ service.text }}</div>
         {% if service.icon == "cores" and client.dossie_report and client.dossie_report.coloracao_images %}
         {% set images = client.dossie_report.coloracao_images %}
@@ -65,7 +77,7 @@
           {% endif %}
         </div>
         {% endif %}
-      </div>
+      </details>
       {% endfor %}
     </div>
     {% else %}
@@ -80,11 +92,13 @@
   <div class="card-header">Recomendações da consultoria</div>
   <div class="card-body">
     {% for report in other_reports %}
-    <div class="{{ 'mb-4 pb-4 border-bottom' if not loop.last else 'mb-0' }}">
-      <h4 class="h6 mb-1">{{ report.title }}</h4>
-      <p class="text-muted small mb-2">Enviado em {{ report.sent_at.strftime('%d/%m/%Y') if report.sent_at else "—" }}</p>
-      <div style="white-space: pre-line;">{{ report.content }}</div>
-    </div>
+    <details class="manage-disclosure {{ 'mb-0' if loop.last else 'mb-3' }}">
+      <summary>
+        <span>{{ report.title }}</span>
+        <span class="ms-auto text-muted small fw-normal">{{ report.sent_at.strftime('%d/%m/%Y') if report.sent_at else "—" }}</span>
+      </summary>
+      <div class="manage-disclosure-body" style="white-space: pre-line;">{{ report.content }}</div>
+    </details>
     {% endfor %}
   </div>
 </div>
