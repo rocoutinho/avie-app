@@ -309,6 +309,16 @@ class ShoppingListItemForm(FlaskForm):
     submit = SubmitField("Salvar")
 
 
+class ColoracaoImageForm(FlaskForm):
+    image_url = StringField("Link da imagem", validators=[Optional(), Length(max=500)])
+    image_file = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
+    )
+    caption = StringField("Legenda (opcional, ex: \"Cores premium\")", validators=[Optional(), Length(max=255)])
+    submit = SubmitField("Adicionar imagem")
+
+
 class StyleAssessmentForm(FlaskForm):
     estacao_cor = StringField(
         "Estação de cor (ex: Outono suave)", validators=[Optional(), Length(max=100)]

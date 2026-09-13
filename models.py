@@ -414,6 +414,30 @@ class StyleReport(db.Model):
             [self.estilo_pessoal, self.proporcoes, self.coloracao, self.visagismo, self.arquetipos]
         )
 
+    coloracao_images = db.relationship(
+        "ColoracaoImage",
+        backref="style_report",
+        cascade="all, delete-orphan",
+        order_by="ColoracaoImage.created_at",
+    )
+
+
+class ColoracaoImage(db.Model):
+    """Uma imagem de referência da coloração pessoal (paleta de cores,
+    cores universais, metais/acessórios, estação etc.) anexada ao dossiê
+    — a consultora sobe imagens já prontas (ex: exportadas de uma
+    ferramenta de análise de cor) e a cliente vê a sequência como
+    carrossel dentro do card "Cores" em client_area_diagnostico.html.
+    Ordem é a de cadastro (created_at) — sem reordenação manual, mesmo
+    minimalismo de ClosetItem/ShoppingListItem (criar + excluir, sem
+    editar)."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    style_report_id = db.Column(db.Integer, db.ForeignKey("style_report.id"), nullable=False)
+    image_url = db.Column(db.String(500), nullable=False)
+    caption = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

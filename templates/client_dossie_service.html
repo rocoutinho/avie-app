@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ label }} — {{ client.full_name }}{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('clients.dossie', client_id=client.id) }}" class="text-muted small text-decoration-none">&larr; Voltar pro dossiê</a>
+  <h1 class="h4 mb-0 mt-2">{{ label }}</h1>
+  <p class="text-muted small mb-0">{{ client.full_name }}</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        {{ label }}
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_dossie', client_id=client.id) }}">Editar dossiê</a>
+      </div>
+      <div class="card-body">
+        {% if text %}
+        <div style="white-space: pre-line;">{{ text }}</div>
+        {% else %}
+        <p class="text-muted mb-0">Este serviço ainda não foi preenchido no dossiê.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
