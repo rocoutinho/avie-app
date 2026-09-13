@@ -1795,7 +1795,35 @@ def test_client_area_shows_journey_cards(app, client):
     assert "Meu diagnóstico de imagem".encode() in response.data
     assert "Minha assinatura visual".encode() in response.data
     assert "Minha evolução contínua".encode() in response.data
-    assert "Concluído".encode() in response.data
+    # Cards da home não têm mais rótulo de texto ("Concluído" etc.) — o
+    # status vira só o indicador visual no canto do card.
+    assert b'journey-card-status is-filled' in response.data
+
+
+def test_client_area_shows_in_progress_status_for_scheduled_consultation(app, client):
+    with app.app_context():
+        c = Client(full_name="Paula Andamento", email="paula-andamento@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(
+            Consultation(
+                client_id=c.id,
+                tipo="consultoria_imagem",
+                scheduled_at=datetime(2999, 1, 1, 10, 0),
+                status="agendada",
+            )
+        )
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "paula-andamento@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/")
+    assert response.status_code == 200
+    assert b'journey-card-status is-in-progress' in response.data
 
 
 def test_staff_saves_identity_fields_via_client_edit(app, logged_in_client):
