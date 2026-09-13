@@ -214,22 +214,24 @@ def personal_shopper():
 @client_area_bp.route("/evolucao")
 @login_required
 def evolucao():
+    """"Minha Evolução" responde "o que faço agora", não é agenda nem
+    histórico — por isso `recent_achievements` corta pra poucas sessões
+    (as 3 mais recentes) e só as realmente concluídas ("realizada"),
+    nunca agendamentos cancelados/faltas, que não são "conquista"."""
     now = datetime.utcnow()
     future = sorted(
         (c for c in current_user.consultations if c.status == "agendada" and c.scheduled_at >= now),
         key=lambda c: c.scheduled_at,
     )
     next_consultation = future[0] if future else None
-    future_ids = {c.id for c in future}
     # current_user.consultations já vem ordenada por scheduled_at desc
-    # (ver models.py) — filtrar preserva essa ordem, então past_consultations
-    # já sai com a mais recente primeiro, sem precisar reordenar.
-    past_consultations = [c for c in current_user.consultations if c.id not in future_ids]
+    # (ver models.py), então fatiar preserva a mais recente primeiro.
+    recent_achievements = [c for c in current_user.consultations if c.status == "realizada"][:3]
     return render_template(
         "client_area_evolucao.html",
         client=current_user,
         next_consultation=next_consultation,
-        past_consultations=past_consultations,
+        recent_achievements=recent_achievements,
     )
 
 

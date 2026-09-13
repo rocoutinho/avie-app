@@ -237,6 +237,14 @@ class Client(UserMixin, db.Model):
     identidade_objetivo = db.Column(db.Text)
     identidade_estilo = db.Column(db.Text)
 
+    # "Minha Evolução" — mensagem curta e atual da consultora sobre onde a
+    # cliente está agora na jornada (ex: "seu foco neste momento é..."),
+    # mostrada atribuída a ela no topo de client_area_evolucao.html. Mesmo
+    # espírito de identidade_* acima: narrativa escrita pela equipe, não
+    # dado que a cliente preenche. Deliberadamente um campo só, sem
+    # histórico de mensagens anteriores — sempre a mais recente substitui.
+    foco_atual = db.Column(db.Text)
+
     # Acesso à área do cliente (opcional — ver docstring acima).
     password_hash = db.Column(db.String(255))
     last_login_at = db.Column(db.DateTime)

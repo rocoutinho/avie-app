@@ -396,6 +396,7 @@ def edit_client(client_id):
         client.identidade_rotina = form.identidade_rotina.data
         client.identidade_objetivo = form.identidade_objetivo.data
         client.identidade_estilo = form.identidade_estilo.data
+        client.foco_atual = form.foco_atual.data
         db.session.commit()
         flash("Dados atualizados.", "success")
         return redirect(url_for("clients.dados_pessoais", client_id=client.id))

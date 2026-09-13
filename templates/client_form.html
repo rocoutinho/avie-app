@@ -29,6 +29,10 @@
       {{ render_field(form.identidade_objetivo) }}
       {{ render_field(form.identidade_estilo) }}
 
+      <hr class="my-4">
+      <h2 class="h6 text-muted text-uppercase mb-3">Minha evolução</h2>
+      {{ render_field(form.foco_atual) }}
+
       <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
     </form>
   </div>
