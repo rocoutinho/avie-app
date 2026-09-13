@@ -57,33 +57,74 @@ def _dossie_services(sent_reports):
     return services
 
 
+def _next_step(client, previous_login, journey):
+    """A ÚNICA orientação dinâmica da home — nunca mais de uma, por
+    princípio explícito de produto: a cliente não deve ver vários CTAs
+    competindo pela atenção, o sistema decide qual é o mais relevante.
+    Prioridade: dossiê novo desde a última visita > looks novos desde a
+    última visita > próxima consultoria agendada > identidade ainda não
+    escrita pela consultora > None (cai no aviso padrão de último/
+    primeiro acesso, calculado no template). As duas primeiras checagens
+    só fazem sentido pra quem já tem um acesso anterior pra comparar —
+    numa primeira visita não há "novidade", só conteúdo."""
+    dossie = client.dossie_report
+    if previous_login and dossie and dossie.sent_at and dossie.sent_at > previous_login:
+        return {
+            "message": "Seu dossiê está pronto pra você.",
+            "cta_label": "Ver meu dossiê",
+            "cta_url": url_for("client_area.diagnostico"),
+        }
+
+    if previous_login:
+        new_looks = [l for l in client.looks if l.created_at and l.created_at > previous_login]
+        if new_looks:
+            n = len(new_looks)
+            return {
+                "message": (
+                    f"{n} novo look{'s' if n != 1 else ''} "
+                    f"{'foram preparados' if n != 1 else 'foi preparado'} para você."
+                ),
+                "cta_label": "Ver meus looks",
+                "cta_url": url_for("client_area.looks"),
+            }
+
+    next_consultation = journey[3]["next_consultation"]
+    if next_consultation:
+        return {
+            "message": f"Seu próximo encontro é dia {next_consultation.scheduled_at.strftime('%d/%m')}.",
+            "cta_label": "Ver detalhes",
+            "cta_url": url_for("client_area.evolucao"),
+        }
+
+    if not (client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo):
+        return {
+            "message": "Vamos te conhecer melhor pra guiar sua jornada.",
+            "cta_label": "Conhecer minha identidade",
+            "cta_url": url_for("client_area.identity"),
+        }
+
+    return None
+
+
 @client_area_bp.route("/")
 @login_required
 def index():
     """Resumo de leitura rápida — nenhum conteúdo completo mora aqui, só
-    status e um resumo de uma linha por etapa; cada card leva pra sua
-    própria página (mesmo padrão dos 4 recursos, sem exceção — ver revisão
-    de UX da área da cliente). O destaque no topo prioriza o que é mais
-    acionável: próxima consultoria > novidade desde a última visita >
-    mensagem padrão de último acesso."""
+    os 4 cards da jornada; cada um leva pra sua própria página (mesmo
+    padrão dos 4 recursos, sem exceção — ver revisão de UX da área da
+    cliente). O único destaque dinâmico no topo é `next_step` — ver
+    _next_step acima."""
     previous_login_raw = session.pop("client_previous_login_at", None)
     previous_login = datetime.fromisoformat(previous_login_raw) if previous_login_raw else None
 
-    sent_reports = _sent_reports(current_user)
-    dossie_services = _dossie_services(sent_reports)
-
-    has_news = previous_login is not None and (
-        any(r.sent_at and r.sent_at > previous_login for r in sent_reports)
-        or any(l.created_at and l.created_at > previous_login for l in current_user.looks)
-    )
+    journey = build_journey(current_user)
 
     return render_template(
         "client_area.html",
         client=current_user,
         previous_login=previous_login,
-        has_news=has_news,
-        journey=build_journey(current_user),
-        dossie_services=dossie_services,
+        journey=journey,
+        next_step=_next_step(current_user, previous_login, journey),
     )
 
 
