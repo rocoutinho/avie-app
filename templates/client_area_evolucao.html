@@ -1,32 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Minha evolução contínua{% endblock %}
+{% block title %}Minha Evolução{% endblock %}
 
 {% block content %}
 <div class="mb-4">
   <a href="{{ url_for('client_area.index') }}" class="text-muted small text-decoration-none">&larr; Voltar pra minha jornada</a>
   <p class="eyebrow mb-1 mt-2" style="color: var(--avie-gold);">Minha jornada</p>
-  <h1 class="h3 mb-0">Minha evolução contínua</h1>
+  <h1 class="h3 mb-0">Minha Evolução</h1>
 </div>
 
+{% if client.foco_atual %}
+<div class="card mb-4" style="border-color: var(--avie-gold);">
+  <div class="card-body">
+    <p class="text-muted small mb-1">Agora na sua jornada</p>
+    <p class="mb-2" style="white-space: pre-line;">{{ client.foco_atual }}</p>
+    <p class="text-end text-muted small mb-0">— Fabiana</p>
+  </div>
+</div>
+{% endif %}
+
 <div class="card mb-4">
-  <div class="card-header">Próxima consultoria</div>
+  <div class="card-header">Próximo encontro</div>
   <div class="card-body">
     {% if next_consultation %}
-    <p class="mb-0">Sua próxima consultoria está agendada para <strong>{{ next_consultation.scheduled_at.strftime('%d/%m/%Y às %H:%M') }}</strong>.</p>
+    <p class="mb-0">Sua próxima consultoria está agendada para <strong>{{ next_consultation.scheduled_at.strftime('%d/%m/%Y') }}</strong>.</p>
     {% else %}
     <p class="text-muted mb-0">Nenhuma consultoria agendada no momento — combine a próxima com sua consultora quando quiser dar continuidade.</p>
     {% endif %}
   </div>
 </div>
 
-{% if past_consultations %}
+{% if recent_achievements %}
 <div class="card">
-  <div class="card-header">Consultorias anteriores</div>
+  <div class="card-header">Conquistas recentes</div>
   <ul class="list-group list-group-flush">
-    {% for con in past_consultations %}
+    {% for con in recent_achievements %}
     <li class="list-group-item d-flex justify-content-between">
       <span>{{ label_for(CONSULTATION_TYPES, con.tipo) }}</span>
-      <span class="text-muted small">{{ con.scheduled_at.strftime('%d/%m/%Y') }} · {{ label_for(CONSULTATION_STATUSES, con.status) }}</span>
+      <span class="text-muted small">{{ con.scheduled_at.strftime('%d/%m/%Y') }}</span>
     </li>
     {% endfor %}
   </ul>

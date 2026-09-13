@@ -140,6 +140,13 @@ class ClientForm(FlaskForm):
         render_kw={"rows": 4},
     )
 
+    # "Minha Evolução" — ver models.py:Client.foco_atual.
+    foco_atual = TextAreaField(
+        "Foco atual (mensagem curta sobre onde ela está agora na jornada)",
+        validators=[Optional()],
+        render_kw={"rows": 3},
+    )
+
     submit = SubmitField("Salvar")
 
 

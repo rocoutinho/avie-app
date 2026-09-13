@@ -2061,6 +2061,124 @@ def test_client_sees_next_and_past_consultations_on_evolucao_page(app, client):
     assert "05/01/2020".encode() in response.data
 
 
+def test_client_sees_consultant_focus_message_on_evolucao_page(app, client):
+    with app.app_context():
+        c = Client(
+            full_name="Wilma Foco", email="wilma-foco@example.com", status="cliente_ativo",
+            foco_atual="Seu foco neste momento é incorporar os novos looks profissionais à sua rotina.",
+        )
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "wilma-foco@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/evolucao")
+    assert response.status_code == 200
+    assert "Agora na sua jornada".encode() in response.data
+    assert "incorporar os novos looks profissionais".encode() in response.data
+    assert "Fabiana".encode() in response.data
+
+
+def test_client_evolucao_hides_focus_card_when_empty(app, client):
+    with app.app_context():
+        c = Client(full_name="Xenia Semfoco", email="xenia-semfoco@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "xenia-semfoco@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/evolucao")
+    assert response.status_code == 200
+    assert "Agora na sua jornada".encode() not in response.data
+
+
+def test_client_evolucao_shows_only_recent_completed_achievements(app, client):
+    with app.app_context():
+        c = Client(full_name="Yolanda Conquistas", email="yolanda-conquistas@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        for i, (tipo, status) in enumerate(
+            [
+                ("consultoria_imagem", "realizada"),  # dia 1 — mais antiga, fica de fora (corte em 3)
+                ("consultoria_imagem", "realizada"),
+                ("consultoria_imagem", "realizada"),
+                ("consultoria_imagem", "realizada"),
+                ("consultoria_imagem", "cancelada"),  # nunca é "conquista"
+                ("diagnostico_gratuito", "faltou"),  # nunca é "conquista"
+            ]
+        ):
+            db.session.add(
+                Consultation(
+                    client_id=c.id, tipo=tipo, status=status,
+                    scheduled_at=datetime(2020, 1, i + 1, 10, 0),
+                )
+            )
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "yolanda-conquistas@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/evolucao")
+    assert response.status_code == 200
+    # current_user.consultations vem ordenada desc — entre as "realizada"
+    # (dias 1 a 4), as 3 mais recentes são os dias 4, 3 e 2; o dia 1 fica
+    # de fora do corte, e os dias 5/6 (cancelada/faltou) nunca entram.
+    assert "04/01/2020".encode() in response.data
+    assert "03/01/2020".encode() in response.data
+    assert "02/01/2020".encode() in response.data
+    assert "01/01/2020".encode() not in response.data
+    assert "05/01/2020".encode() not in response.data
+    assert "06/01/2020".encode() not in response.data
+
+
+def test_staff_sets_foco_atual_via_client_edit(app, logged_in_client):
+    with app.app_context():
+        c = Client(full_name="Zoe Editar", email="zoe-editar@example.com", status="cliente_ativo")
+        db.session.add(c)
+        db.session.commit()
+        client_id = c.id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/editar",
+        data={
+            "full_name": "Zoe Editar",
+            "email": "zoe-editar@example.com",
+            "phone": "",
+            "instagram": "",
+            "source": "outro",
+            "status": "cliente_ativo",
+            "notes": "",
+            "style_notes": "",
+            "idade": "",
+            "profissao": "",
+            "cidade": "",
+            "foto_perfil": "",
+            "identidade_rotina": "",
+            "identidade_objetivo": "",
+            "identidade_estilo": "",
+            "foco_atual": "Seu foco agora é a consultoria de guarda-roupa cápsula.",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert (
+            db.session.get(Client, client_id).foco_atual
+            == "Seu foco agora é a consultoria de guarda-roupa cápsula."
+        )
+
+
 def test_build_journey_looks_status_reflects_real_look(app):
     with app.app_context():
         c = Client(full_name="Cliente Looks", email="looks-journey@example.com")
