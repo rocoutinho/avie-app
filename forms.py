@@ -337,6 +337,11 @@ class StyleAssessmentForm(FlaskForm):
         "Mensagem que a cliente quer transmitir (ex: confiança e sofisticação)",
         validators=[Optional(), Length(max=255)],
     )
+    pontos_chave = TextAreaField(
+        "Pontos-chave (2-3 recomendações curtas, uma por linha — aparecem na síntese do dossiê)",
+        validators=[Optional()],
+        render_kw={"rows": 3},
+    )
     submit = SubmitField("Salvar")
 
 

@@ -1,25 +1,47 @@
 {% extends "base.html" %}
-{% block title %}Meu diagnóstico de imagem{% endblock %}
+{% block title %}Meu Dossiê{% endblock %}
 {% from "_dossie_service_icon.html" import service_icon %}
 
 {% block content %}
 <div class="mb-4">
   <a href="{{ url_for('client_area.index') }}" class="text-muted small text-decoration-none">&larr; Voltar pra minha jornada</a>
   <p class="eyebrow mb-1 mt-2" style="color: var(--avie-gold);">Minha jornada</p>
-  <h1 class="h3 mb-0">Meu diagnóstico de imagem</h1>
+  <h1 class="h3 mb-0">Meu Dossiê</h1>
 </div>
 
-<div class="card mb-4">
+{% set paleta_image = client.dossie_report.coloracao_images[0] if client.dossie_report and client.dossie_report.coloracao_images else None %}
+{% set assessment = client.style_assessment %}
+{% if assessment and (assessment.mensagem_desejada or assessment.estacao_cor or paleta_image or assessment.pontos_chave) %}
+<div class="card mb-4" style="border-color: var(--avie-gold);">
   <div class="card-body">
-    {% if client.style_assessment %}
-    <dl class="mb-4 pb-4 border-bottom">
-      {% if client.style_assessment.estacao_cor %}<dt>Estação de cor</dt><dd>{{ client.style_assessment.estacao_cor }}</dd>{% endif %}
-      {% if client.style_assessment.paleta_principal %}<dt>Paleta principal</dt><dd>{{ client.style_assessment.paleta_principal }}</dd>{% endif %}
-      {% if client.style_assessment.estilo_predominante %}<dt>Estilo predominante</dt><dd>{{ client.style_assessment.estilo_predominante }}</dd>{% endif %}
-      {% if client.style_assessment.estilo_complementar %}<dt>Estilo complementar</dt><dd>{{ client.style_assessment.estilo_complementar }}</dd>{% endif %}
-      {% if client.style_assessment.mensagem_desejada %}<dt class="mb-0">Mensagem que você transmite</dt><dd class="mb-0">{{ client.style_assessment.mensagem_desejada }}</dd>{% endif %}
-    </dl>
+    {% if assessment.mensagem_desejada %}
+    <div class="mb-3">
+      <p class="text-muted small mb-1">Minha essência</p>
+      <p class="mb-0 fw-bold">{{ assessment.mensagem_desejada }}</p>
+    </div>
     {% endif %}
+    {% if assessment.estacao_cor or paleta_image %}
+    <div class="mb-3">
+      <p class="text-muted small mb-1">Minha paleta</p>
+      {% if paleta_image %}
+      <img src="{{ paleta_image.image_url }}" alt="Minha paleta" class="rounded mb-2" style="width: 100%; max-width: 220px; aspect-ratio: 3/4; object-fit: cover;">
+      {% endif %}
+      {% if assessment.estacao_cor %}<p class="mb-0">{{ assessment.estacao_cor }}</p>{% endif %}
+    </div>
+    {% endif %}
+    {% if assessment.pontos_chave %}
+    <div class="mb-3">
+      <p class="text-muted small mb-1">Pontos-chave</p>
+      <p class="mb-0" style="white-space: pre-line;">{{ assessment.pontos_chave }}</p>
+    </div>
+    {% endif %}
+    <a href="#dossie-completo" class="btn btn-sm btn-outline-secondary">Ver dossiê completo</a>
+  </div>
+</div>
+{% endif %}
+
+<div id="dossie-completo" class="card mb-4">
+  <div class="card-body">
     {% if client.profile %}
     {% set profile_answers = [
       ("Objetivo profissional", client.profile.objetivo_profissional),
