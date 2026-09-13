@@ -326,6 +326,28 @@ class ColoracaoImageForm(FlaskForm):
     submit = SubmitField("Adicionar imagem")
 
 
+class DossieSectionForm(FlaskForm):
+    """Sub-análise dentro de um serviço do dossiê — ver models.py:DossieSection.
+    O serviço em si (Estilo/Biotipo/...) vem da página de onde o
+    formulário é aberto, não é escolhido aqui."""
+
+    title = StringField(
+        "Título da seção (ex: \"Análise de Proporções\")", validators=[DataRequired(), Length(max=150)]
+    )
+    content = TextAreaField("Conteúdo", validators=[Optional()], render_kw={"rows": 6})
+    image_url = StringField("Link da imagem (opcional)", validators=[Optional(), Length(max=500)])
+    image_file = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
+    )
+    group = StringField(
+        "Grupo (opcional — seções do mesmo grupo viram abas para comparar, ex: \"Estilos identificados\")",
+        validators=[Optional(), Length(max=100)],
+    )
+    order = IntegerField("Ordem de exibição", default=0, validators=[Optional()])
+    submit = SubmitField("Salvar seção")
+
+
 class StyleAssessmentForm(FlaskForm):
     estacao_cor = StringField(
         "Estação de cor (ex: Outono suave)", validators=[Optional(), Length(max=100)]

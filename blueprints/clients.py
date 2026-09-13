@@ -17,6 +17,7 @@ from forms import (
     ClosetItemForm,
     ColoracaoImageForm,
     ConsultationForm,
+    DossieSectionForm,
     EditDossieForm,
     LookForm,
     PaymentForm,
@@ -31,6 +32,7 @@ from models import (
     ClosetItem,
     ColoracaoImage,
     Consultation,
+    DossieSection,
     Look,
     LookItem,
     Payment,
@@ -282,7 +284,9 @@ def dossie_service(client_id, service_field):
         "client_dossie_service.html",
         client=client,
         label=label,
+        service_field=service_field,
         text=getattr(report, service_field, None),
+        sections=[s for s in report.dossie_sections if s.service == service_field],
     )
 
 
@@ -298,6 +302,7 @@ def dossie_coloracao(client_id):
         client=client,
         report=report,
         form=ColoracaoImageForm(),
+        sections=[s for s in report.dossie_sections if s.service == "coloracao"],
     )
 
 
@@ -332,6 +337,82 @@ def delete_coloracao_image(client_id, image_id):
     db.session.commit()
     flash("Imagem removida.", "success")
     return redirect(url_for("clients.dossie_coloracao", client_id=client.id))
+
+
+def _dossie_section_redirect(client_id, service_field):
+    """Cada serviço tem sua própria página (dossie_service genérica, ou
+    dossie_coloracao pro único serviço com página própria mais rica) —
+    depois de criar/editar/excluir uma seção, volta pra página de onde
+    ela veio."""
+    if service_field == "coloracao":
+        return redirect(url_for("clients.dossie_coloracao", client_id=client_id))
+    return redirect(url_for("clients.dossie_service", client_id=client_id, service_field=service_field))
+
+
+@clients_bp.route("/<int:client_id>/dossie/<service_field>/secoes/nova", methods=["GET", "POST"])
+@login_required
+def new_dossie_section(client_id, service_field):
+    valid_fields = {field for field, _label, _icon in DOSSIE_SERVICE_LABELS}
+    if service_field not in valid_fields:
+        abort(404)
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    label = next(label for field, label, _icon in DOSSIE_SERVICE_LABELS if field == service_field)
+    form = DossieSectionForm()
+    if form.validate_on_submit():
+        section = DossieSection(
+            style_report_id=report.id,
+            service=service_field,
+            title=form.title.data.strip(),
+            content=form.content.data,
+            image_url=upload_image(form.image_file.data) or form.image_url.data,
+            group=form.group.data or None,
+            order=form.order.data or 0,
+        )
+        db.session.add(section)
+        db.session.commit()
+        flash("Seção adicionada.", "success")
+        return _dossie_section_redirect(client.id, service_field)
+    return render_template("dossie_section_form.html", form=form, client=client, label=label, section=None)
+
+
+@clients_bp.route("/<int:client_id>/dossie/secoes/<int:section_id>/editar", methods=["GET", "POST"])
+@login_required
+def edit_dossie_section(client_id, section_id):
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    section = DossieSection.query.filter_by(id=section_id, style_report_id=report.id).first_or_404()
+    label = next(label for field, label, _icon in DOSSIE_SERVICE_LABELS if field == section.service)
+    form = DossieSectionForm(obj=section)
+    if form.validate_on_submit():
+        section.title = form.title.data.strip()
+        section.content = form.content.data
+        section.image_url = upload_image(form.image_file.data) or form.image_url.data
+        section.group = form.group.data or None
+        section.order = form.order.data or 0
+        db.session.commit()
+        flash("Seção atualizada.", "success")
+        return _dossie_section_redirect(client.id, section.service)
+    return render_template("dossie_section_form.html", form=form, client=client, label=label, section=section)
+
+
+@clients_bp.route("/<int:client_id>/dossie/secoes/<int:section_id>/excluir", methods=["POST"])
+@login_required
+def delete_dossie_section(client_id, section_id):
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    section = DossieSection.query.filter_by(id=section_id, style_report_id=report.id).first_or_404()
+    service_field = section.service
+    db.session.delete(section)
+    db.session.commit()
+    flash("Seção removida.", "success")
+    return _dossie_section_redirect(client.id, service_field)
 
 
 @clients_bp.route("/<int:client_id>/looks")

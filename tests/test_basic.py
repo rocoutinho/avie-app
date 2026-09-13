@@ -14,6 +14,7 @@ from models import (
     ClosetItem,
     ColoracaoImage,
     Consultation,
+    DossieSection,
     Ebook,
     Look,
     Payment,
@@ -1220,6 +1221,130 @@ def test_staff_manages_coloracao_images_and_client_sees_carousel(app, logged_in_
     assert response.status_code == 200
     with app.app_context():
         assert db.session.get(ColoracaoImage, image_id) is None
+
+
+def test_staff_creates_dossie_section_and_client_sees_it_as_collapse(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = created.id
+        created.set_password("senha-cliente-final")
+        db.session.commit()
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/estilo_pessoal/secoes/nova",
+        data={"title": "Análise de Proporções", "content": "Corpo retângulo.", "order": "0"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Seção adicionada.".encode() in response.data
+    assert "Análise de Proporções".encode() in response.data
+
+    with app.app_context():
+        report = db.session.get(Client, client_id).dossie_report
+        assert len(report.dossie_sections) == 1
+        assert report.dossie_sections[0].service == "estilo_pessoal"
+
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/diagnostico")
+    assert response.status_code == 200
+    assert "Análise de Proporções".encode() in response.data
+    assert "Corpo retângulo.".encode() in response.data
+    # Sem group, a seção vira um collapse simples, não uma aba.
+    assert b"nav-tabs" not in response.data
+
+
+def test_dossie_sections_with_same_group_render_as_tabs(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = created.id
+        created.set_password("senha-cliente-final")
+        report = created.dossie_report
+        db.session.add(
+            DossieSection(
+                style_report_id=report.id,
+                service="estilo_pessoal",
+                title="Esportivo",
+                content="Busca conforto e praticidade.",
+                group="estilos_identificados",
+                order=0,
+            )
+        )
+        db.session.add(
+            DossieSection(
+                style_report_id=report.id,
+                service="estilo_pessoal",
+                title="Tradicional",
+                content="Formal e conservador.",
+                group="estilos_identificados",
+                order=1,
+            )
+        )
+        db.session.commit()
+
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/diagnostico")
+    assert response.status_code == 200
+    assert "Esportivo".encode() in response.data
+    assert "Tradicional".encode() in response.data
+    assert "Busca conforto e praticidade.".encode() in response.data
+    assert "Formal e conservador.".encode() in response.data
+    assert b"nav-tabs" in response.data
+    assert b"tab-pane" in response.data
+
+
+def test_staff_edits_and_deletes_dossie_section(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_id = Client.query.filter_by(email="dossie-nova@example.com").first().id
+
+    logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/estilo_pessoal/secoes/nova",
+        data={"title": "Rascunho", "content": "Texto inicial.", "order": "0"},
+        follow_redirects=True,
+    )
+    with app.app_context():
+        report = db.session.get(Client, client_id).dossie_report
+        section_id = report.dossie_sections[0].id
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/secoes/{section_id}/editar",
+        data={"title": "Análise de Proporções", "content": "Texto revisado.", "order": "1"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Seção atualizada.".encode() in response.data
+    assert "Análise de Proporções".encode() in response.data
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/secoes/{section_id}/excluir", follow_redirects=True
+    )
+    assert response.status_code == 200
+    assert "Seção removida.".encode() in response.data
+
+    with app.app_context():
+        report = db.session.get(Client, client_id).dossie_report
+        assert len(report.dossie_sections) == 0
+
+
+def test_new_dossie_section_rejects_invalid_service_field(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_id = Client.query.filter_by(email="dossie-nova@example.com").first().id
+
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie/campo-invalido/secoes/nova")
+    assert response.status_code == 404
 
 
 def test_resubmitting_dossie_onboarding_updates_same_report(app, logged_in_client):

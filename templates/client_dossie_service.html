@@ -9,7 +9,7 @@
 
 <div class="row justify-content-center">
   <div class="col-lg-8">
-    <div class="card">
+    <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         {{ label }}
         <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_dossie', client_id=client.id) }}">Editar dossiê</a>
@@ -19,6 +19,41 @@
         <div style="white-space: pre-line;">{{ text }}</div>
         {% else %}
         <p class="text-muted mb-0">Este serviço ainda não foi preenchido no dossiê.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        Seções (aprofundamento opcional)
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.new_dossie_section', client_id=client.id, service_field=service_field) }}">+ Nova seção</a>
+      </div>
+      <div class="card-body">
+        <p class="text-muted small">
+          Quebre este serviço em partes (ex: "Análise de Proporções", "Peças que Favorecem") — a cliente vê cada uma como um item que expande. Seções com o mesmo "grupo" viram abas comparáveis entre si (ex: 2 estilos identificados).
+        </p>
+        {% if sections %}
+        {% for section in sections %}
+        <details class="manage-disclosure {{ 'mb-0' if loop.last else 'mb-3' }}">
+          <summary>
+            <span>{{ section.title }}</span>
+            {% if section.group %}<span class="badge text-bg-light border ms-2">{{ section.group }}</span>{% endif %}
+            <span class="ms-auto text-muted small fw-normal">Ordem {{ section.order }}</span>
+          </summary>
+          <div class="manage-disclosure-body">
+            {% if section.image_url %}<img src="{{ section.image_url }}" alt="{{ section.title }}" class="rounded mb-2" style="max-width: 220px;">{% endif %}
+            {% if section.content %}<div class="mb-3" style="white-space: pre-line;">{{ section.content }}</div>{% endif %}
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_dossie_section', client_id=client.id, section_id=section.id) }}">Editar</a>
+              <form method="post" action="{{ url_for('clients.delete_dossie_section', client_id=client.id, section_id=section.id) }}" onsubmit="return confirm('Remover esta seção?');">
+                <button type="submit" class="btn btn-sm btn-outline-secondary text-danger">Excluir</button>
+              </form>
+            </div>
+          </div>
+        </details>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted small mb-0">Nenhuma seção cadastrada ainda.</p>
         {% endif %}
       </div>
     </div>
