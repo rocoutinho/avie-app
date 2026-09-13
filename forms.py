@@ -296,8 +296,14 @@ class ClosetItemForm(FlaskForm):
 class ShoppingListItemForm(FlaskForm):
     category = SelectField("Categoria", choices=CLOSET_ITEM_CATEGORIES)
     description = StringField("Peça sugerida", validators=[DataRequired(), Length(max=255)])
-    motivo = TextAreaField(
-        "Motivo da recomendação (o porquê, não o link de compra)", validators=[Optional()]
+    motivo = TextAreaField("Motivo da recomendação (o porquê)", validators=[Optional()])
+    photo_url = StringField("Link da foto (opcional)", validators=[Optional(), Length(max=500)])
+    photo_file = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
+    )
+    link_compra = StringField(
+        "Link de compra (opcional, parceiro)", validators=[Optional(), Length(max=500)]
     )
     notes = TextAreaField("Notas (opcional)", validators=[Optional()])
     submit = SubmitField("Salvar")

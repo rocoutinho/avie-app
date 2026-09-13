@@ -132,26 +132,52 @@
 {% endif %}
 
 <h2 class="h5 mb-1 mt-5">Próximas peças</h2>
-<p class="text-muted small mb-3">Sugestões do seu personal shopper pra ampliar seus looks.</p>
+<p class="text-muted small mb-3">Sugestões do seu personal shopper pra ampliar seus looks — recomendações de curadoria e, quando disponível, um link de compra direto.</p>
 {% if shopping_list_items %}
-<div class="card">
-  <ul class="list-group list-group-flush">
-    {% for item in shopping_list_items %}
-    <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
-      <span class="{{ 'text-decoration-line-through text-muted' if item.status == 'incorporada' }}">
-        {{ item.description }}
-        {% if item.motivo %}<br><span class="text-muted small">{{ item.motivo }}</span>{% endif %}
-      </span>
-      <span class="text-muted small flex-shrink-0">{{ label_for(PERSONAL_SHOPPER_STATUSES, item.status) }}</span>
-    </li>
-    {% endfor %}
-  </ul>
+<div class="row g-4 mb-4">
+  {% for item in shopping_list_items %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      {% if item.photo_url %}
+      <img src="{{ item.photo_url }}" alt="{{ item.description }}" class="card-img-top" style="aspect-ratio: 3/4; object-fit: cover;">
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <span class="badge text-bg-light border align-self-start mb-2">{{ label_for(PERSONAL_SHOPPER_STATUSES, item.status) }}</span>
+        <h3 class="h6 mb-1 {{ 'text-decoration-line-through text-muted' if item.status == 'incorporada' }}">{{ item.description }}</h3>
+        <p class="text-muted small mb-2">{{ label_for(CLOSET_ITEM_CATEGORIES, item.category) }}</p>
+        {% if item.motivo %}<p class="mb-2" style="white-space: pre-line;">{{ item.motivo }}</p>{% endif %}
+        <div class="mt-auto d-flex flex-column gap-2">
+          {% if item.link_compra %}
+          <a href="{{ item.link_compra }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">Ver produto</a>
+          {% if item.status == "recomendada" %}
+          <form method="post" action="{{ url_for('client_area.accept_shopping_list_item', item_id=item.id) }}">
+            <button type="submit" class="btn btn-sm btn-brand w-100">Aceitar recomendação</button>
+          </form>
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% else %}
-<div class="card">
+<div class="card mb-4">
   <div class="card-body">
     <p class="text-muted mb-0">Nenhuma sugestão de compra no momento — sua consultora recomenda aqui as próximas peças pra ampliar seus looks.</p>
   </div>
 </div>
 {% endif %}
+
+<div class="card" style="background: var(--avie-bg); border-color: var(--avie-gold);">
+  <div class="card-body">
+    <h3 class="h6 mb-1">Quer ir às compras com a Fabiana?</h3>
+    <p class="text-muted small mb-3">Agende um Shopping Day: um período reservado pra irem juntas a lojas físicas, com a curadoria dela ao vivo. Serviço adicional, pago à parte.</p>
+    <a
+      class="btn btn-sm btn-brand"
+      href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ ('Olá, ' ~ client.full_name.split(' ')[0] ~ ' aqui! Gostaria de agendar um Shopping Day com a Fabiana.') | urlencode }}"
+      target="_blank" rel="noopener"
+    >Agendar pelo WhatsApp</a>
+  </div>
+</div>
 {% endblock %}
