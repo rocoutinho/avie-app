@@ -111,12 +111,38 @@ def diagnostico():
 @client_area_bp.route("/looks")
 @login_required
 def looks():
+    """"Minha assinatura visual" é um hub, não uma página de conteúdo — só
+    o resumo do topo e os 3 cards de navegação (Meus looks, Meu closet,
+    Próximas peças), mesmo padrão visual/estrutural do hub da cliente pro
+    staff (client_detail.html, classes .journey-grid/.journey-card já
+    existentes, reaproveitadas aqui sem CSS novo). Cada card leva pra sua
+    própria página com o conteúdo completo e os filtros — nada de conteúdo
+    completo mora aqui, mesma regra do resto da área da cliente (ver
+    client_area.index)."""
+    return render_template("client_area_looks.html", client=current_user)
+
+
+@client_area_bp.route("/looks/galeria")
+@login_required
+def looks_gallery():
     active_momento = request.args.get("momento") or None
     looks = current_user.looks
     if active_momento:
         looks = [l for l in looks if l.momento == active_momento]
     momento_counts = {key: sum(1 for l in current_user.looks if l.momento == key) for key, _label in LOOK_MOMENTS}
 
+    return render_template(
+        "client_area_looks_gallery.html",
+        client=current_user,
+        looks=looks,
+        active_momento=active_momento,
+        momento_counts=momento_counts,
+    )
+
+
+@client_area_bp.route("/closet")
+@login_required
+def closet():
     active_categoria = request.args.get("categoria") or None
     closet_items = current_user.closet_items
     if active_categoria:
@@ -126,14 +152,20 @@ def looks():
     }
 
     return render_template(
-        "client_area_looks.html",
+        "client_area_closet.html",
         client=current_user,
-        looks=looks,
-        active_momento=active_momento,
-        momento_counts=momento_counts,
         closet_items=closet_items,
         active_categoria=active_categoria,
         categoria_counts=categoria_counts,
+    )
+
+
+@client_area_bp.route("/personal-shopper")
+@login_required
+def personal_shopper():
+    return render_template(
+        "client_area_personal_shopper.html",
+        client=current_user,
         shopping_list_items=current_user.shopping_list_items,
     )
 
@@ -169,7 +201,7 @@ def toggle_look_favorite(look_id):
     look = Look.query.filter_by(id=look_id, client_id=current_user.id).first_or_404()
     look.favorited = not look.favorited
     db.session.commit()
-    return redirect(url_for("client_area.looks"))
+    return redirect(url_for("client_area.looks_gallery"))
 
 
 @client_area_bp.route("/lista-compras/<int:item_id>/aceitar", methods=["POST"])
@@ -184,4 +216,4 @@ def accept_shopping_list_item(item_id):
     if item.link_compra and item.status == "recomendada":
         item.status = "aprovada"
         db.session.commit()
-    return redirect(url_for("client_area.looks"))
+    return redirect(url_for("client_area.personal_shopper"))

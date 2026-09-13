@@ -1330,7 +1330,7 @@ def test_staff_manages_closet_items_and_client_sees_them_read_only(app, logged_i
         data={"email": "isabela-closet@example.com", "password": "senha-cliente-123"},
         follow_redirects=True,
     )
-    response = client.get("/minha-area/looks")
+    response = client.get("/minha-area/closet")
     assert response.status_code == 200
     assert "Blazer preto alfaiataria".encode() in response.data
     assert b"Excluir" not in response.data
@@ -1389,7 +1389,7 @@ def test_staff_manages_shopping_list_and_client_sees_it_read_only(app, logged_in
         data={"email": "julia-compras@example.com", "password": "senha-cliente-123"},
         follow_redirects=True,
     )
-    response = client.get("/minha-area/looks")
+    response = client.get("/minha-area/personal-shopper")
     assert response.status_code == 200
     assert "Scarpin nude".encode() in response.data
     assert "Falta um sapato neutro".encode() in response.data
@@ -1483,7 +1483,7 @@ def test_client_accepts_shopping_list_item_recommendation(app, client):
         follow_redirects=True,
     )
 
-    response = client.get("/minha-area/looks")
+    response = client.get("/minha-area/personal-shopper")
     assert "Aceitar recomendação".encode() in response.data
     assert "Ver produto".encode() in response.data
 
@@ -1853,7 +1853,7 @@ def test_staff_creates_look_with_closet_items_and_client_favorites_it(app, logge
         data={"email": "paula-looks@example.com", "password": "senha-cliente-123"},
         follow_redirects=True,
     )
-    response = client.get("/minha-area/looks")
+    response = client.get("/minha-area/looks/galeria")
     assert response.status_code == 200
     assert "Reunião executiva".encode() in response.data
     assert "Blazer preto".encode() in response.data
@@ -1893,11 +1893,11 @@ def test_client_filters_looks_by_momento(app, client):
         follow_redirects=True,
     )
 
-    response = client.get("/minha-area/looks")
+    response = client.get("/minha-area/looks/galeria")
     assert "Blazer de reunião".encode() in response.data
     assert "Vestido de festa".encode() in response.data
 
-    response = client.get("/minha-area/looks?momento=trabalho")
+    response = client.get("/minha-area/looks/galeria?momento=trabalho")
     assert "Blazer de reunião".encode() in response.data
     assert "Vestido de festa".encode() not in response.data
 
@@ -1918,13 +1918,43 @@ def test_client_filters_closet_by_categoria(app, client):
         follow_redirects=True,
     )
 
-    response = client.get("/minha-area/looks")
+    response = client.get("/minha-area/closet")
     assert "Blazer estruturado".encode() in response.data
     assert "Calça pantalona".encode() in response.data
 
-    response = client.get("/minha-area/looks?categoria=blazer")
+    response = client.get("/minha-area/closet?categoria=blazer")
     assert "Blazer estruturado".encode() in response.data
     assert "Calça pantalona".encode() not in response.data
+
+
+def test_client_assinatura_visual_hub_links_to_the_three_sections(app, client):
+    with app.app_context():
+        c = Client(full_name="Helena Hub", email="helena-hub@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(Look(client_id=c.id, nome="Look do hub"))
+        db.session.add(ClosetItem(client_id=c.id, category="blazer", description="Blazer do hub"))
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "helena-hub@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+
+    response = client.get("/minha-area/looks")
+    assert response.status_code == 200
+    assert "Meus looks".encode() in response.data
+    assert "Meu closet".encode() in response.data
+    assert "Próximas peças".encode() in response.data
+    # Hub é só navegação — conteúdo de fato (nome do look/peça) mora nas
+    # páginas de destino, não aqui.
+    assert "Look do hub".encode() not in response.data
+    assert "Blazer do hub".encode() not in response.data
+    assert b'href="/minha-area/looks/galeria"' in response.data
+    assert b'href="/minha-area/closet"' in response.data
+    assert b'href="/minha-area/personal-shopper"' in response.data
 
 
 def test_client_cannot_favorite_another_clients_look(app, client):
