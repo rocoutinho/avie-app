@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from extensions import db, limiter
@@ -46,12 +46,6 @@ def login():
 
         client = Client.query.filter_by(email=email).first()
         if client and client.check_password(password):
-            # Guarda o acesso anterior (se houver) antes de sobrescrever,
-            # pra área do cliente conseguir mostrar "seu último acesso foi
-            # em ..." uma vez só, logo depois do login.
-            session["client_previous_login_at"] = (
-                client.last_login_at.isoformat() if client.last_login_at else None
-            )
             client.last_login_at = datetime.utcnow()
             db.session.commit()
             login_user(client)

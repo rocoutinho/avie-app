@@ -1790,7 +1790,7 @@ def test_client_area_shows_journey_cards(app, client):
     )
     response = client.get("/minha-area/")
     assert response.status_code == 200
-    assert "Sua jornada de transformação".encode() in response.data
+    assert "Sua jornada de Transformação".encode() in response.data
     assert "Minha Identidade".encode() in response.data
     assert "Meu Dossiê".encode() in response.data
     assert "Minha Assinatura Visual".encode() in response.data
@@ -1798,132 +1798,6 @@ def test_client_area_shows_journey_cards(app, client):
     # Cards da home não têm mais rótulo de texto ("Concluído" etc.) — o
     # status vira só o indicador visual no canto do card.
     assert b'journey-card-status is-filled' in response.data
-
-
-def test_client_area_next_step_shows_new_dossie(app, client):
-    with app.app_context():
-        c = Client(full_name="Vera Dossie", email="vera-dossie@example.com", status="cliente_ativo")
-        c.set_password("senha-cliente-123")
-        c.last_login_at = datetime(2024, 1, 1)
-        db.session.add(c)
-        db.session.commit()
-        db.session.add(
-            StyleReport(
-                client_id=c.id,
-                title="Dossiê",
-                content="",
-                status="enviado",
-                sent_at=datetime(2024, 6, 1),
-                estilo_pessoal="Clássico contemporâneo",
-            )
-        )
-        db.session.commit()
-
-    # Sem follow_redirects: o próprio redirect pro /minha-area/ pós-login já
-    # consumiria (session.pop) o previous_login antes do teste conseguir
-    # checar a página com ele ainda disponível.
-    client.post(
-        "/login",
-        data={"email": "vera-dossie@example.com", "password": "senha-cliente-123"},
-    )
-    response = client.get("/minha-area/")
-    assert response.status_code == 200
-    assert "Seu dossiê está pronto pra você.".encode() in response.data
-    assert b'href="/minha-area/diagnostico"' in response.data
-    assert "Ver meu dossiê".encode() in response.data
-
-
-def test_client_area_next_step_shows_new_looks(app, client):
-    with app.app_context():
-        c = Client(full_name="Wanda Looks", email="wanda-looks@example.com", status="cliente_ativo")
-        c.set_password("senha-cliente-123")
-        c.last_login_at = datetime(2024, 1, 1)
-        db.session.add(c)
-        db.session.commit()
-        db.session.add(Look(client_id=c.id, nome="Look novo", created_at=datetime(2024, 6, 1)))
-        db.session.add(Look(client_id=c.id, nome="Outro look novo", created_at=datetime(2024, 6, 2)))
-        db.session.commit()
-
-    client.post(
-        "/login",
-        data={"email": "wanda-looks@example.com", "password": "senha-cliente-123"},
-    )
-    response = client.get("/minha-area/")
-    assert response.status_code == 200
-    assert "2 novo looks foram preparados para você.".encode() in response.data
-    assert b'href="/minha-area/looks"' in response.data
-
-
-def test_client_area_next_step_shows_next_consultation(app, client):
-    with app.app_context():
-        c = Client(full_name="Yara Consulta", email="yara-consulta@example.com", status="cliente_ativo")
-        c.set_password("senha-cliente-123")
-        db.session.add(c)
-        db.session.commit()
-        db.session.add(
-            Consultation(
-                client_id=c.id,
-                tipo="consultoria_imagem",
-                scheduled_at=datetime(2999, 10, 20, 10, 0),
-                status="agendada",
-            )
-        )
-        db.session.commit()
-
-    client.post(
-        "/login",
-        data={"email": "yara-consulta@example.com", "password": "senha-cliente-123"},
-        follow_redirects=True,
-    )
-    response = client.get("/minha-area/")
-    assert response.status_code == 200
-    assert "Seu próximo encontro é dia 20/10.".encode() in response.data
-    assert b'href="/minha-area/evolucao"' in response.data
-
-
-def test_client_area_next_step_shows_identidade_pending(app, client):
-    with app.app_context():
-        c = Client(full_name="Zilda Identidade", email="zilda-identidade@example.com", status="cliente_ativo")
-        c.set_password("senha-cliente-123")
-        db.session.add(c)
-        db.session.commit()
-
-    client.post(
-        "/login",
-        data={"email": "zilda-identidade@example.com", "password": "senha-cliente-123"},
-        follow_redirects=True,
-    )
-    response = client.get("/minha-area/")
-    assert response.status_code == 200
-    assert "Vamos te conhecer melhor pra guiar sua jornada.".encode() in response.data
-    assert b'href="/minha-area/identidade"' in response.data
-
-
-def test_client_area_next_step_falls_back_when_nothing_stands_out(app, client):
-    with app.app_context():
-        c = Client(
-            full_name="Alice Semnovidade",
-            email="alice-semnovidade@example.com",
-            status="cliente_ativo",
-            identidade_rotina="Rotina preenchida.",
-            identidade_objetivo="Objetivo preenchido.",
-            identidade_estilo="Estilo preenchido.",
-        )
-        c.set_password("senha-cliente-123")
-        db.session.add(c)
-        db.session.commit()
-
-    client.post(
-        "/login",
-        data={"email": "alice-semnovidade@example.com", "password": "senha-cliente-123"},
-        follow_redirects=True,
-    )
-    response = client.get("/minha-area/")
-    assert response.status_code == 200
-    assert "Este é seu primeiro acesso à sua área.".encode() in response.data
-    # Sem next_step, não deve sobrar nenhum CTA de "próximo passo" no topo.
-    assert "Ver meu dossiê".encode() not in response.data
-    assert "Ver meus looks".encode() not in response.data
 
 
 def test_client_area_shows_in_progress_status_for_scheduled_consultation(app, client):

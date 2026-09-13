@@ -12,33 +12,16 @@
 {% block content %}
 <div class="mb-4">
   <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
-  {% if next_step %}
-  <p class="text-muted mb-0">
-    {{ next_step.message }}
-    <a href="{{ next_step.cta_url }}" class="fw-bold text-decoration-none" style="color: var(--avie-gold);">{{ next_step.cta_label }} &rarr;</a>
-  </p>
-  {% else %}
-  <p class="text-muted mb-0">
-    {% if previous_login %}
-      Seu último acesso foi em {{ previous_login.strftime('%d/%m/%Y às %H:%M') }}.
-    {% else %}
-      Este é seu primeiro acesso à sua área.
-    {% endif %}
-  </p>
-  {% endif %}
+  <p class="fw-bold mb-0" style="color: var(--avie-gold);">Sua jornada de Transformação</p>
 </div>
 
-<div class="mb-3">
-  <p class="eyebrow mb-1" style="color: var(--avie-gold);">Sua jornada</p>
-  <h2 class="h4 mb-4">Sua jornada de transformação</h2>
-  <div class="home-journey-grid">
-    {% for step in journey %}
-    <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
-      <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
-      <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
-      <span class="home-journey-title">{{ step.title }}</span>
-    </a>
-    {% endfor %}
-  </div>
+<div class="home-journey-grid">
+  {% for step in journey %}
+  <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
+    <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
+    <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
+    <span class="home-journey-title">{{ step.title }}</span>
+  </a>
+  {% endfor %}
 </div>
 {% endblock %}
