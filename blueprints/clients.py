@@ -7,6 +7,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import login_required
 
 from blueprints.auth import require_staff
+from blueprints.client_area import DOSSIE_SERVICE_LABELS
 from emails import send_client_access_email
 from extensions import db
 from image_upload import upload_image
@@ -14,6 +15,7 @@ from forms import (
     ClientDossieForm,
     ClientForm,
     ClosetItemForm,
+    ColoracaoImageForm,
     ConsultationForm,
     EditDossieForm,
     LookForm,
@@ -27,6 +29,7 @@ from models import (
     PERSONAL_SHOPPER_STATUSES,
     Client,
     ClosetItem,
+    ColoracaoImage,
     Consultation,
     Look,
     LookItem,
@@ -254,8 +257,81 @@ def diagnostico(client_id):
 @clients_bp.route("/<int:client_id>/dossie")
 @login_required
 def dossie(client_id):
+    """Hub dos 5 serviços do dossiê (Estilo/Biotipo/Cores/Visagismo/
+    Arquétipos), cada um seu próprio card — mesmo padrão .journey-grid/
+    .journey-card já usado nos outros hubs (client_detail.html, área da
+    cliente). Cores é o único serviço com página própria mais rica (texto
+    + galeria de imagens da coloração, ver dossie_coloracao); os outros 4
+    caem em dossie_service, uma página genérica de texto."""
     client = Client.query.get_or_404(client_id)
-    return render_template("client_dossie.html", client=client)
+    return render_template("client_dossie.html", client=client, DOSSIE_SERVICE_LABELS=DOSSIE_SERVICE_LABELS)
+
+
+@clients_bp.route("/<int:client_id>/dossie/<service_field>")
+@login_required
+def dossie_service(client_id, service_field):
+    valid_fields = {field for field, _label, _icon in DOSSIE_SERVICE_LABELS if field != "coloracao"}
+    if service_field not in valid_fields:
+        abort(404)
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    label = next(label for field, label, _icon in DOSSIE_SERVICE_LABELS if field == service_field)
+    return render_template(
+        "client_dossie_service.html",
+        client=client,
+        label=label,
+        text=getattr(report, service_field, None),
+    )
+
+
+@clients_bp.route("/<int:client_id>/dossie/coloracao")
+@login_required
+def dossie_coloracao(client_id):
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    return render_template(
+        "client_dossie_coloracao.html",
+        client=client,
+        report=report,
+        form=ColoracaoImageForm(),
+    )
+
+
+@clients_bp.route("/<int:client_id>/dossie/coloracao/imagens/nova", methods=["POST"])
+@login_required
+def new_coloracao_image(client_id):
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    form = ColoracaoImageForm()
+    if form.validate_on_submit():
+        image_url = upload_image(form.image_file.data) or form.image_url.data
+        if not image_url:
+            flash("Informe um link ou envie um arquivo de imagem.", "danger")
+        else:
+            db.session.add(ColoracaoImage(style_report_id=report.id, image_url=image_url, caption=form.caption.data))
+            db.session.commit()
+            flash("Imagem adicionada.", "success")
+    return redirect(url_for("clients.dossie_coloracao", client_id=client.id))
+
+
+@clients_bp.route("/<int:client_id>/dossie/coloracao/imagens/<int:image_id>/excluir", methods=["POST"])
+@login_required
+def delete_coloracao_image(client_id, image_id):
+    client = Client.query.get_or_404(client_id)
+    report = client.dossie_report
+    if report is None:
+        abort(404)
+    image = ColoracaoImage.query.filter_by(id=image_id, style_report_id=report.id).first_or_404()
+    db.session.delete(image)
+    db.session.commit()
+    flash("Imagem removida.", "success")
+    return redirect(url_for("clients.dossie_coloracao", client_id=client.id))
 
 
 @clients_bp.route("/<int:client_id>/looks")

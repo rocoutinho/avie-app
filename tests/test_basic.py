@@ -12,6 +12,7 @@ from models import (
     BlogPost,
     Client,
     ClosetItem,
+    ColoracaoImage,
     Consultation,
     Ebook,
     Look,
@@ -1101,6 +1102,91 @@ def test_dossie_client_sees_service_cards_instead_of_diagnostic_cta(app, logged_
     # Visagismo e Arquétipos ficaram em branco no dossiê — não devem virar cards vazios.
     assert "Visagismo".encode() not in response.data
     assert "Arquétipos".encode() not in response.data
+
+
+def test_staff_dossie_hub_shows_service_cards(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_id = Client.query.filter_by(email="dossie-nova@example.com").first().id
+
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie")
+    assert response.status_code == 200
+    assert "Estilo".encode() in response.data
+    assert "Cores".encode() in response.data
+    assert f'href="/painel/clientes/{client_id}/dossie/coloracao"'.encode() in response.data
+    assert f'href="/painel/clientes/{client_id}/dossie/estilo_pessoal"'.encode() in response.data
+
+
+def test_staff_views_dossie_service_detail_page(app, logged_in_client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        client_id = Client.query.filter_by(email="dossie-nova@example.com").first().id
+
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie/estilo_pessoal")
+    assert response.status_code == 200
+    assert "Estilo clássico com toques contemporâneos.".encode() in response.data
+
+    # Serviço vazio no dossiê (visagismo) mostra estado vazio, não 404.
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie/visagismo")
+    assert response.status_code == 200
+    assert "ainda não foi preenchido".encode() in response.data
+
+    # Campo que não existe no dossiê é 404.
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie/campo-invalido")
+    assert response.status_code == 404
+
+
+def test_staff_manages_coloracao_images_and_client_sees_carousel(app, logged_in_client, client):
+    logged_in_client.post("/painel/clientes/novo-com-dossie", data=_dossie_payload(), follow_redirects=True)
+    with app.app_context():
+        created = Client.query.filter_by(email="dossie-nova@example.com").first()
+        client_id = created.id
+        created.set_password("senha-cliente-final")
+        db.session.commit()
+
+    response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie/coloracao")
+    assert response.status_code == 200
+    assert "Nenhuma imagem cadastrada".encode() in response.data
+
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/coloracao/imagens/nova",
+        data={"image_url": "https://example.com/paleta.jpg", "caption": "Cores premium"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Cores premium".encode() in response.data
+
+    with app.app_context():
+        report = db.session.get(Client, client_id).dossie_report
+        assert len(report.coloracao_images) == 1
+        image_id = report.coloracao_images[0].id
+
+    # A cliente vê a imagem como carrossel dentro do card "Cores".
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "dossie-nova@example.com", "password": "senha-cliente-final"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/diagnostico")
+    assert response.status_code == 200
+    assert "coloracaoCarousel".encode() in response.data
+    assert "https://example.com/paleta.jpg".encode() in response.data
+
+    # Volta como staff e remove a imagem.
+    client.get("/logout")
+    client.post(
+        "/login",
+        data={"email": "staff@example.com", "password": "senha-forte-123"},
+        follow_redirects=True,
+    )
+    response = logged_in_client.post(
+        f"/painel/clientes/{client_id}/dossie/coloracao/imagens/{image_id}/excluir",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert db.session.get(ColoracaoImage, image_id) is None
 
 
 def test_resubmitting_dossie_onboarding_updates_same_report(app, logged_in_client):
