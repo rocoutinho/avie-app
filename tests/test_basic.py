@@ -1097,11 +1097,44 @@ def test_dossie_client_sees_service_cards_instead_of_diagnostic_cta(app, logged_
     assert response.status_code == 200
     assert "Fazer meu diagnóstico".encode() not in response.data
     assert "Estilo".encode() in response.data
-    assert "Cores".encode() in response.data
+    assert "Coloração".encode() in response.data
     assert "Estilo clássico com toques contemporâneos.".encode() in response.data
     # Visagismo e Arquétipos ficaram em branco no dossiê — não devem virar cards vazios.
     assert "Visagismo".encode() not in response.data
     assert "Arquétipos".encode() not in response.data
+    # Cada serviço é um <details> fechado por padrão — evita rolagem longa no
+    # celular quando os textos do dossiê são compridos (ver CLAUDE.md).
+    assert b'<details class="dossie-service-card">' in response.data
+
+
+def test_client_diagnostico_reports_are_collapsible(app, client):
+    with app.app_context():
+        c = Client(full_name="Debora Detalhes", email="debora-detalhes@example.com", status="cliente_ativo")
+        c.set_password("senha-cliente-123")
+        db.session.add(c)
+        db.session.commit()
+        db.session.add(
+            StyleReport(
+                client_id=c.id,
+                title="Relatório complementar",
+                content="Texto longo do relatório complementar, pra testar o collapse.",
+                status="enviado",
+            )
+        )
+        db.session.commit()
+
+    client.post(
+        "/login",
+        data={"email": "debora-detalhes@example.com", "password": "senha-cliente-123"},
+        follow_redirects=True,
+    )
+    response = client.get("/minha-area/diagnostico")
+    assert response.status_code == 200
+    assert "Relatório complementar".encode() in response.data
+    assert "Texto longo do relatório complementar".encode() in response.data
+    # Cada relatório é um <details> fechado por padrão, mesmo motivo dos
+    # cards de serviço do dossiê.
+    assert b'<details class="manage-disclosure' in response.data
 
 
 def test_staff_dossie_hub_shows_service_cards(app, logged_in_client):
@@ -1112,7 +1145,7 @@ def test_staff_dossie_hub_shows_service_cards(app, logged_in_client):
     response = logged_in_client.get(f"/painel/clientes/{client_id}/dossie")
     assert response.status_code == 200
     assert "Estilo".encode() in response.data
-    assert "Cores".encode() in response.data
+    assert "Coloração".encode() in response.data
     assert f'href="/painel/clientes/{client_id}/dossie/coloracao"'.encode() in response.data
     assert f'href="/painel/clientes/{client_id}/dossie/estilo_pessoal"'.encode() in response.data
 
@@ -1161,7 +1194,7 @@ def test_staff_manages_coloracao_images_and_client_sees_carousel(app, logged_in_
         assert len(report.coloracao_images) == 1
         image_id = report.coloracao_images[0].id
 
-    # A cliente vê a imagem como carrossel dentro do card "Cores".
+    # A cliente vê a imagem como carrossel dentro do card "Coloração".
     client.get("/logout")
     client.post(
         "/login",

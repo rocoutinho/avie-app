@@ -391,7 +391,7 @@ class StyleReport(db.Model):
     # `content`. Ficam em branco (None) nos relatórios gerados pelo fluxo
     # normal (reports_engine), que só preenche `content`. Nomes de coluna
     # mantidos por continuidade — os rótulos exibidos ao usuário são
-    # "Estilo"/"Biotipo"/"Cores"/"Visagismo"/"Arquétipos" (ver
+    # "Estilo"/"Biotipo"/"Coloração"/"Visagismo"/"Arquétipos" (ver
     # blueprints/client_area.py:DOSSIE_SERVICE_LABELS).
     estilo_pessoal = db.Column(db.Text)
     proporcoes = db.Column(db.Text)
@@ -427,7 +427,7 @@ class ColoracaoImage(db.Model):
     cores universais, metais/acessórios, estação etc.) anexada ao dossiê
     — a consultora sobe imagens já prontas (ex: exportadas de uma
     ferramenta de análise de cor) e a cliente vê a sequência como
-    carrossel dentro do card "Cores" em client_area_diagnostico.html.
+    carrossel dentro do card "Coloração" em client_area_diagnostico.html.
     Ordem é a de cadastro (created_at) — sem reordenação manual, mesmo
     minimalismo de ClosetItem/ShoppingListItem (criar + excluir, sem
     editar)."""

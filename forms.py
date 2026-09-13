@@ -171,7 +171,7 @@ class DossieServicesForm(FlaskForm):
         "Biotipo", validators=[Optional()], render_kw={"rows": 4}
     )
     coloracao = TextAreaField(
-        "Cores", validators=[Optional()], render_kw={"rows": 4}
+        "Coloração", validators=[Optional()], render_kw={"rows": 4}
     )
     visagismo = TextAreaField(
         "Visagismo", validators=[Optional()], render_kw={"rows": 4}

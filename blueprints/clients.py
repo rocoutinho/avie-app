@@ -60,7 +60,7 @@ def _dossie_services_from_form(form):
     return {
         "Estilo": (form.estilo_pessoal.data or "").strip(),
         "Biotipo": (form.proporcoes.data or "").strip(),
-        "Cores": (form.coloracao.data or "").strip(),
+        "Coloração": (form.coloracao.data or "").strip(),
         "Visagismo": (form.visagismo.data or "").strip(),
         "Arquétipos": (form.arquetipos.data or "").strip(),
     }
@@ -78,7 +78,7 @@ def _build_dossie_content(services):
 def _apply_dossie_services(report, services):
     report.estilo_pessoal = services["Estilo"] or None
     report.proporcoes = services["Biotipo"] or None
-    report.coloracao = services["Cores"] or None
+    report.coloracao = services["Coloração"] or None
     report.visagismo = services["Visagismo"] or None
     report.arquetipos = services["Arquétipos"] or None
 
@@ -257,12 +257,12 @@ def diagnostico(client_id):
 @clients_bp.route("/<int:client_id>/dossie")
 @login_required
 def dossie(client_id):
-    """Hub dos 5 serviços do dossiê (Estilo/Biotipo/Cores/Visagismo/
+    """Hub dos 5 serviços do dossiê (Estilo/Biotipo/Coloração/Visagismo/
     Arquétipos), cada um seu próprio card — mesmo padrão .journey-grid/
     .journey-card já usado nos outros hubs (client_detail.html, área da
-    cliente). Cores é o único serviço com página própria mais rica (texto
-    + galeria de imagens da coloração, ver dossie_coloracao); os outros 4
-    caem em dossie_service, uma página genérica de texto."""
+    cliente). Coloração é o único serviço com página própria mais rica
+    (texto + galeria de imagens, ver dossie_coloracao); os outros 4 caem
+    em dossie_service, uma página genérica de texto."""
     client = Client.query.get_or_404(client_id)
     return render_template("client_dossie.html", client=client, DOSSIE_SERVICE_LABELS=DOSSIE_SERVICE_LABELS)
 
