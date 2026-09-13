@@ -12,17 +12,20 @@
 {% block content %}
 <div class="mb-4">
   <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
+  {% if next_step %}
   <p class="text-muted mb-0">
-    {% if journey[3].next_consultation %}
-      Sua próxima consultoria é dia <strong>{{ journey[3].next_consultation.scheduled_at.strftime('%d/%m/%Y') }}</strong>.
-    {% elif has_news %}
-      Você tem novidades desde sua última visita — dá uma olhada nas suas etapas abaixo.
-    {% elif previous_login %}
+    {{ next_step.message }}
+    <a href="{{ next_step.cta_url }}" class="fw-bold text-decoration-none" style="color: var(--avie-gold);">{{ next_step.cta_label }} &rarr;</a>
+  </p>
+  {% else %}
+  <p class="text-muted mb-0">
+    {% if previous_login %}
       Seu último acesso foi em {{ previous_login.strftime('%d/%m/%Y às %H:%M') }}.
     {% else %}
       Este é seu primeiro acesso à sua área.
     {% endif %}
   </p>
+  {% endif %}
 </div>
 
 <div class="mb-3">

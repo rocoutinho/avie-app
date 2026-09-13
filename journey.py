@@ -49,28 +49,28 @@ def build_journey(client):
     steps = [
         {
             "key": "identidade",
-            "title": "Conhecendo minha identidade",
+            "title": "Minha Identidade",
             "description": "Quem você é, como quer ser percebida e qual é o seu estilo.",
             "status": identidade_status,
             "anchor": "etapa-identidade",
         },
         {
             "key": "diagnostico",
-            "title": "Meu diagnóstico de imagem",
+            "title": "Meu Dossiê",
             "description": "O que a sua consultora identificou sobre cores, estilo e proporções.",
             "status": diagnostico_status,
             "anchor": "etapa-diagnostico",
         },
         {
             "key": "looks",
-            "title": "Minha assinatura visual",
+            "title": "Minha Assinatura Visual",
             "description": "Looks pensados pela sua consultora a partir do seu closet.",
             "status": JOURNEY_STATUS_CONCLUIDO if client.looks else JOURNEY_STATUS_NAO_INICIADO,
             "anchor": "etapa-looks",
         },
         {
             "key": "evolucao",
-            "title": "Minha evolução contínua",
+            "title": "Minha Evolução",
             "description": "Suas consultorias, passadas e futuras.",
             "status": evolucao_status,
             "anchor": "etapa-evolucao",
