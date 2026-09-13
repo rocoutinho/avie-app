@@ -5,7 +5,7 @@ outros clientes nem dá acesso a nada de /painel."""
 
 from datetime import datetime
 
-from flask import Blueprint, abort, current_app, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, current_app, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from extensions import db
@@ -57,75 +57,17 @@ def _dossie_services(sent_reports):
     return services
 
 
-def _next_step(client, previous_login, journey):
-    """A ÚNICA orientação dinâmica da home — nunca mais de uma, por
-    princípio explícito de produto: a cliente não deve ver vários CTAs
-    competindo pela atenção, o sistema decide qual é o mais relevante.
-    Prioridade: dossiê novo desde a última visita > looks novos desde a
-    última visita > próxima consultoria agendada > identidade ainda não
-    escrita pela consultora > None (cai no aviso padrão de último/
-    primeiro acesso, calculado no template). As duas primeiras checagens
-    só fazem sentido pra quem já tem um acesso anterior pra comparar —
-    numa primeira visita não há "novidade", só conteúdo."""
-    dossie = client.dossie_report
-    if previous_login and dossie and dossie.sent_at and dossie.sent_at > previous_login:
-        return {
-            "message": "Seu dossiê está pronto pra você.",
-            "cta_label": "Ver meu dossiê",
-            "cta_url": url_for("client_area.diagnostico"),
-        }
-
-    if previous_login:
-        new_looks = [l for l in client.looks if l.created_at and l.created_at > previous_login]
-        if new_looks:
-            n = len(new_looks)
-            return {
-                "message": (
-                    f"{n} novo look{'s' if n != 1 else ''} "
-                    f"{'foram preparados' if n != 1 else 'foi preparado'} para você."
-                ),
-                "cta_label": "Ver meus looks",
-                "cta_url": url_for("client_area.looks"),
-            }
-
-    next_consultation = journey[3]["next_consultation"]
-    if next_consultation:
-        return {
-            "message": f"Seu próximo encontro é dia {next_consultation.scheduled_at.strftime('%d/%m')}.",
-            "cta_label": "Ver detalhes",
-            "cta_url": url_for("client_area.evolucao"),
-        }
-
-    if not (client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo):
-        return {
-            "message": "Vamos te conhecer melhor pra guiar sua jornada.",
-            "cta_label": "Conhecer minha identidade",
-            "cta_url": url_for("client_area.identity"),
-        }
-
-    return None
-
-
 @client_area_bp.route("/")
 @login_required
 def index():
     """Resumo de leitura rápida — nenhum conteúdo completo mora aqui, só
     os 4 cards da jornada; cada um leva pra sua própria página (mesmo
     padrão dos 4 recursos, sem exceção — ver revisão de UX da área da
-    cliente). O único destaque dinâmico no topo é `next_step` — ver
-    _next_step acima."""
-    previous_login_raw = session.pop("client_previous_login_at", None)
-    previous_login = datetime.fromisoformat(previous_login_raw) if previous_login_raw else None
-
+    cliente). Tela deliberadamente sem nenhum texto além do título — sem
+    aviso dinâmico, sem mensagem de último/primeiro acesso — por pedido
+    explícito de manter a home mínima."""
     journey = build_journey(current_user)
-
-    return render_template(
-        "client_area.html",
-        client=current_user,
-        previous_login=previous_login,
-        journey=journey,
-        next_step=_next_step(current_user, previous_login, journey),
-    )
+    return render_template("client_area.html", client=current_user, journey=journey)
 
 
 @client_area_bp.route("/identidade")
