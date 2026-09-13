@@ -42,18 +42,54 @@ def _sent_reports(client):
     return [r for r in client.reports if r.status == "enviado"]
 
 
-def _dossie_services(sent_reports):
-    # Clientes cadastrados via dossiê (ver blueprints/clients.py:new_client_with_dossie)
-    # já chegam com o diagnóstico feito fora do sistema — em vez do CTA
-    # "faça seu diagnóstico" (que é pro funil público do zero), mostramos
-    # um card por serviço já entregue, juntando os campos de todos os
-    # relatórios enviados (o mais recente prevalece se mais de um cobrir
-    # o mesmo serviço).
+def _group_dossie_sections(sections):
+    """Agrupa as sub-análises de um serviço (models.py:DossieSection) em
+    blocos prontos pra renderizar: sem `group`, cada seção vira seu
+    próprio bloco de collapse (o padrão — cobre quase todo caso real);
+    duas ou mais seções com o mesmo `group` viram um único bloco de abas
+    entre elas (usado só quando o conteúdo é genuinamente comparável, ex:
+    2 estilos identificados) — ver avaliação de recursos de UI que
+    motivou essa regra. `sections` já vem ordenada (order, created_at),
+    e essa ordem é preservada tanto entre blocos quanto dentro de cada
+    grupo de abas."""
+    blocks = []
+    groups = {}
+    for section in sections:
+        if section.group:
+            block = groups.get(section.group)
+            if block is None:
+                block = {"type": "tabs", "sections": []}
+                groups[section.group] = block
+                blocks.append(block)
+            block["sections"].append(section)
+        else:
+            blocks.append({"type": "collapse", "sections": [section]})
+    return blocks
+
+
+def _dossie_services(client):
+    """Um dict por serviço já preenchido no dossiê — texto corrido
+    (resumo/obrigatório desde o onboarding) mais as sub-análises
+    opcionais dele, já agrupadas em blocos prontos pra renderizar (ver
+    _group_dossie_sections). Sem seções cadastradas, um serviço aparece
+    exatamente como sempre apareceu (só o texto corrido) — nada muda pra
+    dossiês que nunca ganharam esse detalhamento."""
+    report = client.dossie_report
+    if report is None:
+        return []
     services = []
     for field, label, icon_key in DOSSIE_SERVICE_LABELS:
-        text = next((getattr(r, field) for r in sent_reports if getattr(r, field, None)), None)
-        if text:
-            services.append({"label": label, "text": text, "icon": icon_key})
+        text = getattr(report, field, None)
+        sections = [s for s in report.dossie_sections if s.service == field]
+        if text or sections:
+            services.append(
+                {
+                    "label": label,
+                    "text": text,
+                    "icon": icon_key,
+                    "blocks": _group_dossie_sections(sections),
+                }
+            )
     return services
 
 
@@ -83,7 +119,7 @@ def diagnostico():
     return render_template(
         "client_area_diagnostico.html",
         client=current_user,
-        dossie_services=_dossie_services(sent_reports),
+        dossie_services=_dossie_services(current_user),
         # "Recomendações da consultoria" só mostra relatórios que não são
         # dossiês estruturados (senão duplicaria o mesmo conteúdo já
         # detalhado nos cards de serviço acima).

@@ -429,6 +429,13 @@ class StyleReport(db.Model):
         order_by="ColoracaoImage.created_at",
     )
 
+    dossie_sections = db.relationship(
+        "DossieSection",
+        backref="style_report",
+        cascade="all, delete-orphan",
+        order_by="DossieSection.order, DossieSection.created_at",
+    )
+
 
 class ColoracaoImage(db.Model):
     """Uma imagem de referência da coloração pessoal (paleta de cores,
@@ -444,6 +451,38 @@ class ColoracaoImage(db.Model):
     style_report_id = db.Column(db.Integer, db.ForeignKey("style_report.id"), nullable=False)
     image_url = db.Column(db.String(500), nullable=False)
     caption = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class DossieSection(db.Model):
+    """Sub-análise opcional dentro de um serviço do dossiê (ex: dentro de
+    Biotipo, "Análise de Proporções" e "Peças que Favorecem" como partes
+    separadas) — nasceu de um dossiê real em PDF mostrar que cada serviço
+    costuma se desdobrar em várias partes, não só um texto corrido. O
+    texto corrido que já existe em StyleReport (estilo_pessoal,
+    proporcoes etc.) continua sendo o resumo/obrigatório no onboarding;
+    seções são um aprofundamento opcional que aparece abaixo dele, mesmo
+    padrão "síntese → completo" já usado no dossiê como um todo. Sem
+    seções cadastradas, o serviço renderiza exatamente como antes (só o
+    texto corrido) — nenhum dossiê existente muda de aparência.
+
+    `group` é opcional e livre (texto, não choices fixos): duas ou mais
+    seções do mesmo serviço com o mesmo `group` viram abas entre si na
+    área da cliente (ex: "Esportivo" e "Tradicional" dentro de Estilo,
+    group="estilos_identificados") — usado só quando o conteúdo é
+    genuinamente comparável; sem group, cada seção é um collapse
+    independente (o padrão, cobre a maioria dos casos — ver avaliação de
+    recursos de UI que motivou essa escolha). Ordenação manual via
+    `order` (sem drag-and-drop, mesma decisão já tomada pra Look)."""
+
+    id = db.Column(db.Integer, primary_key=True)
+    style_report_id = db.Column(db.Integer, db.ForeignKey("style_report.id"), nullable=False)
+    service = db.Column(db.String(30), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    content = db.Column(db.Text)
+    image_url = db.Column(db.String(500))
+    group = db.Column(db.String(100))
+    order = db.Column(db.Integer, default=0, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 

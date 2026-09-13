@@ -66,12 +66,15 @@
     {% elif dossie_services %}
     <div class="dossie-services-grid">
       {% for service in dossie_services %}
+      {% set service_idx = loop.index0 %}
       <details class="dossie-service-card">
         <summary class="dossie-service-summary">
           <span class="dossie-service-icon">{{ service_icon(service.icon) }}</span>
           <span class="dossie-service-title">{{ service.label }}</span>
         </summary>
+        {% if service.text %}
         <div class="dossie-service-text">{{ service.text }}</div>
+        {% endif %}
         {% if service.icon == "cores" and client.dossie_report and client.dossie_report.coloracao_images %}
         {% set images = client.dossie_report.coloracao_images %}
         <div id="coloracaoCarousel" class="carousel slide mt-3" data-bs-ride="false">
@@ -99,6 +102,37 @@
           {% endif %}
         </div>
         {% endif %}
+        {% for block in service.blocks %}
+        {% if block.type == "collapse" %}
+        {% set section = block.sections[0] %}
+        <details class="manage-disclosure mt-3 {{ 'mb-0' if loop.last else '' }}">
+          <summary><span>{{ section.title }}</span></summary>
+          <div class="manage-disclosure-body">
+            {% if section.image_url %}<img src="{{ section.image_url }}" alt="{{ section.title }}" class="rounded mb-2" style="max-width: 100%;">{% endif %}
+            {% if section.content %}<div style="white-space: pre-line;">{{ section.content }}</div>{% endif %}
+          </div>
+        </details>
+        {% else %}
+        {% set tabs_id = "dossieTabs-" ~ service_idx ~ "-" ~ loop.index0 %}
+        <div class="mt-3">
+          <ul class="nav nav-tabs" role="tablist">
+            {% for section in block.sections %}
+            <li class="nav-item" role="presentation">
+              <button class="nav-link {{ 'active' if loop.first }}" data-bs-toggle="tab" data-bs-target="#{{ tabs_id }}-{{ loop.index0 }}" type="button" role="tab">{{ section.title }}</button>
+            </li>
+            {% endfor %}
+          </ul>
+          <div class="tab-content border border-top-0 rounded-bottom p-3">
+            {% for section in block.sections %}
+            <div class="tab-pane fade {{ 'show active' if loop.first }}" id="{{ tabs_id }}-{{ loop.index0 }}" role="tabpanel">
+              {% if section.image_url %}<img src="{{ section.image_url }}" alt="{{ section.title }}" class="rounded mb-2" style="max-width: 100%;">{% endif %}
+              {% if section.content %}<div style="white-space: pre-line;">{{ section.content }}</div>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
       </details>
       {% endfor %}
     </div>
