@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Minha jornada{% endblock %}
-
-{% set journey_badge_class = {
-  "nao_iniciado": "bg-secondary",
-  "em_andamento": "bg-warning text-dark",
-  "concluido": "bg-success",
-} %}
+{% from "_journey_home_icon.html" import journey_home_icon %}
 
 {% set journey_step_urls = {
   "identidade": url_for('client_area.identity'),
@@ -33,39 +28,13 @@
 <div class="mb-3">
   <p class="eyebrow mb-1" style="color: var(--avie-gold);">Sua jornada</p>
   <h2 class="h4 mb-4">Sua jornada de transformação</h2>
-  <div class="row g-3">
+  <div class="home-journey-grid">
     {% for step in journey %}
-    <div class="col-sm-6 col-lg-3">
-      <a href="{{ journey_step_urls[step.key] }}" class="card h-100 text-decoration-none text-reset">
-        <div class="card-body d-flex flex-column">
-          <span class="badge {{ journey_badge_class[step.status] }} align-self-start mb-2">{{ step.status_label }}</span>
-          <h3 class="h6 mb-2">{{ step.title }}</h3>
-          <p class="text-muted small mb-0">
-            {%- if step.key == "identidade" -%}
-              {%- set id_count = (client.identidade_rotina and 1 or 0) + (client.identidade_objetivo and 1 or 0) + (client.identidade_estilo and 1 or 0) -%}
-              {%- if id_count == 3 -%}Identidade completa
-              {%- elif id_count > 0 -%}{{ id_count }} de 3 seções preenchidas
-              {%- else -%}Ainda não preenchida{%- endif -%}
-            {%- elif step.key == "diagnostico" -%}
-              {%- if client.style_assessment and (client.style_assessment.estacao_cor or client.style_assessment.estilo_predominante) -%}
-                {{ [client.style_assessment.estacao_cor, client.style_assessment.estilo_predominante]|select|join(' · ') }}
-              {%- elif dossie_services -%}Dossiê disponível pra consulta
-              {%- elif client.profile -%}Diagnóstico do formulário preenchido
-              {%- else -%}Ainda não preenchido{%- endif -%}
-            {%- elif step.key == "looks" -%}
-              {%- if client.looks -%}
-                {%- set fav_count = client.looks|selectattr('favorited')|list|length -%}
-                {{ client.looks|length }} look{{ 's' if client.looks|length != 1 }}{% if fav_count %}, {{ fav_count }} favorito{{ 's' if fav_count != 1 }}{% endif %}
-              {%- else -%}Ainda não montada{%- endif -%}
-            {%- elif step.key == "evolucao" -%}
-              {%- if step.next_consultation -%}Próxima: {{ step.next_consultation.scheduled_at.strftime('%d/%m') }}
-              {%- elif step.status == "concluido" -%}Última consultoria concluída
-              {%- else -%}Ainda não começou{%- endif -%}
-            {%- endif -%}
-          </p>
-        </div>
-      </a>
-    </div>
+    <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
+      <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
+      <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
+      <span class="home-journey-title">{{ step.title }}</span>
+    </a>
     {% endfor %}
   </div>
 </div>

@@ -1,0 +1,23 @@
+{# Ícones dos 4 cards da home da cliente ("Sua jornada de transformação",
+   client_area.html). Diagnóstico e Looks reaproveitam exatamente os
+   mesmos traços já usados no hub da equipe (client_detail.html) pra
+   representar o mesmo conceito dos dois lados. #}
+{% macro journey_home_icon(key) %}
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  {%- if key == "identidade" %}
+  <circle cx="12" cy="8" r="3.5"/>
+  <path d="M5.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/>
+  {%- elif key == "diagnostico" %}
+  <circle cx="10" cy="10" r="6"/>
+  <path d="M15 15l5 5"/>
+  {%- elif key == "looks" %}
+  <path d="M12 3a1.5 1.5 0 1 1 1.5 1.5c-.7 0-1.5.5-1.5 1.5v1"/>
+  <path d="M12 7l8.5 6.2c1 .8.4 2.3-.8 2.3H4.3c-1.2 0-1.8-1.5-.8-2.3L12 7Z"/>
+  {%- elif key == "evolucao" %}
+  <rect x="3.5" y="5" width="17" height="15" rx="2"/>
+  <path d="M3.5 9.5h17"/>
+  <path d="M8 3v4M16 3v4"/>
+  <path d="M8 13.5h2M8 17h2M14 13.5h2M14 17h2"/>
+  {%- endif %}
+</svg>
+{% endmacro %}
