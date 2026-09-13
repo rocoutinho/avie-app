@@ -15,35 +15,61 @@
   {% endif %}
 </div>
 
-<div class="journey-grid">
-  <a class="journey-card" href="{{ url_for('client_area.looks_gallery') }}">
-    <span class="journey-card-status {{ 'is-filled' if client.looks }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a1.5 1.5 0 1 1 1.5 1.5c-.7 0-1.5.5-1.5 1.5v1"/><path d="M12 7l8.5 6.2c1 .8.4 2.3-.8 2.3H4.3c-1.2 0-1.8-1.5-.8-2.3L12 7Z"/></svg>
+<details class="manage-disclosure">
+  <summary>
+    <span>Meus looks</span>
+    <span class="journey-card-status ms-auto {{ 'is-filled' if client.looks }}" style="position: static;"></span>
+  </summary>
+  <div class="manage-disclosure-body">
+    {% if client.looks %}
+    <div id="looksCarousel" class="carousel slide mx-auto" data-bs-ride="false" style="max-width: 360px;">
+      <div class="carousel-inner rounded">
+        {% for look in client.looks %}
+        <div class="carousel-item {{ 'active' if loop.first }}">
+          {% if look.photo_url %}
+          <img src="{{ look.photo_url }}" class="d-block w-100" alt="{{ look.nome }}" style="aspect-ratio: 3/4; object-fit: cover;">
+          {% else %}
+          <div class="d-flex align-items-center justify-content-center bg-light text-muted" style="aspect-ratio: 3/4;">Sem foto</div>
+          {% endif %}
+          <div class="carousel-caption d-none d-md-block">
+            <p class="mb-0 px-2 py-1 rounded" style="background: rgba(0,0,0,0.5);">{{ look.nome }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if client.looks|length > 1 %}
+      <button class="carousel-control-prev" type="button" data-bs-target="#looksCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#looksCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próxima</span>
+      </button>
+      {% endif %}
     </div>
-    <div class="journey-card-title">Meus looks</div>
-    <div class="journey-card-sub">Combinações completas montadas pela sua consultora.</div>
-    <div class="journey-card-sub"><strong>{{ client.looks|length ~ " look" ~ ("s" if client.looks|length != 1) if client.looks else "Nenhum look ainda" }}</strong></div>
-  </a>
+    <a href="{{ url_for('client_area.looks_gallery') }}" class="btn btn-sm btn-outline-secondary mt-3">Ver todos os looks</a>
+    {% else %}
+    <p class="text-muted mb-0">Em breve, sua consultora vai montar aqui looks completos a partir do seu closet digital.</p>
+    {% endif %}
+  </div>
+</details>
 
-  <a class="journey-card" href="{{ url_for('client_area.closet') }}">
+<div class="home-journey-grid looks-hub-actions">
+  <a class="home-journey-card" href="{{ url_for('client_area.closet') }}">
     <span class="journey-card-status {{ 'is-filled' if client.closet_items }}"></span>
-    <div class="journey-card-icon">
+    <span class="home-journey-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3L4 6l1.5 2.5L8 7v13h8V7l2.5 1.5L20 6l-4-3-2 2h-4z"/></svg>
-    </div>
-    <div class="journey-card-title">Meu closet</div>
-    <div class="journey-card-sub">As peças por trás dos seus looks.</div>
-    <div class="journey-card-sub"><strong>{{ client.closet_items|length ~ " peça" ~ ("s" if client.closet_items|length != 1) if client.closet_items else "Nenhuma peça ainda" }}</strong></div>
+    </span>
+    <span class="home-journey-title">Meu closet</span>
   </a>
 
-  <a class="journey-card" href="{{ url_for('client_area.personal_shopper') }}">
+  <a class="home-journey-card" href="{{ url_for('client_area.personal_shopper') }}">
     <span class="journey-card-status {{ 'is-filled' if client.shopping_list_items }}"></span>
-    <div class="journey-card-icon">
+    <span class="home-journey-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-    </div>
-    <div class="journey-card-title">Próximas peças</div>
-    <div class="journey-card-sub">Sugestões pra ampliar seus looks, e seu Shopping Day.</div>
-    <div class="journey-card-sub"><strong>{{ client.shopping_list_items|length ~ " sugest" ~ ("ão" if client.shopping_list_items|length == 1 else "ões") if client.shopping_list_items else "Nenhuma sugestão ainda" }}</strong></div>
+    </span>
+    <span class="home-journey-title">Personal Shopper</span>
   </a>
 </div>
 {% endblock %}

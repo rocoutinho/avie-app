@@ -94,14 +94,14 @@ def diagnostico():
 @client_area_bp.route("/looks")
 @login_required
 def looks():
-    """"Minha assinatura visual" é um hub, não uma página de conteúdo — só
-    o resumo do topo e os 3 cards de navegação (Meus looks, Meu closet,
-    Próximas peças), mesmo padrão visual/estrutural do hub da cliente pro
-    staff (client_detail.html, classes .journey-grid/.journey-card já
-    existentes, reaproveitadas aqui sem CSS novo). Cada card leva pra sua
-    própria página com o conteúdo completo e os filtros — nada de conteúdo
-    completo mora aqui, mesma regra do resto da área da cliente (ver
-    client_area.index)."""
+    """"Minha assinatura visual": um card colapsável "Meus looks" (details/
+    summary + carrossel Bootstrap dos looks, mesmo padrão do carrossel de
+    Coloração em client_area_diagnostico.html) seguido de 2 cards-botão
+    quadrados de navegação — Meu closet e Personal Shopper (reaproveitam
+    .home-journey-grid/.home-journey-card da home, sem CSS novo). Só o
+    card de looks mostra conteúdo direto aqui (fotos/nome, via carrossel);
+    closet e Personal Shopper continuam só navegação — cada um leva pra
+    sua própria página com o conteúdo completo e os filtros."""
     return render_template("client_area_looks.html", client=current_user)
 
 
