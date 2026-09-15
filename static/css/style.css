@@ -749,20 +749,6 @@ footer a {
   letter-spacing: 0.03em;
 }
 
-.btn-outline-light-lp {
-  border: 1px solid rgba(241, 239, 233, 0.4);
-  color: #f1efe9;
-  border-radius: 999px;
-  font-weight: 600;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
-}
-
-.btn-outline-light-lp:hover {
-  border-color: var(--avie-gold-light);
-  background: rgba(245, 216, 134, 0.08);
-  color: var(--avie-gold-light);
-}
-
 .lp-manifesto {
   background: var(--avie-bg);
   padding: 4rem 1.5rem;
@@ -1061,10 +1047,6 @@ footer a {
 
 .lp-about-text-muted {
   color: #a8adbd;
-}
-
-.lp-about .btn-outline-light-lp {
-  color: #f1efe9;
 }
 
 /* Método I.M.P.A.C.T.O. */
