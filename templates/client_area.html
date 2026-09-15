@@ -10,18 +10,20 @@
 } %}
 
 {% block content %}
-<div class="mb-4">
-  <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
-  <p class="lp-script-brush mb-0" style="font-size: 1.8rem;">Sua jornada de Transformação</p>
-</div>
+<div class="home-content">
+  <div class="mb-4">
+    <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
+    <p class="lp-script-brush mb-0" style="font-size: 1.8rem;">Sua jornada de Transformação</p>
+  </div>
 
-<div class="home-journey-grid">
-  {% for step in journey %}
-  <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
-    <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
-    <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
-    <span class="home-journey-title">{{ step.title }}</span>
-  </a>
-  {% endfor %}
+  <div class="home-journey-grid">
+    {% for step in journey %}
+    <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
+      <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
+      <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
+      <span class="home-journey-title">{{ step.title }}</span>
+    </a>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

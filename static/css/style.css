@@ -406,16 +406,26 @@ h1, h2, h3, .font-serif {
 }
 
 /* Home da cliente ("Sua jornada de transformação", client_area.html) —
-   4 cards quadrados, ícone + título centralizados, sem subtítulo: o
+   saudação + grade de cards centralizadas como um único bloco (mesmo
+   max-width dos dois, .home-content envolve ambos) — sem isso, o bloco
+   ficava colado à esquerda em telas largas, com um vazio enorme à
+   direita (desproporcional no desktop; no celular já não tinha esse
+   problema, a largura da tela já limita o bloco). */
+.home-content {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* 4 cards quadrados, ícone + título centralizados, sem subtítulo: o
    status (canto superior direito, mesmo componente .journey-card-status
    acima) já é a informação, não precisa repetir em texto. Sempre 2
    colunas — inclusive no celular — pra caber numa tela só sem rolar;
-   max-width trava o tamanho do quadrado em telas largas. */
+   o max-width vem do wrapper .home-content acima (mesma trava vale pra
+   saudação, então os dois ficam alinhados como um bloco só). */
 .home-journey-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  max-width: 480px;
 }
 
 .home-journey-card {
@@ -445,13 +455,19 @@ h1, h2, h3, .font-serif {
 
 /* "Minha assinatura visual": Meu closet/Personal Shopper reaproveitam
    .home-journey-grid/.home-journey-card (ver acima), mas só 2 cards
-   dentro do cap de 480px sobravam com um vazio enorme ao lado no
-   desktop. A partir do breakpoint md, essa combinação larga o cap e os
-   cards trocam o aspect-ratio:1 (quadrado perfeito, que ficaria gigante
-   esticado até a largura toda) por uma altura fixa mais baixa — ocupam
-   a linha toda, sem sobra, sem virar quadrados enormes. No celular
-   continua idêntico ao padrão da home (2 colunas quadradas, cap de
-   480px), já que lá nunca sobrava espaço mesmo. */
+   dentro de um cap de 480px sobravam com um vazio enorme ao lado no
+   desktop. Cap próprio (não herdado de .home-journey-grid, que não trava
+   mais largura sozinho — ver .home-content) só pra manter esta grade
+   pequena/quadrada até o breakpoint md, igual sempre foi. A partir daí,
+   larga o cap e os cards trocam o aspect-ratio:1 (quadrado perfeito, que
+   ficaria gigante esticado até a largura toda) por uma altura fixa mais
+   baixa — ocupam a linha toda, sem sobra, sem virar quadrados enormes.
+   No celular continua idêntico ao padrão da home (2 colunas quadradas,
+   cap de 480px), já que lá nunca sobrava espaço mesmo. */
+.looks-hub-actions {
+  max-width: 480px;
+}
+
 @media (min-width: 768px) {
   .looks-hub-actions {
     max-width: none;
