@@ -1152,12 +1152,60 @@ footer a {
 }
 
 /* Depoimentos */
+
+/* Estrelas de avaliação — SVG dourado sólido (mesma lógica dos ícones de
+   selo em .lp-intro-badge-icon: preenchido, não linha fina) no lugar dos
+   caracteres "★" antigos. Uma cor/tamanho pro título da seção, outra
+   (menor) reaproveitada dentro de cada card de depoimento. */
+.lp-star-icon {
+  display: inline-flex;
+  color: var(--avie-gold);
+}
+
+.lp-star-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.lp-star-icon-sm svg {
+  width: 14px;
+  height: 14px;
+}
+
 .lp-testimonial-card {
   background: #fff;
   border: 1px solid var(--avie-border);
   border-radius: var(--avie-radius);
   padding: 1.75rem 1.5rem;
   height: 100%;
+}
+
+/* Emblema de profissão de quem avaliou — mesmo padrão navy/dourado já
+   usado em .lp-intro-badge-icon/.lp-service-pill-icon, só que menor pra
+   caber ao lado do rótulo do cargo sem competir com o texto do card. */
+.lp-testimonial-role-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.6rem;
+}
+
+.lp-testimonial-role-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--avie-navy-deep);
+  border: 1.5px solid var(--avie-gold);
+  color: var(--avie-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lp-testimonial-role-icon svg {
+  width: 15px;
+  height: 15px;
 }
 
 .lp-testimonial-role {
@@ -1167,7 +1215,6 @@ footer a {
   font-weight: 700;
   font-size: 0.8rem;
   color: var(--avie-navy);
-  margin-bottom: 0.4rem;
 }
 
 .lp-testimonial-source {

@@ -28,6 +28,17 @@
   {%- elif key == "check" %}
   <circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/>
   <path d="M7.8 12.3 10.4 15 16.3 8.8" fill="none" stroke="var(--avie-navy)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+  {%- elif key == "star" %}
+  <path d="M12 2.7l2.9 5.9 6.5.7-4.8 4.5 1.3 6.5L12 16.9l-5.9 3.4 1.3-6.5-4.8-4.5 6.5-.7L12 2.7Z" fill="currentColor" stroke="none"/>
+  {%- elif key == "leaf" %}
+  <path d="M6 20c9 0 13-6.5 13-15.5C10 5 4 10.5 4 18c0 .3 0 .7.1 1.3Z" fill="currentColor" stroke="none"/>
+  <path d="M6 20c2-6 5-10 10-13" fill="none" stroke="var(--avie-navy)" stroke-width="1.6"/>
+  {%- elif key == "heart" %}
+  <path d="M12 20s-7.8-4.7-9.5-9.2A5 5 0 0 1 12 6.2a5 5 0 0 1 9.5 4.6C19.8 15.3 12 20 12 20Z" fill="currentColor" stroke="none"/>
+  {%- elif key == "scissors" %}
+  <circle cx="6.2" cy="6.2" r="2.3" fill="currentColor" stroke="none"/>
+  <circle cx="6.2" cy="17.8" r="2.3" fill="currentColor" stroke="none"/>
+  <path d="M7.9 7.7 20 19M7.9 16.3 20 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
   {%- elif key == "eye" %}
   <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
   {%- elif key == "compass" %}
@@ -204,27 +215,48 @@
 
   <section class="lp-band full-bleed">
     <div class="container reveal">
-      <h2 class="h1 text-center mb-2">Quando a imagem muda, a percepção também muda.</h2>
-      <p class="text-center mb-5" style="color: var(--avie-gold); letter-spacing: 0.2em;" aria-hidden="true">★★★★★</p>
+      <h2 class="h1 text-center mb-2 mx-auto" style="max-width: 780px;">A percepção muda quando a imagem se alinha à sua autoridade.</h2>
+      <div class="d-flex justify-content-center gap-1 mb-5">
+        {% for _ in range(5) %}
+        <span class="lp-star-icon">{{ service_icon("star") }}</span>
+        {% endfor %}
+      </div>
 
       <div class="row g-4">
         {% set testimonials = [
-          ("Arquiteta", "Maha Arquitetura", "Fabi é aquela que tem o dom de guiar a pessoa para realçar sua beleza natural com harmonia. Se você quer se vestir de forma adequada, se posicionar no mercado, entre amigos e com você mesmo, você precisa da consultoria dela!!! Todo o processo tem pilares evidentes: conhecimento, acolhimento, zelo e preocupação com o bem-estar de quem ela está atendendo."),
-          ("Nutricionista", "Idma Socha", "Eu ameeeeei a experiência! Fabiana muito atenciosa, detalhista… explicou o porquê de cada coisa, exemplificou. Fez toda a sessão sem pressa, respondendo todos os questionamentos e direcionou com eficiência. Após o recebimento do meu dossiê sou outra pessoa — hoje sei exatamente como me preparar para transmitir exatamente o que eu desejo."),
-          ("Pediatra", "Ana Paula Bastos", "Quando procurei a Fabi para me auxiliar em uma produção para um evento, não tinha ideia de quanto iria me surpreender! Sempre com sorriso no rosto e simpatia, me auxiliou desde a escolha do vestido até a cor da unha!! É uma profissional exemplar, cuidadosa, organizada! Super indico e confio de olhos fechados!!"),
-          ("Artesã", "Bianca Melo", "A consultoria de Fabiana me surpreendeu! Muito mais do que eu esperava. Ela tem muita propriedade e cuidado. Faz questão de me deixar tudo muito claro e explicado. A segurança nos contamina positivamente! Muito grata por tê-la conhecido."),
+          ("Arquiteta", "ruler", "Maha Arquitetura", "Fabi é aquela que tem o dom de guiar a pessoa para realçar sua beleza natural com harmonia. Se você quer se vestir de forma adequada, se posicionar no mercado, entre amigos e com você mesmo, você precisa da consultoria dela!!! Todo o processo tem pilares evidentes: conhecimento, acolhimento, zelo e preocupação com o bem-estar de quem ela está atendendo."),
+          ("Nutricionista", "leaf", "Idma Socha", "Eu ameeeeei a experiência! Fabiana muito atenciosa, detalhista… explicou o porquê de cada coisa, exemplificou. Fez toda a sessão sem pressa, respondendo todos os questionamentos e direcionou com eficiência. Após o recebimento do meu dossiê sou outra pessoa — hoje sei exatamente como me preparar para transmitir exatamente o que eu desejo."),
+          ("Pediatra", "heart", "Ana Paula Bastos", "Quando procurei a Fabi para me auxiliar em uma produção para um evento, não tinha ideia de quanto iria me surpreender! Sempre com sorriso no rosto e simpatia, me auxiliou desde a escolha do vestido até a cor da unha!! É uma profissional exemplar, cuidadosa, organizada! Super indico e confio de olhos fechados!!"),
+          ("Artesã", "scissors", "Bianca Melo", "A consultoria de Fabiana me surpreendeu! Muito mais do que eu esperava. Ela tem muita propriedade e cuidado. Faz questão de me deixar tudo muito claro e explicado. A segurança nos contamina positivamente! Muito grata por tê-la conhecido."),
         ] %}
-        {% for role, name, quote in testimonials %}
+        {% for role, icon_key, name, quote in testimonials %}
         <div class="col-md-6 col-lg-3">
           <div class="lp-testimonial-card">
-            <p class="lp-testimonial-role">{{ role }}</p>
-            <p class="mb-2" style="color: var(--avie-gold); letter-spacing: 0.15em;" aria-hidden="true">★★★★★</p>
+            <div class="lp-testimonial-role-row">
+              <span class="lp-testimonial-role-icon">{{ service_icon(icon_key) }}</span>
+              <p class="lp-testimonial-role mb-0">{{ role }}</p>
+            </div>
+            <div class="d-flex gap-1 mb-2">
+              {% for _ in range(5) %}
+              <span class="lp-star-icon lp-star-icon-sm">{{ service_icon("star") }}</span>
+              {% endfor %}
+            </div>
             <p class="text-muted small fst-italic">“{{ quote }}”</p>
             <p class="small fw-semibold mb-0" style="color: var(--avie-navy);">{{ name }}</p>
             <p class="lp-testimonial-source small mb-0">Avaliação verificada no Google</p>
           </div>
         </div>
         {% endfor %}
+      </div>
+
+      <div class="text-center mt-5">
+        <svg viewBox="0 0 48 48" width="120" height="40" aria-label="Google" role="img">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <p class="text-muted small mb-0">Avaliações verificadas no Google</p>
       </div>
     </div>
   </section>
