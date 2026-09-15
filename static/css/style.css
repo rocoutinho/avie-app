@@ -1382,18 +1382,6 @@ footer a {
   margin-top: 1rem;
 }
 
-.lp-hero-trust-item {
-  font-size: 0.85rem;
-  color: #cfd3de;
-}
-
-.lp-hero-trust-item strong {
-  color: var(--avie-gold-light);
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1.15rem;
-  margin-right: 0.3rem;
-}
-
 /* Revelação suave ao rolar a página — só ativa via JS (progressive
    enhancement: sem JS ou com "prefers-reduced-motion", tudo já aparece
    visível por padrão, ver static/js/landing.js). */
