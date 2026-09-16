@@ -16,7 +16,9 @@
   <path d="M12 3c.7 3.4 2.2 4.9 5.5 5.5-3.3.6-4.8 2.1-5.5 5.5-.7-3.4-2.2-4.9-5.5-5.5C9.8 7.9 11.3 6.4 12 3Z"/>
   <path d="M18.5 15c.4 1.7 1.1 2.4 2.5 2.5-1.4.1-2.1.8-2.5 2.5-.4-1.7-1.1-2.4-2.5-2.5 1.4-.1 2.1-.8 2.5-2.5Z"/>
   {%- elif key == "briefcase" %}
-  <rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>
+  <rect x="3" y="8" width="18" height="11" rx="2" fill="currentColor" stroke="none"/>
+  <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  <rect x="10.2" y="11.6" width="3.6" height="2.6" rx="0.6" fill="var(--avie-navy)" stroke="none"/>
   {%- elif key == "presentation" %}
   <rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 21h8M12 16v5"/><path d="M7 12l3-3 2.5 2.5L17 7"/>
   {%- elif key == "users" %}
@@ -24,15 +26,33 @@
   {%- elif key == "bag" %}
   <path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>
   {%- elif key == "check" %}
-  <path d="M5 13l4 4L19 7"/>
+  <circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/>
+  <path d="M7.8 12.3 10.4 15 16.3 8.8" fill="none" stroke="var(--avie-navy)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+  {%- elif key == "star" %}
+  <path d="M12 2.7l2.9 5.9 6.5.7-4.8 4.5 1.3 6.5L12 16.9l-5.9 3.4 1.3-6.5-4.8-4.5 6.5-.7L12 2.7Z" fill="currentColor" stroke="none"/>
+  {%- elif key == "leaf" %}
+  <path d="M6 20c9 0 13-6.5 13-15.5C10 5 4 10.5 4 18c0 .3 0 .7.1 1.3Z" fill="currentColor" stroke="none"/>
+  <path d="M6 20c2-6 5-10 10-13" fill="none" stroke="var(--avie-navy)" stroke-width="1.6"/>
+  {%- elif key == "heart" %}
+  <path d="M12 20s-7.8-4.7-9.5-9.2A5 5 0 0 1 12 6.2a5 5 0 0 1 9.5 4.6C19.8 15.3 12 20 12 20Z" fill="currentColor" stroke="none"/>
+  {%- elif key == "scissors" %}
+  <circle cx="6.2" cy="6.2" r="2.3" fill="currentColor" stroke="none"/>
+  <circle cx="6.2" cy="17.8" r="2.3" fill="currentColor" stroke="none"/>
+  <path d="M7.9 7.7 20 19M7.9 16.3 20 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
   {%- elif key == "eye" %}
   <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
   {%- elif key == "compass" %}
   <circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.8 13.8 8.5 15.5l1.7-5.3 5.3-1.7Z"/>
   {%- elif key == "medal" %}
-  <circle cx="12" cy="8" r="4.5"/><path d="M9 11.5 7 21l5-3.2 5 3.2-2-9.5"/>
+  <path d="M9 13 6.3 21l5.7-3.1 5.7 3.1L15 13" fill="currentColor" stroke="none"/>
+  <circle cx="12" cy="8.5" r="6" fill="currentColor" stroke="none"/>
+  <path d="M12 5.1l1.1 2.3 2.5.4-1.8 1.8.4 2.5-2.2-1.2-2.2 1.2.4-2.5-1.8-1.8 2.5-.4L12 5.1Z" fill="var(--avie-navy)" stroke="none"/>
   {%- elif key == "crown" %}
-  <path d="M4 18h16"/><path d="m4 18 1.5-8 4 3.2L12 7l2.5 6.2 4-3.2L20 18"/>
+  <path d="M4 17.2l1.4-7.4L9 13.5l3-6.7 3 6.7 3.6-3.7L20 17.2H4Z" fill="currentColor" stroke="none"/>
+  <rect x="4" y="17.6" width="16" height="2.2" rx="0.6" fill="currentColor" stroke="none"/>
+  <circle cx="4.4" cy="8.7" r="1.4" fill="currentColor" stroke="none"/>
+  <circle cx="12" cy="5.6" r="1.5" fill="currentColor" stroke="none"/>
+  <circle cx="19.6" cy="8.7" r="1.4" fill="currentColor" stroke="none"/>
   {%- elif key == "estilo" %}
   <path d="M9 4 12 6 15 4"/>
   <path d="M9 4 4 7l1.3 3.5L4 20h16l-1.3-9.5L20 7l-5-3"/>
@@ -65,7 +85,6 @@
       <img src="{{ url_for('static', filename='img/fabiana-hero.jpg') }}" alt="Fabiana Montemor">
     </div>
     <div class="container lp-hero-inner text-center">
-      <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-3" alt="Fabiana Montemor — Consultoria de Imagem e Posicionamento Profissional">
       <h1 class="display-4 mb-3 mx-auto" style="max-width: 780px;">
         Sua imagem está comunicando o nível profissional que você já alcançou?
       </h1>
@@ -76,10 +95,6 @@
       </p>
       <div class="lp-hero-ctas d-flex flex-wrap gap-3 justify-content-center">
         <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand btn-lg d-inline-flex align-items-center justify-content-center">Quero fortalecer<br>minha imagem</a>
-      </div>
-      <div class="lp-hero-trust d-flex flex-wrap gap-4 justify-content-center mt-4">
-        <span class="lp-hero-trust-item"><strong>15+</strong> anos de experiência</span>
-        <span class="lp-hero-trust-item"><strong>500+</strong> clientes atendidos</span>
       </div>
     </div>
   </section>
@@ -119,7 +134,7 @@
   </section>
 
   <section class="lp-photo-band full-bleed">
-    <img src="{{ url_for('static', filename='img/fabiana-estrategia.jpg') }}" alt="">
+    <img src="{{ url_for('static', filename='img/fabiana-estrategia.png') }}" alt="">
   </section>
 
   <section class="lp-band full-bleed">
@@ -194,34 +209,54 @@
       </div>
       <div class="d-flex flex-wrap gap-3 mt-4 justify-content-center">
         <a href="{{ url_for('public.diagnostic') }}" class="btn btn-brand">Fale comigo</a>
-        <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" class="btn btn-outline-light-lp">@fabianamontemor</a>
       </div>
     </div>
   </section>
 
   <section class="lp-band full-bleed">
     <div class="container reveal">
-      <h2 class="h1 text-center mb-2">Quando a imagem muda, a percepção também muda.</h2>
-      <p class="text-center mb-5" style="color: var(--avie-gold); letter-spacing: 0.2em;" aria-hidden="true">★★★★★</p>
+      <h2 class="h1 text-center mb-2 mx-auto" style="max-width: 780px;">A percepção muda quando a imagem se alinha à sua autoridade.</h2>
+      <div class="d-flex justify-content-center gap-1 mb-5">
+        {% for _ in range(5) %}
+        <span class="lp-star-icon">{{ service_icon("star") }}</span>
+        {% endfor %}
+      </div>
 
       <div class="row g-4">
         {% set testimonials = [
-          ("Arquiteta", "Maha Arquitetura", "Fabi é aquela que tem o dom de guiar a pessoa para realçar sua beleza natural com harmonia. Se você quer se vestir de forma adequada, se posicionar no mercado, entre amigos e com você mesmo, você precisa da consultoria dela!!! Todo o processo tem pilares evidentes: conhecimento, acolhimento, zelo e preocupação com o bem-estar de quem ela está atendendo."),
-          ("Nutricionista", "Idma Socha", "Eu ameeeeei a experiência! Fabiana muito atenciosa, detalhista… explicou o porquê de cada coisa, exemplificou. Fez toda a sessão sem pressa, respondendo todos os questionamentos e direcionou com eficiência. Após o recebimento do meu dossiê sou outra pessoa — hoje sei exatamente como me preparar para transmitir exatamente o que eu desejo."),
-          ("Pediatra", "Ana Paula Bastos", "Quando procurei a Fabi para me auxiliar em uma produção para um evento, não tinha ideia de quanto iria me surpreender! Sempre com sorriso no rosto e simpatia, me auxiliou desde a escolha do vestido até a cor da unha!! É uma profissional exemplar, cuidadosa, organizada! Super indico e confio de olhos fechados!!"),
-          ("Artesã", "Bianca Melo", "A consultoria de Fabiana me surpreendeu! Muito mais do que eu esperava. Ela tem muita propriedade e cuidado. Faz questão de me deixar tudo muito claro e explicado. A segurança nos contamina positivamente! Muito grata por tê-la conhecido."),
+          ("Arquiteta", "ruler", "Maha Arquitetura", "Fabi é aquela que tem o dom de guiar a pessoa para realçar sua beleza natural com harmonia. Se você quer se vestir de forma adequada, se posicionar no mercado, entre amigos e com você mesmo, você precisa da consultoria dela!!! Todo o processo tem pilares evidentes: conhecimento, acolhimento, zelo e preocupação com o bem-estar de quem ela está atendendo."),
+          ("Nutricionista", "leaf", "Idma Socha", "Eu ameeeeei a experiência! Fabiana muito atenciosa, detalhista… explicou o porquê de cada coisa, exemplificou. Fez toda a sessão sem pressa, respondendo todos os questionamentos e direcionou com eficiência. Após o recebimento do meu dossiê sou outra pessoa — hoje sei exatamente como me preparar para transmitir exatamente o que eu desejo."),
+          ("Pediatra", "heart", "Ana Paula Bastos", "Quando procurei a Fabi para me auxiliar em uma produção para um evento, não tinha ideia de quanto iria me surpreender! Sempre com sorriso no rosto e simpatia, me auxiliou desde a escolha do vestido até a cor da unha!! É uma profissional exemplar, cuidadosa, organizada! Super indico e confio de olhos fechados!!"),
+          ("Artesã", "scissors", "Bianca Melo", "A consultoria de Fabiana me surpreendeu! Muito mais do que eu esperava. Ela tem muita propriedade e cuidado. Faz questão de me deixar tudo muito claro e explicado. A segurança nos contamina positivamente! Muito grata por tê-la conhecido."),
         ] %}
-        {% for role, name, quote in testimonials %}
+        {% for role, icon_key, name, quote in testimonials %}
         <div class="col-md-6 col-lg-3">
           <div class="lp-testimonial-card">
-            <p class="lp-testimonial-role">{{ role }}</p>
-            <p class="mb-2" style="color: var(--avie-gold); letter-spacing: 0.15em;" aria-hidden="true">★★★★★</p>
+            <div class="lp-testimonial-role-row">
+              <span class="lp-testimonial-role-icon">{{ service_icon(icon_key) }}</span>
+              <p class="lp-testimonial-role mb-0">{{ role }}</p>
+            </div>
+            <div class="d-flex gap-1 mb-2">
+              {% for _ in range(5) %}
+              <span class="lp-star-icon lp-star-icon-sm">{{ service_icon("star") }}</span>
+              {% endfor %}
+            </div>
             <p class="text-muted small fst-italic">“{{ quote }}”</p>
             <p class="small fw-semibold mb-0" style="color: var(--avie-navy);">{{ name }}</p>
             <p class="lp-testimonial-source small mb-0">Avaliação verificada no Google</p>
           </div>
         </div>
         {% endfor %}
+      </div>
+
+      <div class="text-center mt-5">
+        <svg viewBox="0 0 48 48" width="120" height="40" aria-label="Google" role="img">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <p class="text-muted small mb-0">Avaliações verificadas no Google</p>
       </div>
     </div>
   </section>
@@ -262,13 +297,13 @@
         <p class="lp-footer-tagline">Transformando profissionais através da consultoria de imagem estratégica. Sua imagem é seu cartão de visitas mais poderoso.</p>
         <div class="lp-footer-social">
           <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
           </a>
           <a href="{{ config.LINKEDIN_URL }}" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.25h4.5V23h-4.5V8.25zM8.5 8.25h4.31v2.02h.06c.6-1.13 2.06-2.32 4.25-2.32 4.55 0 5.39 3 5.39 6.9V23h-4.5v-6.98c0-1.66-.03-3.8-2.32-3.8-2.32 0-2.68 1.81-2.68 3.68V23h-4.5V8.25z"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.25h4.5V23h-4.5V8.25zM8.5 8.25h4.31v2.02h.06c.6-1.13 2.06-2.32 4.25-2.32 4.55 0 5.39 3 5.39 6.9V23h-4.5v-6.98c0-1.66-.03-3.8-2.32-3.8-2.32 0-2.68 1.81-2.68 3.68V23h-4.5V8.25z"/></svg>
           </a>
           <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9s-4.44-9.94-9.91-9.94zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.15-4.9-4.34-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9s-4.44-9.94-9.91-9.94zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.15-4.9-4.34-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/></svg>
           </a>
         </div>
       </div>
@@ -278,6 +313,7 @@
           <li><a href="#sobre">Sobre</a></li>
           <li><a href="{{ url_for('public.blog_index') }}">Blog</a></li>
           <li><a href="{{ url_for('public.diagnostic') }}">Fazer diagnóstico</a></li>
+          <li><a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar minha sessão diagnóstica' | urlencode }}" target="_blank" rel="noopener">Agendar sessão diagnóstica</a></li>
           <li><a href="{{ url_for('public.privacy') }}">Política de Privacidade</a></li>
           <li><a href="{{ url_for('auth.login') }}">Clientes</a></li>
         </ul>
