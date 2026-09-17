@@ -700,6 +700,15 @@ footer a {
   height: 30px;
 }
 
+/* Variante com foto real do selo (já vem com o anel dourado embutido na
+   própria imagem), então a borda/fundo do círculo CSS é dispensada aqui
+   pra não duplicar o anel. */
+.lp-intro-badge-icon-img {
+  border: none;
+  background: transparent;
+  object-fit: cover;
+}
+
 .lp-intro-badge-label {
   color: #fff;
   font-family: "Cormorant Garamond", serif;
@@ -738,6 +747,14 @@ footer a {
 .lp-service-pill-icon svg {
   width: 20px;
   height: 20px;
+}
+
+/* Mesma lógica da variante de foto em .lp-intro-badge-icon-img, aplicada
+   à pílula de serviço. */
+.lp-service-pill-icon-img {
+  border: none;
+  background: transparent;
+  object-fit: cover;
 }
 
 .lp-service-pill-label {

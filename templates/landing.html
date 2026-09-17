@@ -108,14 +108,18 @@
 
       <div class="row g-3 mb-5 justify-content-center">
         {% set intro_badges = [
-          ("briefcase", "Sua posição"),
-          ("medal", "Sua experiência"),
-          ("crown", "Sua autoridade"),
+          ("briefcase", "Sua posição", "icon-badge-posicao.jpg"),
+          ("medal", "Sua experiência", none),
+          ("crown", "Sua autoridade", "icon-badge-autoridade.jpg"),
         ] %}
-        {% for icon_key, label in intro_badges %}
+        {% for icon_key, label, image in intro_badges %}
         <div class="col-4">
           <div class="lp-intro-badge">
+            {% if image %}
+            <img src="{{ url_for('static', filename='img/' ~ image) }}" class="lp-intro-badge-icon lp-intro-badge-icon-img" alt="">
+            {% else %}
             <div class="lp-intro-badge-icon">{{ service_icon(icon_key) }}</div>
+            {% endif %}
             <p class="lp-intro-badge-label mb-0">{{ label }}</p>
           </div>
         </div>
@@ -148,16 +152,20 @@
 
       <div class="row g-3 mx-auto mb-5" style="max-width: 560px;">
         {% set service_pills = [
-          ("estilo", "Estilo"),
-          ("biotipo", "Biotipo"),
-          ("cores", "Coloração"),
-          ("visagismo", "Visagismo"),
-          ("arquetipos", "Arquétipos"),
+          ("estilo", "Estilo", "icon-service-estilo.jpg"),
+          ("biotipo", "Biotipo", "icon-service-biotipo.jpg"),
+          ("cores", "Coloração", "icon-service-cores.jpg"),
+          ("visagismo", "Visagismo", "icon-service-visagismo.jpg"),
+          ("arquetipos", "Arquétipos", "icon-service-arquetipos.jpg"),
         ] %}
-        {% for icon_key, label in service_pills %}
+        {% for icon_key, label, image in service_pills %}
         <div class="col-6{% if loop.last %} offset-3{% endif %}">
           <div class="lp-service-pill">
+            {% if image %}
+            <img src="{{ url_for('static', filename='img/' ~ image) }}" class="lp-service-pill-icon lp-service-pill-icon-img" alt="">
+            {% else %}
             <div class="lp-service-pill-icon">{{ service_icon(icon_key) }}</div>
+            {% endif %}
             <span class="lp-service-pill-label">{{ label }}</span>
           </div>
         </div>
