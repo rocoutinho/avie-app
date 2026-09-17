@@ -1194,45 +1194,23 @@ footer a {
   height: 100%;
 }
 
-/* Emblema de profissão de quem avaliou — mesmo padrão navy/dourado já
-   usado em .lp-intro-badge-icon/.lp-service-pill-icon, só que menor pra
-   caber ao lado do rótulo do cargo sem competir com o texto do card. */
-.lp-testimonial-role-row {
+/* Prints reais de avaliações do Google (substituem o card de texto
+   gerado antes) — moldura mínima, a imagem já traz todo o conteúdo. */
+.lp-testimonial-card-shot {
+  padding: 0.5rem;
   display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin-bottom: 0.6rem;
 }
 
-.lp-testimonial-role-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--avie-navy-deep);
-  border: 1.5px solid var(--avie-gold);
-  color: var(--avie-gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.lp-testimonial-card-shot img {
+  width: 100%;
+  height: auto;
+  border-radius: calc(var(--avie-radius) - 0.35rem);
 }
 
-.lp-testimonial-role-icon svg {
-  width: 15px;
-  height: 15px;
-}
-
-.lp-testimonial-role {
-  font-family: "News Gothic Condensed", "Inter", sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 700;
-  font-size: 0.8rem;
-  color: var(--avie-navy);
-}
-
-.lp-testimonial-source {
-  color: var(--avie-text-muted);
+.lp-google-wordmark {
+  height: 32px;
+  width: auto;
+  margin-bottom: 0.4rem;
 }
 
 /* Banner final de CTA, em navy escuro (fecha a página antes do rodapé) */
