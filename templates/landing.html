@@ -109,7 +109,7 @@
       <div class="row g-3 mb-5 justify-content-center">
         {% set intro_badges = [
           ("briefcase", "Sua posição", "icon-badge-posicao.png"),
-          ("medal", "Sua experiência", none),
+          ("medal", "Sua experiência", "icon-badge-experiencia.png"),
           ("crown", "Sua autoridade", "icon-badge-autoridade-v3.png"),
         ] %}
         {% for icon_key, label, image in intro_badges %}
@@ -138,7 +138,7 @@
   </section>
 
   <section class="lp-photo-band full-bleed">
-    <img src="{{ url_for('static', filename='img/fabiana-estrategia.png') }}" alt="">
+    <img src="{{ url_for('static', filename='img/fabiana-estrategia-v2.jpg') }}" alt="">
   </section>
 
   <section class="lp-band full-bleed">
@@ -277,7 +277,7 @@
 
       <p class="lp-about-text mt-4 mb-5" style="color: #fff;">Clique para iniciar uma conversa<br>comigo pelo WhatsApp</p>
 
-      <img src="{{ url_for('static', filename='img/logo-full-gold.png') }}" class="lp-hero-logo mx-auto mb-3" alt="Fabiana Montemor — Consultoria de Imagem e Estilo">
+      <img src="{{ url_for('static', filename='img/logo-full-gold-v2.png') }}" class="lp-hero-logo mx-auto mb-3" alt="Fabiana Montemor — Consultoria de Imagem e Estilo">
 
       <p class="lp-about-text lp-about-text-muted mb-0">Atendimento presencial e online · São José dos Campos/SP</p>
     </div>
@@ -299,8 +299,7 @@
     <div class="row gy-4">
       <div class="col-md-5">
         <div class="lp-footer-brand">
-          <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="brand-mark" alt="">
-          <span>Fabiana Montemor</span>
+          <img src="{{ url_for('static', filename='img/logo-full-gold-v2.png') }}" class="lp-footer-logo" alt="Fabiana Montemor — Consultoria de Imagem e Estilo">
         </div>
         <p class="lp-footer-tagline">Transformando profissionais através da consultoria de imagem estratégica. Sua imagem é seu cartão de visitas mais poderoso.</p>
         <div class="lp-footer-social">

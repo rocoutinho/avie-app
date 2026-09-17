@@ -891,19 +891,12 @@ footer a {
 }
 
 .lp-footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 700;
-  font-size: 1.3rem;
-  color: var(--avie-gold-light);
   margin-bottom: 0.75rem;
 }
 
-.lp-footer-brand .brand-mark {
-  width: 26px;
-  height: 26px;
+.lp-footer-logo {
+  height: 52px;
+  width: auto;
 }
 
 .lp-footer-tagline {
