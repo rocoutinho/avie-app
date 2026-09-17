@@ -1161,6 +1161,13 @@ footer a {
   color: var(--avie-gold);
 }
 
+.lp-bullet-check-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
 /* Depoimentos */
 
 /* Estrelas de avaliação — SVG dourado sólido (mesma lógica dos ícones de
@@ -1169,15 +1176,12 @@ footer a {
    (menor) reaproveitada dentro de cada card de depoimento. */
 .lp-star-icon {
   display: inline-flex;
-  color: var(--avie-gold);
-}
-
-.lp-star-icon svg {
   width: 22px;
   height: 22px;
+  object-fit: contain;
 }
 
-.lp-star-icon-sm svg {
+.lp-star-icon-sm {
   width: 14px;
   height: 14px;
 }
@@ -1256,10 +1260,14 @@ footer a {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.lp-whatsapp-float img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
 .lp-whatsapp-float:hover {
   transform: translateY(-2px) scale(1.05);
-  background: var(--avie-gold);
-  color: var(--avie-navy-deep);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
 }
 
@@ -1282,9 +1290,14 @@ footer a {
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
+.lp-footer-social a img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
 .lp-footer-social a:hover {
-  background: var(--avie-gold);
-  color: var(--avie-navy-deep);
+  border-color: var(--avie-gold-light);
   transform: translateY(-2px);
 }
 

@@ -25,11 +25,6 @@
   <circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 19a4.3 4.3 0 0 1 6.7-3.6"/>
   {%- elif key == "bag" %}
   <path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>
-  {%- elif key == "check" %}
-  <circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/>
-  <path d="M7.8 12.3 10.4 15 16.3 8.8" fill="none" stroke="var(--avie-navy)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
-  {%- elif key == "star" %}
-  <path d="M12 2.7l2.9 5.9 6.5.7-4.8 4.5 1.3 6.5L12 16.9l-5.9 3.4 1.3-6.5-4.8-4.5 6.5-.7L12 2.7Z" fill="currentColor" stroke="none"/>
   {%- elif key == "leaf" %}
   <path d="M6 20c9 0 13-6.5 13-15.5C10 5 4 10.5 4 18c0 .3 0 .7.1 1.3Z" fill="currentColor" stroke="none"/>
   <path d="M6 20c2-6 5-10 10-13" fill="none" stroke="var(--avie-navy)" stroke-width="1.6"/>
@@ -181,11 +176,11 @@
       <h2 class="h1 text-center mb-5">Essa consultoria é para você que...</h2>
 
       <ul class="lp-bullet-list mx-auto mb-5" style="max-width: 640px;">
-        <li>{{ service_icon("check") }}<span>É empresária/o e percebe que sua imagem representa sua empresa.</span></li>
-        <li>{{ service_icon("check") }}<span>Ocupa uma posição de liderança e quer fortalecer sua presença.</span></li>
-        <li>{{ service_icon("check") }}<span>É profissional liberal e sabe que a confiança influencia a decisão do cliente.</span></li>
-        <li>{{ service_icon("check") }}<span>Passou por uma mudança de carreira e sente que sua imagem ainda pertence à fase anterior.</span></li>
-        <li>{{ service_icon("check") }}<span>Tem pouco tempo e precisa de um guarda-roupa mais inteligente e funcional.</span></li>
+        <li><img src="{{ url_for('static', filename='img/icon-check.png') }}" class="lp-bullet-check-icon" alt=""><span>É empresária/o e percebe que sua imagem representa sua empresa.</span></li>
+        <li><img src="{{ url_for('static', filename='img/icon-check.png') }}" class="lp-bullet-check-icon" alt=""><span>Ocupa uma posição de liderança e quer fortalecer sua presença.</span></li>
+        <li><img src="{{ url_for('static', filename='img/icon-check.png') }}" class="lp-bullet-check-icon" alt=""><span>É profissional liberal e sabe que a confiança influencia a decisão do cliente.</span></li>
+        <li><img src="{{ url_for('static', filename='img/icon-check.png') }}" class="lp-bullet-check-icon" alt=""><span>Passou por uma mudança de carreira e sente que sua imagem ainda pertence à fase anterior.</span></li>
+        <li><img src="{{ url_for('static', filename='img/icon-check.png') }}" class="lp-bullet-check-icon" alt=""><span>Tem pouco tempo e precisa de um guarda-roupa mais inteligente e funcional.</span></li>
       </ul>
 
       <div class="text-center">
@@ -226,7 +221,7 @@
       <h2 class="h1 text-center mb-2 mx-auto" style="max-width: 780px;">A percepção muda quando a imagem se alinha à sua autoridade.</h2>
       <div class="d-flex justify-content-center gap-1 mb-5">
         {% for _ in range(5) %}
-        <span class="lp-star-icon">{{ service_icon("star") }}</span>
+        <img src="{{ url_for('static', filename='img/icon-star.png') }}" class="lp-star-icon" alt="">
         {% endfor %}
       </div>
 
@@ -246,7 +241,7 @@
             </div>
             <div class="d-flex gap-1 mb-2">
               {% for _ in range(5) %}
-              <span class="lp-star-icon lp-star-icon-sm">{{ service_icon("star") }}</span>
+              <img src="{{ url_for('static', filename='img/icon-star.png') }}" class="lp-star-icon lp-star-icon-sm" alt="">
               {% endfor %}
             </div>
             <p class="text-muted small fst-italic">“{{ quote }}”</p>
@@ -287,9 +282,7 @@
 
 <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar uma consultoria' | urlencode }}"
    target="_blank" rel="noopener" class="lp-whatsapp-float" aria-label="Conversar no WhatsApp">
-  <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26" aria-hidden="true">
-    <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9s-4.44-9.94-9.91-9.94zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.15-4.9-4.34-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/>
-  </svg>
+  <img src="{{ url_for('static', filename='img/icon-whatsapp.png') }}" alt="">
 </a>
 {% endblock %}
 
@@ -304,13 +297,13 @@
         <p class="lp-footer-tagline">Transformando profissionais através da consultoria de imagem estratégica. Sua imagem é seu cartão de visitas mais poderoso.</p>
         <div class="lp-footer-social">
           <a href="{{ config.INSTAGRAM_URL }}" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+            <img src="{{ url_for('static', filename='img/icon-instagram.png') }}" alt="">
           </a>
           <a href="{{ config.LINKEDIN_URL }}" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.24 8.25h4.5V23h-4.5V8.25zM8.5 8.25h4.31v2.02h.06c.6-1.13 2.06-2.32 4.25-2.32 4.55 0 5.39 3 5.39 6.9V23h-4.5v-6.98c0-1.66-.03-3.8-2.32-3.8-2.32 0-2.68 1.81-2.68 3.68V23h-4.5V8.25z"/></svg>
+            <img src="{{ url_for('static', filename='img/icon-linkedin.png') }}" alt="">
           </a>
           <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9s-4.44-9.94-9.91-9.94zm5.8 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.15-4.9-4.34-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.27-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.29.29-.12.57.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.35z"/></svg>
+            <img src="{{ url_for('static', filename='img/icon-whatsapp.png') }}" alt="">
           </a>
         </div>
       </div>
