@@ -1324,11 +1324,25 @@ footer a {
     right: 1rem;
   }
 
-  .lp-hero-portrait,
-  .lp-about-portrait {
+  .lp-hero-portrait {
     height: 68vh;
     min-height: 380px;
     max-height: 640px;
+  }
+
+  /* "Sobre": em vez de altura por vh (que sobra bastante perna em telas
+     estreitas e altas), usa aspect-ratio pra recortar sempre no mesmo
+     ponto da foto (até a altura do quadril, antes da calça alargar),
+     independente da altura do viewport. */
+  .lp-about-portrait {
+    height: auto;
+    aspect-ratio: 1100 / 1007;
+    min-height: unset;
+    max-height: none;
+  }
+
+  .lp-about-portrait img {
+    object-position: center top;
   }
 
   .lp-hero-logo {
