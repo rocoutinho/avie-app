@@ -285,6 +285,7 @@
         <ul class="lp-footer-links">
           <li><a href="#sobre">Sobre</a></li>
           <li><a href="{{ url_for('public.blog_index') }}">Blog</a></li>
+          <li><a href="{{ url_for('public.metodo_versa') }}">Método Versa</a></li>
           <li><a href="{{ url_for('public.diagnostic') }}">Fazer diagnóstico</a></li>
           <li><a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, gostaria de agendar minha sessão diagnóstica' | urlencode }}" target="_blank" rel="noopener">Agendar sessão diagnóstica</a></li>
           <li><a href="{{ url_for('public.privacy') }}">Política de Privacidade</a></li>
@@ -294,7 +295,6 @@
       <div class="col-md-4">
         <p class="lp-footer-heading">Contato</p>
         <ul class="lp-footer-links">
-          <li><a href="mailto:{{ config.MAIL_DEFAULT_SENDER }}">{{ config.MAIL_DEFAULT_SENDER }}</a></li>
           <li><a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}" target="_blank" rel="noopener">WhatsApp</a></li>
           <li>Edifício Olimpus Offices</li>
           <li>R. José Augusto dos Santos, 108 - Sl 512<br>Floradas de São José, São José dos Campos - SP<br>12230-085</li>

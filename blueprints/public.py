@@ -89,6 +89,11 @@ def privacy():
     return render_template("privacy.html")
 
 
+@public_bp.route("/metodo-versa")
+def metodo_versa():
+    return render_template("metodo_versa.html")
+
+
 @public_bp.route("/blog")
 def blog_index():
     posts = BlogPost.query.filter_by(status="publicado").order_by(BlogPost.published_at.desc()).all()

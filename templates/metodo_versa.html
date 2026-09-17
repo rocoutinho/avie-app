@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Método Versa{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <p class="text-uppercase text-muted small mb-2" style="letter-spacing: 0.08em;">Em breve</p>
+    <h1 class="h3 mb-3">Método Versa</h1>
+    <p class="lead">
+      A metodologia própria da Fabiana Montemor para transformar sua imagem
+      em uma ferramenta de posicionamento — do diagnóstico ao acompanhamento
+      contínuo. Os detalhes completos de cada etapa estão sendo finalizados
+      e chegam em breve por aqui.
+    </p>
+
+    <h2 class="h6 text-uppercase text-muted mt-5 mb-3">Cronograma (provisório)</h2>
+    <ul class="list-group mb-4">
+      <li class="list-group-item">
+        <strong>1. Diagnóstico</strong> — mapeamento da sua imagem atual, seu momento de carreira e seus objetivos.
+      </li>
+      <li class="list-group-item">
+        <strong>2. Estratégia</strong> — definição do posicionamento de imagem alinhado à sua identidade e aos seus objetivos profissionais.
+      </li>
+      <li class="list-group-item">
+        <strong>3. Transformação</strong> — aplicação prática: estilo, coloração, visagismo e guarda-roupa estratégico.
+      </li>
+      <li class="list-group-item">
+        <strong>4. Acompanhamento</strong> — consolidação dos resultados e ajustes contínuos ao longo da sua jornada.
+      </li>
+    </ul>
+    <p class="text-muted small">
+      Este cronograma é uma prévia do conceito e pode mudar até o lançamento completo.
+    </p>
+
+    <div class="mt-4">
+      <a href="https://wa.me/{{ config.WHATSAPP_NUMBER }}?text={{ 'Olá, tenho interesse em saber mais sobre o Método Versa' | urlencode }}" target="_blank" rel="noopener" class="btn btn-brand">Quero saber mais</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
