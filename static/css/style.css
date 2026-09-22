@@ -76,6 +76,37 @@ h1, h2, h3, .font-serif {
   flex-shrink: 0;
 }
 
+.navbar-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.navbar-brand-name {
+  font-size: 1.5rem;
+}
+
+.navbar-brand-tagline {
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(241, 239, 233, 0.65);
+}
+
+.navbar-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+@media (max-width: 575.98px) {
+  .navbar-brand-tagline {
+    display: none;
+  }
+}
+
 .navbar-links {
   align-items: center;
 }
