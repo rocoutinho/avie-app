@@ -42,145 +42,15 @@ h1, h2, h3, .font-serif {
   font-family: "News Gothic Condensed", "Inter", sans-serif;
 }
 
-/* Navbar: sempre em azul marinho, a aplicação de marca mais consistente
-   em qualquer página (interna ou pública). Acabamento com um pouco mais
-   de respiro vertical, borda inferior sutil em dourado (em vez de um
-   corte reto) e os links no mesmo registro tipográfico condensado do
-   resto da marca (.eyebrow), pra não ficar com a fonte padrão genérica
-   do Bootstrap. */
-.navbar {
-  background: var(--avie-navy-deep) !important;
-  border-bottom: 1px solid rgba(245, 216, 134, 0.14) !important;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.navbar > .container {
-  align-items: center;
-}
-
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 700;
-  font-size: 1.5rem;
-  letter-spacing: 0.01em;
-  color: var(--avie-gold-light) !important;
-}
-
-.navbar-brand .brand-mark {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-}
-
-.navbar-brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-}
-
-.navbar-brand-name {
-  font-size: 1.5rem;
-}
-
-.navbar-brand-tagline {
-  font-family: "News Gothic Condensed", "Inter", sans-serif;
-  font-weight: 500;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(241, 239, 233, 0.65);
-}
-
-@media (max-width: 399.98px) {
-  .navbar-brand-name {
-    font-size: 1.2rem;
-  }
-
-  .navbar-brand-tagline {
-    font-size: 0.52rem;
-  }
-}
-
-.navbar-links {
-  align-items: center;
-}
-
-.navbar-link-pill {
-  display: inline-flex;
-  align-items: center;
-  height: 2.35rem;
-  padding: 0 1.15rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: transparent;
-  color: #f1efe9;
-  text-decoration: none;
-  cursor: pointer;
-  font-family: "News Gothic Condensed", "Inter", sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
-}
-
-.navbar-link-pill:hover,
-.navbar-link-pill:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(245, 216, 134, 0.55);
-  color: #fff;
-}
-
-/* Dropdown "Recursos" — Bootstrap padrão é claro, precisa do próprio
-   tema escuro pra combinar com a navbar. */
-.navbar .dropdown-menu {
-  background: var(--avie-navy-deep);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 0.4rem;
-  margin-top: 0.5rem;
-  box-shadow: var(--avie-shadow);
-}
-
-.navbar .dropdown-item {
-  color: #f1efe9;
-  border-radius: 8px;
-  padding: 0.55rem 0.9rem;
-  font-family: "News Gothic Condensed", "Inter", sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.navbar .dropdown-item:hover,
-.navbar .dropdown-item:focus {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-
-.navbar .btn-brand {
-  height: 2.35rem;
-  padding: 0 1.35rem;
-  display: inline-flex;
-  align-items: center;
-  font-family: "News Gothic Condensed", "Inter", sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  font-size: 0.8rem;
-}
-
-/* Header público (visitante não logado) — substitui a navbar de pílulas
-   por um componente único, sem hambúrguer em nenhuma largura: faixa
-   horizontal no desktop, duas linhas (marca / navegação) abaixo de
-   1024px. Um só breakpoint — a faixa 768-1023px já usa a composição de
-   duas linhas, não ganha arquitetura própria. Aprovado via wireframe
-   (ver CLAUDE.md) antes desta implementação. Staff/cliente logado
-   continuam na .navbar de sempre, só o visitante público usa isto. */
+/* Header — um único componente reaproveitado nas três variantes de
+   usuário (staff, cliente logada, visitante público), sem hambúrguer em
+   nenhuma largura: faixa horizontal no desktop, duas linhas (marca /
+   navegação) abaixo de 1024px. Um só breakpoint — a faixa 768-1023px já
+   usa a composição de duas linhas, não ganha arquitetura própria.
+   Nasceu pro header público (aprovado via wireframe, ver CLAUDE.md) e
+   depois foi estendido tal como está — zero CSS novo — pra staff e
+   cliente, só variando o conteúdo do .pf-nav de cada ramo em
+   templates/base.html. */
 .pf-header {
   background: var(--avie-navy-deep);
   border-bottom: 1px solid rgba(245, 216, 134, 0.14);
@@ -2066,23 +1936,6 @@ footer a {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-}
-
-/* Navbar responsiva — some no navbar-toggler de dentro do navy escuro. */
-.navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.35);
-  padding: 0.35rem 0.55rem;
-}
-
-.navbar-toggler:focus {
-  box-shadow: 0 0 0 0.2rem rgba(245, 216, 134, 0.35);
-}
-
-@media (max-width: 991.98px) {
-  .navbar-collapse {
-    padding-top: 0.5rem;
-    padding-bottom: 0.75rem;
   }
 }
 

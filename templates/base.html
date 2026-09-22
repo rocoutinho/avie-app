@@ -68,58 +68,75 @@
 </head>
 <body>
   {% if current_user.is_authenticated and current_user.is_staff %}
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-      <a class="navbar-brand" href="{{ url_for('public.landing') }}">
-        <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="brand-mark" alt="">
-        <span class="navbar-brand-text">
-          <span class="navbar-brand-name">Fabiana Montemor</span>
-          <span class="navbar-brand-tagline">Consultoria de Imagem e Posicionamento Profissional</span>
+  {% set ep = request.endpoint or '' %}
+  <header class="pf-header">
+    <div class="pf-inner">
+      <a class="pf-brand" href="{{ url_for('public.landing') }}">
+        <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="pf-logo" alt="">
+        <span class="pf-brand-text">
+          <span class="pf-name">Fabiana Montemor</span>
+          <span class="pf-tagline">Consultoria de Imagem e Posicionamento Profissional</span>
         </span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
-        <div class="navbar-links d-flex flex-wrap gap-2 align-items-center mt-3 mt-lg-0">
-          <a class="navbar-link-pill" href="{{ url_for('dashboard.index') }}">Painel</a>
-          <div class="dropdown">
-            <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Estúdio</button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{ url_for('clients.list_clients') }}">Clientes</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('sessions.list_sessions') }}">Agenda</a></li>
-            </ul>
-          </div>
-          <div class="dropdown">
-            <button class="navbar-link-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Negócio</button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{ url_for('payments.list_payments') }}">Pagamentos</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('analytics.index') }}">Analytics</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('blog.list_posts') }}">Blog</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('ebooks.list_ebooks') }}">Ebooks</a></li>
-            </ul>
-          </div>
-          <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
+      <nav class="pf-nav" aria-label="Navegação principal">
+        <a class="pf-item{% if ep == 'dashboard.index' %} is-active{% endif %}" href="{{ url_for('dashboard.index') }}">
+          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>
+          <span>Painel</span>
+        </a>
+        <div class="dropdown pf-dropdown">
+          <button class="pf-item dropdown-toggle{% if ep.startswith('clients.') or ep.startswith('sessions.') %} is-active{% endif %}" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+            <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
+            <span>Estúdio</span>
+            <svg class="pf-chev" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <ul class="dropdown-menu pf-menu">
+            <li><a class="dropdown-item" href="{{ url_for('clients.list_clients') }}">Clientes</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('sessions.list_sessions') }}">Agenda</a></li>
+          </ul>
         </div>
-      </div>
+        <div class="dropdown pf-dropdown">
+          <button class="pf-item dropdown-toggle{% if ep.startswith('payments.') or ep.startswith('analytics.') or ep.startswith('blog.') or ep.startswith('ebooks.') %} is-active{% endif %}" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+            <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+            <span>Negócio</span>
+            <svg class="pf-chev" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <ul class="dropdown-menu pf-menu">
+            <li><a class="dropdown-item" href="{{ url_for('payments.list_payments') }}">Pagamentos</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('analytics.index') }}">Analytics</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('blog.list_posts') }}">Blog</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('ebooks.list_ebooks') }}">Ebooks</a></li>
+          </ul>
+        </div>
+        <a class="pf-item" href="{{ url_for('auth.logout') }}">
+          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          <span>Sair</span>
+        </a>
+      </nav>
     </div>
-  </nav>
+  </header>
   {% elif current_user.is_authenticated %}
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-      <a class="navbar-brand" href="{{ url_for('public.landing') }}">
-        <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="brand-mark" alt="">
-        <span class="navbar-brand-text">
-          <span class="navbar-brand-name">Fabiana Montemor</span>
-          <span class="navbar-brand-tagline">Consultoria de Imagem e Posicionamento Profissional</span>
+  {% set ep = request.endpoint or '' %}
+  <header class="pf-header">
+    <div class="pf-inner">
+      <a class="pf-brand" href="{{ url_for('public.landing') }}">
+        <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="pf-logo" alt="">
+        <span class="pf-brand-text">
+          <span class="pf-name">Fabiana Montemor</span>
+          <span class="pf-tagline">Consultoria de Imagem e Posicionamento Profissional</span>
         </span>
       </a>
-      <div class="d-flex flex-wrap gap-2 align-items-center">
-        <a class="navbar-link-pill" href="{{ url_for('client_area.index') }}">Minha área</a>
-        <a class="btn btn-brand" href="{{ url_for('auth.logout') }}">Sair</a>
-      </div>
+      <nav class="pf-nav" aria-label="Navegação principal">
+        <a class="pf-item{% if ep.startswith('client_area.') %} is-active{% endif %}" href="{{ url_for('client_area.index') }}">
+          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>
+          <span>Minha área</span>
+        </a>
+        <a class="pf-item" href="{{ url_for('auth.logout') }}">
+          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          <span>Sair</span>
+        </a>
+      </nav>
     </div>
-  </nav>
+  </header>
   {% else %}
   <header class="pf-header">
     <div class="pf-inner">
