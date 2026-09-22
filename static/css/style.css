@@ -101,10 +101,69 @@ h1, h2, h3, .font-serif {
   gap: 0.4rem;
 }
 
-@media (max-width: 575.98px) {
-  .navbar-brand-tagline {
-    display: none;
+@media (max-width: 399.98px) {
+  .navbar-brand-name {
+    font-size: 1.2rem;
   }
+
+  .navbar-brand-tagline {
+    font-size: 0.52rem;
+  }
+}
+
+/* Menu mobile da nav pública (visitante): hambúrguer abre uma fileira de
+   ícone+rótulo com divisórias verticais entre os 3 itens, em vez das
+   pílulas do desktop — referência visual explícita, telas grandes ficam
+   com o tratamento de pílulas já existente (.navbar-links-anon, d-lg-flex
+   acima), só o bloco abaixo é d-lg-none. */
+.navbar-icon-links {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 0.75rem;
+}
+
+.navbar-icon-links > * {
+  flex: 1;
+}
+
+.navbar-icon-links > *:not(:first-child) {
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.navbar-icon-link,
+.navbar-icon-link-dropdown .dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.9rem 0.35rem;
+  color: var(--avie-gold-light);
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-family: "News Gothic Condensed", "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.navbar-icon-link-icon {
+  display: flex;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.navbar-icon-link-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.navbar-icon-link-muted {
+  color: rgba(241, 239, 233, 0.85);
 }
 
 .navbar-links {
