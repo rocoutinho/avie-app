@@ -1133,6 +1133,19 @@ footer a {
   display: block;
 }
 
+/* Em telas largas, altura fixa + full-bleed (100vw) força um recorte
+   vertical severo (a imagem precisa esticar muito na largura pra cobrir
+   o container, sobrando só uma tira fina do topo). A partir daqui, a
+   altura acompanha a proporção real da foto (1536x1024) — sem corte —
+   com um teto pra não virar uma faixa gigante em monitores muito largos. */
+@media (min-width: 768px) {
+  .lp-photo-band {
+    height: auto;
+    aspect-ratio: 1536 / 1024;
+    max-height: 640px;
+  }
+}
+
 /* Lista de "essa consultoria é para você que..." */
 .lp-bullet-list {
   list-style: none;
