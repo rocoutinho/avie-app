@@ -488,6 +488,303 @@ h1, h2, h3, .font-serif {
   line-height: 1.3;
 }
 
+/* Home da cliente redesenhada com base numa referência de dashboard: os
+   mesmos 4 cards de acesso rápido (.home-journey-grid/.home-journey-card,
+   sem nenhuma mudança de marcação — os testes checam esse HTML) viram uma
+   fileira de 4 a partir do desktop em vez do quadrado 2x2, já que agora
+   sobra largura ao lado (a sidebar ocupa o espaço que antes ficava vazio).
+   Escopado só na home (.client-home-quicklinks) pra não mexer no reuso
+   desse mesmo componente em Minha assinatura visual/closet/etc. */
+@media (min-width: 768px) {
+  .client-home-quicklinks .home-journey-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: none;
+  }
+}
+
+/* Cartão "Serviços do seu plano" — substitui o anel de progresso da
+   referência: aqui não existe assinatura/plano recorrente, então em vez
+   de % mostra os 5 serviços do dossiê (DOSSIE_SERVICE_LABELS) com check
+   pra quem já foi preenchido pela consultora (client.dossie_report) e
+   vazio pra quem ainda não. Mesmo par filled/vazio de .journey-card-status
+   usado em vários outros lugares do app, só que numa lista em vez de
+   badge de canto. */
+.client-widget-card {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  padding: 1.25rem 1.35rem;
+}
+
+.client-widget-title {
+  font-weight: 700;
+  color: var(--avie-navy);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.client-plan-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.client-plan-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.92rem;
+  color: var(--avie-navy);
+}
+
+.client-plan-list .journey-card-status {
+  position: static;
+}
+
+.client-plan-list li.is-pending {
+  color: var(--avie-text-muted);
+}
+
+.client-appointment {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.client-appointment-date {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  background: var(--avie-navy-deep);
+  color: var(--avie-gold-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.client-appointment-date span {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.client-quote-card {
+  background: var(--avie-navy-deep);
+  border-radius: var(--avie-radius);
+  padding: 1.5rem;
+  color: var(--avie-gold-light);
+}
+
+.client-quote-card p {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.client-quote-card cite {
+  display: block;
+  font-style: normal;
+  font-size: 0.8rem;
+  color: rgba(245, 216, 134, 0.7);
+}
+
+.client-blog-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: var(--avie-radius);
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.client-blog-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--avie-shadow);
+  border-color: var(--avie-gold);
+  color: inherit;
+}
+
+.client-blog-card-cover {
+  aspect-ratio: 16/10;
+  background: var(--avie-navy-deep);
+  overflow: hidden;
+}
+
+.client-blog-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.client-blog-card-body {
+  padding: 0.9rem 1rem 1.1rem;
+}
+
+.client-blog-card-tag {
+  color: var(--avie-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.client-blog-card-title {
+  color: var(--avie-navy);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0.3rem 0 0;
+  line-height: 1.35;
+}
+
+/* Shell com sidebar pra toda a área da cliente (client_area_base.html) —
+   a navbar padrão do base.html continua no topo; esse shell ocupa o
+   restante da tela abaixo dela. full-bleed pra sidebar encostar na borda
+   da viewport (senão ficaria presa dentro do .container padrão). */
+.client-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: calc(100vh - 73px);
+}
+
+.client-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--avie-navy-deep);
+  padding: 1.75rem 1.25rem;
+}
+
+.client-main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem clamp(1.25rem, 4vw, 3rem);
+}
+
+.client-mobile-toggle {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: var(--avie-navy-deep);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 767.98px) {
+  .client-shell {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .client-mobile-toggle {
+    display: flex;
+  }
+
+  .client-main {
+    padding: 1.5rem 1rem 2rem;
+  }
+}
+
+.client-sidebar-offcanvas {
+  background: var(--avie-navy-deep);
+  width: 280px;
+}
+
+.client-sidebar-offcanvas .btn-close {
+  filter: invert(1);
+}
+
+.client-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.client-sidebar-brand img {
+  width: 28px;
+  height: 28px;
+}
+
+.client-sidebar-brand span {
+  color: #fff;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.client-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.client-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.client-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.client-sidebar-link.is-active {
+  background: var(--avie-gold);
+  color: var(--avie-navy-deep);
+  font-weight: 700;
+}
+
+.client-sidebar-link-icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.client-sidebar-link-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.client-sidebar-quote {
+  color: var(--avie-gold-light);
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.client-sidebar-offcanvas .client-sidebar-quote {
+  margin-top: auto;
+}
+
 .section-back-link {
   display: inline-flex;
   align-items: center;

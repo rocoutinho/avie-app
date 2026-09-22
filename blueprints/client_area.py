@@ -10,9 +10,28 @@ from flask_login import current_user, login_required
 
 from extensions import db
 from journey import build_journey
-from models import Client, CLOSET_ITEM_CATEGORIES, Look, LOOK_MOMENTS, ShoppingListItem
+from models import BlogPost, Client, CLOSET_ITEM_CATEGORIES, Look, LOOK_MOMENTS, ShoppingListItem
 
 client_area_bp = Blueprint("client_area", __name__, url_prefix="/minha-area")
+
+# Frases curtas pra "inspiração do dia" na home — texto fixo (sem tabela
+# própria: são só 7 frases genéricas, não vale o custo de um model/CRUD
+# pra isso ainda). Escolhida de forma determinística pelo dia do ano, não
+# aleatória, pra não trocar a cada refresh da página.
+DAILY_QUOTES = [
+    "Uma imagem bem construída abre portas que o talento sozinho não alcança.",
+    "Sua imagem é a primeira frase de uma conversa que você ainda não teve.",
+    "Consistência é o que transforma uma boa impressão em reputação.",
+    "Vestir-se com intenção é uma forma silenciosa de liderança.",
+    "Quem te conhece de verdade nunca duvida — quem te vê pela primeira vez, precisa de um sinal.",
+    "Estilo não é sobre chamar atenção. É sobre comunicar com precisão.",
+    "Cada escolha de imagem é uma frase que você diz sem abrir a boca.",
+]
+
+
+def _quote_of_the_day():
+    day_index = datetime.utcnow().timetuple().tm_yday
+    return DAILY_QUOTES[day_index % len(DAILY_QUOTES)]
 
 
 def require_client():
@@ -40,6 +59,14 @@ DOSSIE_SERVICE_LABELS = [
 
 def _sent_reports(client):
     return [r for r in client.reports if r.status == "enviado"]
+
+
+def _next_consultation(client):
+    future = sorted(
+        (c for c in client.consultations if c.status == "agendada" and c.scheduled_at >= datetime.utcnow()),
+        key=lambda c: c.scheduled_at,
+    )
+    return future[0] if future else None
 
 
 def _group_dossie_sections(sections):
@@ -96,14 +123,32 @@ def _dossie_services(client):
 @client_area_bp.route("/")
 @login_required
 def index():
-    """Resumo de leitura rápida — nenhum conteúdo completo mora aqui, só
-    os 4 cards da jornada; cada um leva pra sua própria página (mesmo
-    padrão dos 4 recursos, sem exceção — ver revisão de UX da área da
-    cliente). Tela deliberadamente sem nenhum texto além do título — sem
-    aviso dinâmico, sem mensagem de último/primeiro acesso — por pedido
-    explícito de manter a home mínima."""
+    """Redesenhada num layout de dashboard (sidebar + widgets), a partir
+    de uma referência visual explícita: os 4 cards da jornada continuam
+    aqui (mesmo padrão de sempre — cada um leva pra sua própria página),
+    mas agora ao lado de 3 widgets extras. "Sua evolução" da referência
+    (anel de % de progresso) foi substituído por `plan_services`: como a
+    Avie não tem plano/assinatura recorrente, mostra os 5 serviços do
+    dossiê (mesmo DOSSIE_SERVICE_LABELS de sempre) com check pra quem já
+    foi preenchido pela consultora — "o que a cliente já consumiu", não
+    um % calculado. `next_consultation` reaproveita a mesma lógica de
+    evolucao() (ver _next_consultation). `blog_posts` são os artigos
+    publicados mais recentes (mesma fonte do /blog público)."""
     journey = build_journey(current_user)
-    return render_template("client_area.html", client=current_user, journey=journey)
+    plan_services = [
+        {"label": label, "icon": icon_key, "filled": bool(current_user.dossie_report and getattr(current_user.dossie_report, field, None))}
+        for field, label, icon_key in DOSSIE_SERVICE_LABELS
+    ]
+    blog_posts = BlogPost.query.filter_by(status="publicado").order_by(BlogPost.published_at.desc()).limit(4).all()
+    return render_template(
+        "client_area.html",
+        client=current_user,
+        journey=journey,
+        plan_services=plan_services,
+        next_consultation=_next_consultation(current_user),
+        quote=_quote_of_the_day(),
+        blog_posts=blog_posts,
+    )
 
 
 @client_area_bp.route("/identidade")
@@ -196,19 +241,13 @@ def evolucao():
     histórico — por isso `recent_achievements` corta pra poucas sessões
     (as 3 mais recentes) e só as realmente concluídas ("realizada"),
     nunca agendamentos cancelados/faltas, que não são "conquista"."""
-    now = datetime.utcnow()
-    future = sorted(
-        (c for c in current_user.consultations if c.status == "agendada" and c.scheduled_at >= now),
-        key=lambda c: c.scheduled_at,
-    )
-    next_consultation = future[0] if future else None
     # current_user.consultations já vem ordenada por scheduled_at desc
     # (ver models.py), então fatiar preserva a mais recente primeiro.
     recent_achievements = [c for c in current_user.consultations if c.status == "realizada"][:3]
     return render_template(
         "client_area_evolucao.html",
         client=current_user,
-        next_consultation=next_consultation,
+        next_consultation=_next_consultation(current_user),
         recent_achievements=recent_achievements,
     )
 

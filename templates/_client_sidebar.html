@@ -1,0 +1,33 @@
+{# Navegação da área da cliente — mesma inclusão usada na sidebar fixa do
+   desktop e dentro do offcanvas do mobile (client_area_base.html), pra não
+   duplicar a marcação em dois lugares. Reaproveita os ícones de
+   _journey_home_icon.html (identidade/diagnostico/looks/evolucao) — só
+   "Início" ganha um ícone próprio aqui, já que a home não faz parte da
+   jornada em si. #}
+{% from "_journey_home_icon.html" import journey_home_icon %}
+{% set client_nav_items = [
+  ("client_area.index", "home", "Início"),
+  ("client_area.identity", "identidade", "Identidade"),
+  ("client_area.diagnostico", "diagnostico", "Dossiê"),
+  ("client_area.looks", "looks", "Assinatura Visual"),
+  ("client_area.evolucao", "evolucao", "Evolução"),
+] %}
+<div class="client-sidebar-brand">
+  <img src="{{ url_for('static', filename='img/icon-gold.png') }}" alt="">
+  <span>Fabiana Montemor</span>
+</div>
+<nav class="client-sidebar-nav">
+  {% for endpoint, icon_key, label in client_nav_items %}
+  <a href="{{ url_for(endpoint) }}" class="client-sidebar-link{% if request.endpoint == endpoint %} is-active{% endif %}">
+    <span class="client-sidebar-link-icon">
+      {% if icon_key == "home" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>
+      {% else %}
+      {{ journey_home_icon(icon_key) }}
+      {% endif %}
+    </span>
+    <span>{{ label }}</span>
+  </a>
+  {% endfor %}
+</nav>
+<p class="client-sidebar-quote mb-0">&ldquo;Mais que estilo.<br>Direção.&rdquo;</p>

@@ -1,6 +1,7 @@
-{% extends "base.html" %}
+{% extends "client_area_base.html" %}
 {% block title %}Minha jornada{% endblock %}
 {% from "_journey_home_icon.html" import journey_home_icon %}
+{% from "_dossie_service_icon.html" import service_icon %}
 
 {% set journey_step_urls = {
   "identidade": url_for('client_area.identity'),
@@ -8,20 +9,92 @@
   "looks": url_for('client_area.looks'),
   "evolucao": url_for('client_area.evolucao'),
 } %}
+{% set month_abbr_pt = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"] %}
 
-{% block content %}
+{% block client_content %}
 <div class="mb-4">
   <h1 class="h3 mb-1">Olá, {{ client.full_name.split(' ')[0] }}</h1>
   <p class="lp-script-brush mb-0" style="font-size: 1.8rem;">Sua jornada de Transformação</p>
 </div>
 
-<div class="home-journey-grid">
-  {% for step in journey %}
-  <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
-    <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
-    <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
-    <span class="home-journey-title">{{ step.title }}</span>
-  </a>
-  {% endfor %}
+<div class="client-home-quicklinks mb-5">
+  <div class="home-journey-grid">
+    {% for step in journey %}
+    <a href="{{ journey_step_urls[step.key] }}" class="home-journey-card">
+      <span class="journey-card-status {{ 'is-filled' if step.status == 'concluido' else ('is-in-progress' if step.status == 'em_andamento') }}"></span>
+      <span class="home-journey-icon">{{ journey_home_icon(step.key) }}</span>
+      <span class="home-journey-title">{{ step.title }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="h5 mb-0">Conteúdos para você</h2>
+      <a href="{{ url_for('public.blog_index') }}" class="small">Ver todos →</a>
+    </div>
+    {% if blog_posts %}
+    <div class="row g-3">
+      {% for post in blog_posts %}
+      <div class="col-sm-6">
+        <a href="{{ url_for('public.blog_post', slug=post.slug) }}" class="client-blog-card">
+          {% if post.cover_image_url %}
+          <div class="client-blog-card-cover">
+            <img src="{{ post.cover_image_url }}" alt="">
+          </div>
+          {% endif %}
+          <div class="client-blog-card-body">
+            <p class="client-blog-card-tag mb-0">Artigo</p>
+            <p class="client-blog-card-title">{{ post.title }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted small">Nenhum artigo publicado ainda.</p>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4 d-flex flex-column gap-4">
+    <div class="client-widget-card">
+      <p class="client-widget-title mb-3">Serviços do seu plano</p>
+      <ul class="client-plan-list">
+        {% for service in plan_services %}
+        <li{% if not service.filled %} class="is-pending"{% endif %}>
+          <span class="journey-card-status {{ 'is-filled' if service.filled }}"></span>
+          {{ service.label }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="client-widget-card">
+      <p class="client-widget-title mb-3">Seu próximo agendamento</p>
+      {% if next_consultation %}
+      <div class="client-appointment">
+        <div class="client-appointment-date">
+          {{ next_consultation.scheduled_at.day }}
+          <span>{{ month_abbr_pt[next_consultation.scheduled_at.month - 1] }}</span>
+        </div>
+        <div>
+          <p class="mb-0 fw-semibold" style="color: var(--avie-navy);">{{ label_for(CONSULTATION_TYPES, next_consultation.tipo) }}</p>
+          <p class="text-muted small mb-0">com Fabiana Montemor</p>
+          <p class="text-muted small mb-0">{{ next_consultation.scheduled_at.strftime('%H:%M') }}</p>
+        </div>
+      </div>
+      <a href="{{ url_for('client_area.evolucao') }}" class="btn btn-brand btn-sm mt-3 w-100">Ver detalhes</a>
+      {% else %}
+      <p class="text-muted small mb-0">Nenhuma consultoria agendada no momento.</p>
+      {% endif %}
+    </div>
+
+    <div class="client-quote-card">
+      <p>&ldquo;{{ quote }}&rdquo;</p>
+      <cite>— Fabiana Montemor</cite>
+    </div>
+  </div>
 </div>
 {% endblock %}

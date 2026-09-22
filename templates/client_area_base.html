@@ -1,0 +1,31 @@
+{# Casca com sidebar pra toda a área da cliente — navbar padrão
+   (base.html) continua no topo (marca/"Sair"), e abaixo dela entra esse
+   shell de duas colunas: sidebar fixa no desktop, vira offcanvas
+   (Bootstrap, já vendorizado) atrás de um botão "Menu" no mobile. Cada
+   página de client_area_*.html só preenche {% block client_content %}. #}
+{% extends "base.html" %}
+{% block content %}
+<div class="client-shell full-bleed">
+  <button class="client-mobile-toggle d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#clientSidebarOffcanvas" aria-controls="clientSidebarOffcanvas" aria-label="Abrir menu">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    Menu
+  </button>
+
+  <aside class="client-sidebar d-none d-md-flex flex-column">
+    {% include "_client_sidebar.html" %}
+  </aside>
+
+  <div class="offcanvas offcanvas-start client-sidebar-offcanvas" tabindex="-1" id="clientSidebarOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+      {% include "_client_sidebar.html" %}
+    </div>
+  </div>
+
+  <div class="client-main">
+    {% block client_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
