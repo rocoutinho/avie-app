@@ -416,6 +416,7 @@ h1, h2, h3, .font-serif {
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   max-width: 480px;
+  margin: 0 auto;
 }
 
 .home-journey-card {
