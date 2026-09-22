@@ -1607,6 +1607,20 @@ footer a {
     font-size: 1.5rem;
   }
 
+  /* "Sua experiência"/"Sua autoridade" quebravam em 2 linhas nos selos de
+     intro em telas estreitas (o card fica só ~1/3 da largura, e essas
+     duas palavras são mais longas que "posição") — encolhe fonte/
+     espaçamento e força uma linha só, igual "Sua posição" já ficava. */
+  .lp-intro-badge {
+    padding: 1.5rem 0.4rem;
+  }
+
+  .lp-intro-badge-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
   .lp-whatsapp-float {
     width: 52px;
     height: 52px;
