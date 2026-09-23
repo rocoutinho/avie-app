@@ -3,7 +3,11 @@
    duplicar a marcação em dois lugares. Reaproveita os ícones de
    _journey_home_icon.html (identidade/diagnostico/looks/evolucao) — só
    "Início" ganha um ícone próprio aqui, já que a home não faz parte da
-   jornada em si. #}
+   jornada em si. O rodapé com nome/"Sair" existe porque este é o único
+   shell da área da cliente agora (ver base.html: o branch de cliente
+   logado não renderiza mais nenhum header próprio, mesma lógica já usada
+   pro lado do staff em _admin_sidebar.html — duas faixas de navegação
+   empilhadas, uma delas repetindo marca/"Sair", era o bug reportado). #}
 {% from "_journey_home_icon.html" import journey_home_icon %}
 {% set client_nav_items = [
   ("client_area.index", "home", "Início"),
@@ -31,3 +35,10 @@
   {% endfor %}
 </nav>
 <p class="client-sidebar-quote mb-0">&ldquo;Mais que estilo.<br>Direção.&rdquo;</p>
+<div class="client-sidebar-foot">
+  <span class="client-sidebar-avatar">{{ (current_user.full_name or "")[:2]|upper }}</span>
+  <span class="client-sidebar-foot-text">
+    <span class="client-sidebar-foot-name">{{ current_user.full_name }}</span>
+    <span class="client-sidebar-foot-role"><a href="{{ url_for('auth.logout') }}">Sair</a></span>
+  </span>
+</div>

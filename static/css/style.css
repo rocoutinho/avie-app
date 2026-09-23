@@ -946,6 +946,54 @@ h1, h2, h3, .font-serif {
   margin-top: auto;
 }
 
+/* Rodapé (nome + "Sair") — mesmo componente conceitual de
+   .admin-sidebar-foot, único jeito de sair da área da cliente agora que
+   o header do topo não existe mais pra clientes logadas. */
+.client-sidebar-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding-top: 1.25rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.client-sidebar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--avie-navy);
+  color: var(--avie-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.client-sidebar-foot-name {
+  display: block;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.client-sidebar-foot-role {
+  display: block;
+  color: rgba(241, 239, 233, 0.55);
+  font-size: 0.72rem;
+}
+
+.client-sidebar-foot-role a {
+  color: rgba(241, 239, 233, 0.75);
+}
+
+.client-sidebar-foot-role a:hover {
+  color: var(--avie-gold-light);
+}
+
 /* =========================================================
    Área do staff — sidebar fixa (desktop) / barra inferior (mobile),
    substitui a antiga .navbar de topo. Mesmo padrão estrutural de

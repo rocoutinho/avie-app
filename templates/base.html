@@ -73,28 +73,11 @@
      "Sair") vem de admin_base.html/_admin_sidebar.html, que toda página do
      staff estende. #}
   {% elif current_user.is_authenticated %}
-  {% set ep = request.endpoint or '' %}
-  <header class="pf-header">
-    <div class="pf-inner">
-      <a class="pf-brand" href="{{ url_for('public.landing') }}">
-        <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="pf-logo" alt="">
-        <span class="pf-brand-text">
-          <span class="pf-name">Fabiana Montemor</span>
-          <span class="pf-tagline">Consultoria de Imagem e Posicionamento Profissional</span>
-        </span>
-      </a>
-      <nav class="pf-nav" aria-label="Navegação principal">
-        <a class="pf-item{% if ep.startswith('client_area.') %} is-active{% endif %}" href="{{ url_for('client_area.index') }}">
-          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>
-          <span>Minha área</span>
-        </a>
-        <a class="pf-item" href="{{ url_for('auth.logout') }}">
-          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-          <span>Sair</span>
-        </a>
-      </nav>
-    </div>
-  </header>
+  {# Sem header aqui, mesma lógica do staff acima: a área da cliente usa a
+     própria sidebar fixa (mobile: botão "Menu" → offcanvas) como shell
+     inteiro (marca, navegação, "Sair") — ver client_area_base.html/
+     _client_sidebar.html. Um header aqui em cima duplicaria marca/"Sair"
+     com o que já aparece nela. #}
   {% else %}
   <header class="pf-header">
     <div class="pf-inner">

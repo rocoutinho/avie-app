@@ -1,8 +1,10 @@
-{# Casca com sidebar pra toda a área da cliente — navbar padrão
-   (base.html) continua no topo (marca/"Sair"), e abaixo dela entra esse
-   shell de duas colunas: sidebar fixa no desktop, vira offcanvas
-   (Bootstrap, já vendorizado) atrás de um botão "Menu" no mobile. Cada
-   página de client_area_*.html só preenche {% block client_content %}. #}
+{# Casca com sidebar pra toda a área da cliente — base.html não renderiza
+   mais nenhum header pra cliente logada (ver o {% elif
+   current_user.is_authenticated %} lá, vazio de propósito), esta casca é
+   o shell inteiro: sidebar fixa no desktop (marca + navegação + "Sair",
+   ver _client_sidebar.html), vira offcanvas (Bootstrap, já vendorizado)
+   atrás de um botão "Menu" no mobile. Cada página de client_area_*.html
+   só preenche {% block client_content %}. #}
 {% extends "base.html" %}
 {% block content %}
 <div class="client-shell full-bleed">
