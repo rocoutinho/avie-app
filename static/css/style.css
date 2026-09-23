@@ -1753,20 +1753,6 @@ h1, h2, h3, .font-serif {
   font-weight: 600;
 }
 
-.section-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--avie-text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-}
-
-.section-back-link:hover {
-  color: var(--avie-navy);
-}
-
 /* Formulários */
 .form-label {
   font-size: 0.85rem;
