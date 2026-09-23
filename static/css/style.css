@@ -833,19 +833,42 @@ h1, h2, h3, .font-serif {
   padding: 2rem clamp(1.25rem, 4vw, 3rem);
 }
 
-.client-mobile-toggle {
+/* Barra inferior fixa no mobile — mesmo componente conceitual de
+   .admin-tabbar (staff), substitui o antigo botão "Menu" no topo que
+   duplicava uma segunda faixa de navegação (ver CLAUDE.md). */
+.client-tabbar {
   display: none;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
   background: var(--avie-navy-deep);
-  color: #fff;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: space-around;
+  padding: 0.5rem 0 0.6rem;
+}
+
+.client-tabbar-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: none;
   border: none;
-  padding: 0.75rem 1.25rem;
+  color: rgba(241, 239, 233, 0.55);
+  text-decoration: none;
+  font-size: 0.62rem;
   font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+}
+
+.client-tabbar-link svg {
+  width: 19px;
+  height: 19px;
+}
+
+.client-tabbar-link.is-active {
+  color: var(--avie-gold-light);
 }
 
 @media (max-width: 767.98px) {
@@ -854,18 +877,25 @@ h1, h2, h3, .font-serif {
     min-height: auto;
   }
 
-  .client-mobile-toggle {
+  .client-tabbar {
     display: flex;
   }
 
   .client-main {
-    padding: 1.5rem 1rem 2rem;
+    padding: 1.5rem 1rem 5.5rem;
   }
 }
 
 .client-sidebar-offcanvas {
   background: var(--avie-navy-deep);
-  width: 280px;
+}
+
+/* Bootstrap's own .offcanvas.offcanvas-bottom rule (two classes) beats a
+   plain .client-sidebar-offcanvas override (one class) at equal source
+   order — match its specificity so 85vh actually wins over the 30vh
+   default (var(--bs-offcanvas-height)). */
+.offcanvas.client-sidebar-offcanvas {
+  height: 85vh;
 }
 
 .client-sidebar-offcanvas .btn-close {
@@ -1176,7 +1206,13 @@ h1, h2, h3, .font-serif {
 
 .admin-more-offcanvas {
   background: var(--avie-navy-deep);
-  max-height: 85vh;
+}
+
+/* Same specificity fix as .client-sidebar-offcanvas above: Bootstrap's
+   .offcanvas.offcanvas-bottom rule (two classes) otherwise wins over a
+   plain single-class override and keeps the 30vh default. */
+.offcanvas.admin-more-offcanvas {
+  height: 85vh;
 }
 
 .admin-more-offcanvas .btn-close {

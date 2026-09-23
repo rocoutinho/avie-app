@@ -2,22 +2,22 @@
    mais nenhum header pra cliente logada (ver o {% elif
    current_user.is_authenticated %} lá, vazio de propósito), esta casca é
    o shell inteiro: sidebar fixa no desktop (marca + navegação + "Sair",
-   ver _client_sidebar.html), vira offcanvas (Bootstrap, já vendorizado)
-   atrás de um botão "Menu" no mobile. Cada página de client_area_*.html
-   só preenche {% block client_content %}. #}
+   ver _client_sidebar.html). No mobile, mesma lógica da barra inferior do
+   staff (_admin_tabbar.html): _client_tabbar.html fica fixa embaixo com os
+   4 destinos mais frequentes, e "Mais" abre um offcanvas (Bootstrap, já
+   vendorizado) com a _client_sidebar.html inteira (Evolução + "Sair"
+   incluídos) — nenhum hambúrguer no topo duplicando navegação. Cada
+   página de client_area_*.html só preenche {% block client_content %}. #}
 {% extends "base.html" %}
 {% block content %}
 <div class="client-shell full-bleed">
-  <button class="client-mobile-toggle d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#clientSidebarOffcanvas" aria-controls="clientSidebarOffcanvas" aria-label="Abrir menu">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-    Menu
-  </button>
-
   <aside class="client-sidebar d-none d-md-flex flex-column">
     {% include "_client_sidebar.html" %}
   </aside>
 
-  <div class="offcanvas offcanvas-start client-sidebar-offcanvas" tabindex="-1" id="clientSidebarOffcanvas">
+  {% include "_client_tabbar.html" %}
+
+  <div class="offcanvas offcanvas-bottom client-sidebar-offcanvas" tabindex="-1" id="clientSidebarOffcanvas">
     <div class="offcanvas-header">
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
     </div>

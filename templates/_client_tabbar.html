@@ -1,0 +1,29 @@
+{# Barra inferior fixa da área da cliente no mobile — mesma lógica da
+   _admin_tabbar.html do staff: os 4 destinos mais frequentes ficam sempre
+   visíveis, só "Mais" abre o restante (aqui, Evolução + Sair) num
+   offcanvas com a mesma _client_sidebar.html. Substitui o antigo botão
+   "Menu" no topo, que duplicava uma segunda faixa de navegação. #}
+{% from "_journey_home_icon.html" import journey_home_icon %}
+{% set ep = request.endpoint or '' %}
+<nav class="client-tabbar d-md-none">
+  <a href="{{ url_for('client_area.index') }}" class="client-tabbar-link{% if ep == 'client_area.index' %} is-active{% endif %}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>
+    <span>Início</span>
+  </a>
+  <a href="{{ url_for('client_area.identity') }}" class="client-tabbar-link{% if ep == 'client_area.identity' %} is-active{% endif %}">
+    {{ journey_home_icon("identidade") }}
+    <span>Identidade</span>
+  </a>
+  <a href="{{ url_for('client_area.diagnostico') }}" class="client-tabbar-link{% if ep == 'client_area.diagnostico' %} is-active{% endif %}">
+    {{ journey_home_icon("diagnostico") }}
+    <span>Dossiê</span>
+  </a>
+  <a href="{{ url_for('client_area.looks') }}" class="client-tabbar-link{% if ep.startswith('client_area.looks') or ep == 'client_area.closet' or ep == 'client_area.personal_shopper' %} is-active{% endif %}">
+    {{ journey_home_icon("looks") }}
+    <span>Visual</span>
+  </a>
+  <button type="button" class="client-tabbar-link{% if ep == 'client_area.evolucao' %} is-active{% endif %}" data-bs-toggle="offcanvas" data-bs-target="#clientSidebarOffcanvas" aria-controls="clientSidebarOffcanvas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="18.5" r="1.6"/></svg>
+    <span>Mais</span>
+  </button>
+</nav>
