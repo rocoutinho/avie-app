@@ -1,0 +1,54 @@
+{# Navegação do staff — mesma inclusão usada na sidebar fixa do desktop e
+   dentro do offcanvas "Mais" do mobile (admin_base.html/_admin_tabbar.html),
+   pra não duplicar a marcação em dois lugares. Segue o mesmo padrão de
+   _client_sidebar.html, com seu próprio conjunto de classes (.admin-sidebar-*)
+   porque o conteúdo (destinos do staff) e o rodapé (usuário + Sair) são
+   diferentes. #}
+{% set ep = request.endpoint or '' %}
+{% set admin_nav_items = [
+  ("dashboard.index", "hoje", "Hoje", ep == "dashboard.index"),
+  ("clients.list_clients", "clientes", "Clientes", ep.startswith("clients.") or ep.startswith("reports.")),
+  ("sessions.list_sessions", "agenda", "Agenda", ep.startswith("sessions.")),
+  ("blog.list_posts", "conteudo", "Conteúdo", ep.startswith("blog.")),
+  ("payments.list_payments", "pagamentos", "Pagamentos", ep.startswith("payments.")),
+  ("analytics.index", "analytics", "Analytics", ep.startswith("analytics.")),
+  ("ebooks.list_ebooks", "ebooks", "Ebooks", ep.startswith("ebooks.")),
+] %}
+<div class="admin-sidebar-brand">
+  <img src="{{ url_for('static', filename='img/icon-gold.png') }}" alt="">
+  <span>
+    <span class="admin-sidebar-brand-name">Fabiana Montemor</span>
+    <span class="admin-sidebar-brand-tagline">Consultoria de Imagem</span>
+  </span>
+</div>
+<nav class="admin-sidebar-nav">
+  {% for endpoint, icon_key, label, is_active in admin_nav_items %}
+  <a href="{{ url_for(endpoint) }}" class="admin-sidebar-link{% if is_active %} is-active{% endif %}">
+    <span class="admin-sidebar-link-icon">
+      {% if icon_key == "hoje" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>
+      {% elif icon_key == "clientes" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 19a4.3 4.3 0 0 1 6.7-3.6"/></svg>
+      {% elif icon_key == "agenda" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17"/><path d="M8 3v3M16 3v3"/></svg>
+      {% elif icon_key == "conteudo" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h13l3 3v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1Z"/><path d="M8 11h8M8 15h5"/></svg>
+      {% elif icon_key == "pagamentos" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 14h4"/></svg>
+      {% elif icon_key == "analytics" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V10"/><path d="M11 19V4"/><path d="M18 19v-7"/></svg>
+      {% elif icon_key == "ebooks" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h16v13H4z"/><path d="M4 6.5 12 13l8-6.5"/></svg>
+      {% endif %}
+    </span>
+    <span>{{ label }}</span>
+  </a>
+  {% endfor %}
+</nav>
+<div class="admin-sidebar-foot">
+  <span class="admin-sidebar-avatar">{{ (current_user.name or "")[:2]|upper }}</span>
+  <span class="admin-sidebar-foot-text">
+    <span class="admin-sidebar-foot-name">{{ current_user.name }}</span>
+    <span class="admin-sidebar-foot-role">{{ "Owner" if current_user.role == "owner" else "Marketing" }} · <a href="{{ url_for('auth.logout') }}">Sair</a></span>
+  </span>
+</div>

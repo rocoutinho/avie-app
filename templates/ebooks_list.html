@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}Ebooks{% endblock %}
-{% block content %}
+{% block admin_content %}
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
   <h1 class="h3 mb-0">Ebooks (isca digital)</h1>
   <a href="{{ url_for('ebooks.new_ebook') }}" class="btn btn-brand btn-sm">+ Novo ebook</a>

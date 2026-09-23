@@ -174,7 +174,7 @@ def test_login_and_dashboard_access(app, client):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert "Painel".encode() in response.data
+    assert "Hoje".encode() in response.data
 
 
 def test_client_status_updates_and_consultation_advances_pipeline(app, logged_in_client):

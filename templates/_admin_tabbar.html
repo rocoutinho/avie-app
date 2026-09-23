@@ -1,0 +1,27 @@
+{# Barra inferior fixa do staff no mobile — substitui a sidebar (não um
+   hambúrguer clássico: os 4 destinos mais frequentes ficam sempre visíveis,
+   só "Mais" abre o restante, mesmo princípio de "nunca esconder tudo atrás
+   de um botão só" já usado no header público .pf-header). #}
+{% set ep = request.endpoint or '' %}
+<nav class="admin-tabbar d-md-none">
+  <a href="{{ url_for('dashboard.index') }}" class="admin-tabbar-link{% if ep == 'dashboard.index' %} is-active{% endif %}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>
+    <span>Hoje</span>
+  </a>
+  <a href="{{ url_for('clients.list_clients') }}" class="admin-tabbar-link{% if ep.startswith('clients.') or ep.startswith('reports.') %} is-active{% endif %}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 19a4.3 4.3 0 0 1 6.7-3.6"/></svg>
+    <span>Clientes</span>
+  </a>
+  <a href="{{ url_for('sessions.list_sessions') }}" class="admin-tabbar-link{% if ep.startswith('sessions.') %} is-active{% endif %}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M3.5 9h17"/><path d="M8 3v3M16 3v3"/></svg>
+    <span>Agenda</span>
+  </a>
+  <a href="{{ url_for('blog.list_posts') }}" class="admin-tabbar-link{% if ep.startswith('blog.') %} is-active{% endif %}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h13l3 3v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1Z"/><path d="M8 11h8M8 15h5"/></svg>
+    <span>Conteúdo</span>
+  </a>
+  <button type="button" class="admin-tabbar-link{% if ep.startswith('payments.') or ep.startswith('analytics.') or ep.startswith('ebooks.') %} is-active{% endif %}" data-bs-toggle="offcanvas" data-bs-target="#adminMoreOffcanvas" aria-controls="adminMoreOffcanvas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="18.5" r="1.6"/></svg>
+    <span>Mais</span>
+  </button>
+</nav>

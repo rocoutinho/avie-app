@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}Dossiê — {{ client.full_name }}{% endblock %}
 {% from "_dossie_service_icon.html" import service_icon %}
 {% set title = "Dossiê" %}
-{% block content %}
+{% block admin_content %}
 {% include "_client_subpage_header.html" with context %}
 
 {% if client.dossie_report %}

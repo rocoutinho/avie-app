@@ -68,52 +68,10 @@
 </head>
 <body>
   {% if current_user.is_authenticated and current_user.is_staff %}
-  {% set ep = request.endpoint or '' %}
-  <header class="pf-header">
-    <div class="pf-inner">
-      <a class="pf-brand" href="{{ url_for('public.landing') }}">
-        <img src="{{ url_for('static', filename='img/icon-gold.png') }}" class="pf-logo" alt="">
-        <span class="pf-brand-text">
-          <span class="pf-name">Fabiana Montemor</span>
-          <span class="pf-tagline">Consultoria de Imagem e Posicionamento Profissional</span>
-        </span>
-      </a>
-      <nav class="pf-nav" aria-label="Navegação principal">
-        <a class="pf-item{% if ep == 'dashboard.index' %} is-active{% endif %}" href="{{ url_for('dashboard.index') }}">
-          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>
-          <span>Painel</span>
-        </a>
-        <div class="dropdown pf-dropdown">
-          <button class="pf-item dropdown-toggle{% if ep.startswith('clients.') or ep.startswith('sessions.') %} is-active{% endif %}" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-            <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
-            <span>Estúdio</span>
-            <svg class="pf-chev" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <ul class="dropdown-menu pf-menu">
-            <li><a class="dropdown-item" href="{{ url_for('clients.list_clients') }}">Clientes</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('sessions.list_sessions') }}">Agenda</a></li>
-          </ul>
-        </div>
-        <div class="dropdown pf-dropdown">
-          <button class="pf-item dropdown-toggle{% if ep.startswith('payments.') or ep.startswith('analytics.') or ep.startswith('blog.') or ep.startswith('ebooks.') %} is-active{% endif %}" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-            <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
-            <span>Negócio</span>
-            <svg class="pf-chev" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <ul class="dropdown-menu pf-menu">
-            <li><a class="dropdown-item" href="{{ url_for('payments.list_payments') }}">Pagamentos</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('analytics.index') }}">Analytics</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('blog.list_posts') }}">Blog</a></li>
-            <li><a class="dropdown-item" href="{{ url_for('ebooks.list_ebooks') }}">Ebooks</a></li>
-          </ul>
-        </div>
-        <a class="pf-item" href="{{ url_for('auth.logout') }}">
-          <svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-          <span>Sair</span>
-        </a>
-      </nav>
-    </div>
-  </header>
+  {# Sem header aqui: a área do staff usa uma sidebar fixa (mobile: barra
+     inferior), não uma faixa no topo — o shell inteiro (marca, navegação,
+     "Sair") vem de admin_base.html/_admin_sidebar.html, que toda página do
+     staff estende. #}
   {% elif current_user.is_authenticated %}
   {% set ep = request.endpoint or '' %}
   <header class="pf-header">

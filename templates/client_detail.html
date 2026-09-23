@@ -1,24 +1,45 @@
-{% extends "base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}{{ client.full_name }}{% endblock %}
-{% block content %}
-<div class="mb-4">
-  <h1 class="h3 mb-1">{{ client.full_name }}</h1>
-  <div class="text-muted">
-    {{ client.email }} · {{ client.phone or "sem telefone" }}
-    {% if client.instagram %} · @{{ client.instagram }}{% endif %}
-  </div>
-  <div class="mt-1">
-    <span class="badge text-bg-light border">{{ label_for(CLIENT_STATUSES, client.status) }}</span>
-    <span class="badge text-bg-light border">Origem: {{ label_for(LEAD_SOURCES, client.source) }}</span>
-    {% if client.utm_campaign %}
-    <span class="badge text-bg-light border">Campanha: {{ client.utm_campaign }}</span>
-    {% endif %}
-    {% if client.utm_medium %}
-    <span class="badge text-bg-light border">Mídia: {{ client.utm_medium }}</span>
-    {% endif %}
-    {% if client.is_recorrente %}
-    <span class="badge text-bg-light border">★ Cliente recorrente</span>
-    {% endif %}
+{% block admin_content %}
+{% set diag_bits = [] %}
+{% if client.profile %}{% set _ = diag_bits.append("diagnóstico público") %}{% endif %}
+{% if client.style_assessment %}{% set _ = diag_bits.append("estruturado") %}{% endif %}
+{% if client.other_reports %}{% set _ = diag_bits.append(client.other_reports|length ~ " preliminar" ~ ("es" if client.other_reports|length != 1 else "")) %}{% endif %}
+{% set has_personal_data = client.notes or client.style_notes or client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo or client.idade or client.profissao or client.cidade %}
+
+{% set timeline_steps = [
+  ("Diagnóstico", url_for('clients.diagnostico', client_id=client.id), diag_bits|length > 0, request.endpoint == 'clients.diagnostico'),
+  ("Dossiê", url_for('clients.dossie', client_id=client.id), client.dossie_report is not none, request.endpoint in ('clients.dossie', 'clients.dossie_service', 'clients.dossie_coloracao')),
+  ("Looks", url_for('clients.looks', client_id=client.id), client.looks|length > 0, request.endpoint == 'clients.looks'),
+  ("Closet", url_for('clients.closet', client_id=client.id), client.closet_items|length > 0, request.endpoint == 'clients.closet'),
+  ("Personal Shopper", url_for('clients.personal_shopper', client_id=client.id), client.shopping_list_items|length > 0, request.endpoint == 'clients.personal_shopper'),
+  ("Dados pessoais", url_for('clients.dados_pessoais', client_id=client.id), (has_personal_data or client.password_hash) and true, request.endpoint == 'clients.dados_pessoais'),
+] %}
+{% set ns = namespace(next_step=none) %}
+{% for title, href, filled, _is_current in timeline_steps %}
+  {% if not filled and ns.next_step is none %}{% set ns.next_step = (title, href) %}{% endif %}
+{% endfor %}
+
+<div class="admin-hub-header">
+  <div>
+    <p class="text-muted small mb-2"><a href="{{ url_for('clients.list_clients') }}" class="text-reset">Clientes</a> / {{ client.full_name }}</p>
+    <div class="admin-hub-person">
+      <span class="admin-hub-photo">{{ client.full_name[:2]|upper }}</span>
+      <span>
+        <p class="admin-hub-name">{{ client.full_name }}</p>
+        <p class="admin-hub-meta mb-2">
+          {{ client.email }}{% if client.phone %} · {{ client.phone }}{% endif %}
+          {% if client.instagram %} · @{{ client.instagram }}{% endif %}
+        </p>
+        <p class="admin-hub-meta d-flex flex-wrap gap-1">
+          <span class="admin-spotlight-badge" style="margin:0;">{{ label_for(CLIENT_STATUSES, client.status) }}</span>
+          <span class="admin-spotlight-badge" style="margin:0;">Origem: {{ label_for(LEAD_SOURCES, client.source) }}</span>
+          {% if client.utm_campaign %}<span class="admin-spotlight-badge" style="margin:0;">Campanha: {{ client.utm_campaign }}</span>{% endif %}
+          {% if client.utm_medium %}<span class="admin-spotlight-badge" style="margin:0;">Mídia: {{ client.utm_medium }}</span>{% endif %}
+          {% if client.is_recorrente %}<span class="admin-spotlight-badge" style="margin:0;">★ Cliente recorrente</span>{% endif %}
+        </p>
+      </span>
+    </div>
   </div>
 </div>
 
@@ -42,109 +63,87 @@
   </div>
 </details>
 
-{% set diag_bits = [] %}
-{% if client.profile %}{% set _ = diag_bits.append("diagnóstico público") %}{% endif %}
-{% if client.style_assessment %}{% set _ = diag_bits.append("estruturado") %}{% endif %}
-{% if client.other_reports %}{% set _ = diag_bits.append(client.other_reports|length ~ " preliminar" ~ ("es" if client.other_reports|length != 1 else "")) %}{% endif %}
-{% set has_personal_data = client.notes or client.style_notes or client.identidade_rotina or client.identidade_objetivo or client.identidade_estilo or client.idade or client.profissao or client.cidade %}
+<div class="admin-timeline">
+  {% for title, href, filled, _is_current in timeline_steps %}
+  <div class="admin-tl-step{% if filled %} is-filled{% endif %}">
+    <span class="admin-tl-dot"></span>
+    <span class="admin-tl-line"></span>
+    <span class="admin-tl-label">{{ title }}</span>
+  </div>
+  {% endfor %}
+</div>
 
-<div class="journey-grid">
-  <a class="journey-card" href="{{ url_for('clients.diagnostico', client_id=client.id) }}">
-    <span class="journey-card-status {{ 'is-filled' if diag_bits }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="M15 15l5 5"/></svg>
-    </div>
-    <div class="journey-card-title">Diagnóstico</div>
-    <div class="journey-card-sub">{{ diag_bits|join(" · ") if diag_bits else "Ainda não preenchido" }}</div>
-  </a>
+<div class="admin-hub-tabs">
+  <a class="is-active" href="{{ url_for('clients.detail', client_id=client.id) }}">Visão geral</a>
+  {% for title, href, filled, is_current in timeline_steps %}
+  <a href="{{ href }}"{% if is_current %} class="is-active"{% endif %}>{{ title }}</a>
+  {% endfor %}
+</div>
 
-  <a class="journey-card" href="{{ url_for('clients.dossie', client_id=client.id) }}">
-    <span class="journey-card-status {{ 'is-filled' if client.dossie_report }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
-    </div>
-    <div class="journey-card-title">Dossiê</div>
-    <div class="journey-card-sub">
-      {% if client.dossie_report %}Enviado em {{ client.dossie_report.sent_at.strftime('%d/%m/%Y') if client.dossie_report.sent_at else "—" }}{% else %}Ainda não cadastrado{% endif %}
-    </div>
-  </a>
-
-  <a class="journey-card" href="{{ url_for('clients.looks', client_id=client.id) }}">
-    <span class="journey-card-status {{ 'is-filled' if client.looks }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a1.5 1.5 0 1 1 1.5 1.5c-.7 0-1.5.5-1.5 1.5v1"/><path d="M12 7l8.5 6.2c1 .8.4 2.3-.8 2.3H4.3c-1.2 0-1.8-1.5-.8-2.3L12 7Z"/></svg>
-    </div>
-    <div class="journey-card-title">Looks</div>
-    <div class="journey-card-sub">{{ client.looks|length ~ " look" ~ ("s" if client.looks|length != 1) if client.looks else "Nenhum look ainda" }}</div>
-  </a>
-
-  <a class="journey-card" href="{{ url_for('clients.closet', client_id=client.id) }}">
-    <span class="journey-card-status {{ 'is-filled' if client.closet_items }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3L4 6l1.5 2.5L8 7v13h8V7l2.5 1.5L20 6l-4-3-2 2h-4z"/></svg>
-    </div>
-    <div class="journey-card-title">Closet</div>
-    <div class="journey-card-sub">{{ client.closet_items|length ~ " peça" ~ ("s" if client.closet_items|length != 1) if client.closet_items else "Nenhuma peça ainda" }}</div>
-  </a>
-
-  <a class="journey-card" href="{{ url_for('clients.personal_shopper', client_id=client.id) }}">
-    <span class="journey-card-status {{ 'is-filled' if client.shopping_list_items }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-    </div>
-    <div class="journey-card-title">Personal Shopper</div>
-    <div class="journey-card-sub">
-      {% if client.shopping_list_items %}{{ client.shopping_list_items|length }} recomendaç{{ "ão" if client.shopping_list_items|length == 1 else "ões" }}{% else %}Nenhuma recomendação ainda{% endif %}
-    </div>
-  </a>
-
-  <a class="journey-card" href="{{ url_for('clients.dados_pessoais', client_id=client.id) }}">
-    <span class="journey-card-status {{ 'is-filled' if has_personal_data or client.password_hash }}"></span>
-    <div class="journey-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c0-1.5 1.5-2.5 3-2.5s3 1 3 2.5"/><path d="M14 10h4M14 13h4"/></svg>
-    </div>
-    <div class="journey-card-title">Dados pessoais</div>
-    <div class="journey-card-sub">{{ "Acesso ativo" if client.password_hash else "Sem acesso à área do cliente" }}</div>
-  </a>
+<div class="admin-hub-info-row mb-4">
+  <div class="admin-card admin-hub-info-card">
+    <h3>Próximo passo</h3>
+    {% if ns.next_step %}
+    <p>Completar <a href="{{ ns.next_step[1] }}">{{ ns.next_step[0] }}</a> — ainda não preenchido.</p>
+    {% else %}
+    <p>Jornada em dia — todas as etapas têm conteúdo registrado.</p>
+    {% endif %}
+  </div>
+  <div class="admin-card admin-hub-info-card">
+    <h3>Objetivo da cliente</h3>
+    <p>{{ client.identidade_objetivo or "Ainda não registrado." }}</p>
+  </div>
+  <div class="admin-card admin-hub-info-card">
+    <h3>Canais de atendimento</h3>
+    <p>{{ client.phone or "sem telefone" }} · {{ client.email }}</p>
+  </div>
 </div>
 
 <div class="row g-4">
   <div class="col-lg-6">
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Consultas
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <h2>Consultas</h2>
         <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_consultation', client_id=client.id) }}">+ Agendar</a>
       </div>
-      <ul class="list-group list-group-flush">
+      <ul class="admin-list-simple">
         {% for con in client.consultations %}
-        <li class="list-group-item d-flex justify-content-between">
+        <li>
           <span>{{ label_for(CONSULTATION_TYPES, con.tipo) }} — {{ label_for(CONSULTATION_STATUSES, con.status) }}</span>
-          <span class="text-muted small">{{ con.scheduled_at.strftime('%d/%m/%Y %H:%M') }}</span>
+          <span class="text-muted">{{ con.scheduled_at.strftime('%d/%m/%Y %H:%M') }}</span>
         </li>
         {% else %}
-        <li class="list-group-item text-muted">Nenhuma consulta registrada.</li>
+        <li class="text-muted">Nenhuma consulta registrada.</li>
         {% endfor %}
       </ul>
     </div>
   </div>
 
   <div class="col-lg-6">
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        Pagamentos
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <h2>Pagamentos</h2>
         <a class="btn btn-sm btn-brand" href="{{ url_for('clients.new_payment', client_id=client.id) }}">+ Novo</a>
       </div>
-      <ul class="list-group list-group-flush">
+      <ul class="admin-list-simple">
         {% for p in client.payments %}
-        <li class="list-group-item d-flex justify-content-between">
+        <li>
           <span>{{ p.description }}</span>
-          <span>R$ {{ "%.2f"|format(p.amount) }} · {{ label_for(PAYMENT_STATUSES, p.status) }}</span>
+          <span>R$ {{ "%.2f"|format(p.amount)|replace(".", ",") }} · {{ label_for(PAYMENT_STATUSES, p.status) }}</span>
         </li>
         {% else %}
-        <li class="list-group-item text-muted">Nenhum pagamento registrado.</li>
+        <li class="text-muted">Nenhum pagamento registrado.</li>
         {% endfor %}
       </ul>
     </div>
   </div>
 </div>
+
+{% if client.foco_atual %}
+<div class="admin-hub-quote">
+  <p class="admin-hub-quote-eyebrow">Foco atual</p>
+  <p>&ldquo;{{ client.foco_atual }}&rdquo;</p>
+  <cite>— Fabiana</cite>
+</div>
+{% endif %}
 {% endblock %}

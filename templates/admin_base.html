@@ -1,0 +1,31 @@
+{# Casca com sidebar fixa pra toda a área do staff — segue o mesmo padrão de
+   client_area_base.html: base.html não renderiza mais nada no lugar do
+   header pro staff (ver o {% if current_user.is_staff %} em base.html),
+   esta casca é o shell inteiro (marca, navegação, "Sair"). Sidebar fixa no
+   desktop (>=768px), barra inferior fixa no mobile (_admin_tabbar.html) com
+   um botão "Mais" que abre um offcanvas com o restante da navegação — nunca
+   um hambúrguer escondendo tudo, mesmo princípio do header público. Cada
+   página do staff só preenche {% block admin_content %}. #}
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-shell full-bleed">
+  <aside class="admin-sidebar d-none d-md-flex flex-column">
+    {% include "_admin_sidebar.html" %}
+  </aside>
+
+  {% include "_admin_tabbar.html" %}
+
+  <div class="offcanvas offcanvas-bottom admin-more-offcanvas" tabindex="-1" id="adminMoreOffcanvas">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+      {% include "_admin_sidebar.html" %}
+    </div>
+  </div>
+
+  <div class="admin-main">
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

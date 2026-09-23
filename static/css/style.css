@@ -946,6 +946,729 @@ h1, h2, h3, .font-serif {
   margin-top: auto;
 }
 
+/* =========================================================
+   Área do staff — sidebar fixa (desktop) / barra inferior (mobile),
+   substitui a antiga .navbar de topo. Mesmo padrão estrutural de
+   .client-shell/.client-sidebar acima (full-bleed pra sair do .container),
+   classes próprias (.admin-*) porque o rodapé (usuário + Sair) e a barra
+   inferior mobile não existem do lado da cliente. Aprovado via Artifact
+   (proposta "Redesenho do Admin Avie") antes desta implementação.
+==============================================================*/
+.admin-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: calc(100vh - 60px);
+}
+
+.admin-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--avie-navy-deep);
+  padding: 1.5rem 0.875rem;
+  gap: 1.5rem;
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+  padding: 1.875rem clamp(1.25rem, 4vw, 2.375rem) 2.75rem;
+  background: var(--avie-bg);
+}
+
+.admin-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0 0.5rem;
+}
+
+.admin-sidebar-brand img {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-brand-name {
+  display: block;
+  color: var(--avie-gold-light);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.admin-sidebar-brand-tagline {
+  display: block;
+  color: rgba(241, 239, 233, 0.55);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.admin-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 9px;
+  color: rgba(241, 239, 233, 0.65);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.admin-sidebar-link.is-active {
+  background: var(--avie-gold);
+  color: var(--avie-navy-deep);
+}
+
+.admin-sidebar-link-icon {
+  display: flex;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-link-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.admin-sidebar-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 1rem 0.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-sidebar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--avie-navy);
+  color: var(--avie-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.admin-sidebar-foot-name {
+  display: block;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.admin-sidebar-foot-role {
+  display: block;
+  color: rgba(241, 239, 233, 0.55);
+  font-size: 0.72rem;
+}
+
+.admin-sidebar-foot-role a {
+  color: rgba(241, 239, 233, 0.75);
+}
+
+.admin-sidebar-foot-role a:hover {
+  color: var(--avie-gold-light);
+}
+
+.admin-tabbar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  background: var(--avie-navy-deep);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: space-around;
+  padding: 0.5rem 0 0.6rem;
+}
+
+.admin-tabbar-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: none;
+  border: none;
+  color: rgba(241, 239, 233, 0.55);
+  text-decoration: none;
+  font-size: 0.62rem;
+  font-weight: 600;
+}
+
+.admin-tabbar-link svg {
+  width: 19px;
+  height: 19px;
+}
+
+.admin-tabbar-link.is-active {
+  color: var(--avie-gold-light);
+}
+
+.admin-more-offcanvas {
+  background: var(--avie-navy-deep);
+  max-height: 85vh;
+}
+
+.admin-more-offcanvas .btn-close {
+  filter: invert(1);
+  margin-left: auto;
+}
+
+@media (max-width: 767.98px) {
+  .admin-shell {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .admin-tabbar {
+    display: flex;
+  }
+
+  .admin-main {
+    padding: 1.25rem 1rem 5.5rem;
+  }
+}
+
+/* ---- "Hoje" (dashboard.html): cards com elevação real, densidade de
+   um dashboard de verdade — ver CLAUDE.md pra decisão de design. ---- */
+.admin-greeting h1 {
+  font-size: 1.9rem;
+  margin-bottom: 0.15rem;
+}
+
+.admin-stat-row,
+.admin-card-row {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-stat-row {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.admin-card-row {
+  grid-template-columns: repeat(3, 1fr);
+  align-items: stretch;
+}
+
+@media (max-width: 991.98px) {
+  .admin-stat-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-card-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-stat {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: 16px;
+  padding: 1.15rem 1.2rem;
+  box-shadow: var(--avie-shadow);
+}
+
+.admin-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--avie-text-muted);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.admin-stat-label svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--avie-gold);
+}
+
+.admin-stat-num {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--avie-navy);
+}
+
+.admin-stat-delta {
+  font-size: 0.72rem;
+  color: #6a9c6f;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.admin-card {
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: 16px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: var(--avie-shadow);
+}
+
+.admin-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.admin-card-head h2 {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 700;
+  color: var(--avie-text);
+}
+
+.admin-card-head a:not(.btn) {
+  font-size: 0.76rem;
+  color: var(--avie-gold);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.admin-pipe-row {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.admin-pipe-chip {
+  flex: 1;
+  min-width: 78px;
+  background: var(--avie-bg);
+  border: 1px solid var(--avie-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.6rem;
+}
+
+.admin-pipe-chip-n {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--avie-navy);
+}
+
+.admin-pipe-chip-l {
+  font-size: 0.62rem;
+  color: var(--avie-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.admin-list-simple {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.admin-list-simple li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.625rem;
+  font-size: 0.83rem;
+}
+
+.admin-list-simple a {
+  color: var(--avie-navy);
+  font-weight: 600;
+}
+
+.admin-agenda-item {
+  display: flex;
+  gap: 0.625rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--avie-border);
+  font-size: 0.82rem;
+}
+
+.admin-agenda-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.admin-agenda-time {
+  color: var(--avie-gold);
+  font-weight: 700;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 0.95rem;
+  width: 44px;
+  flex-shrink: 0;
+}
+
+.admin-spotlight {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.admin-spotlight-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--avie-navy) 0%, var(--avie-navy-deep) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--avie-gold-light);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.admin-spotlight-name {
+  font-weight: 700;
+  color: var(--avie-navy);
+  font-size: 0.92rem;
+}
+
+.admin-spotlight-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  background: rgba(189, 151, 80, 0.14);
+  color: var(--avie-gold);
+  padding: 0.05rem 0.5rem;
+  border-radius: 100px;
+  font-weight: 700;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.admin-spotlight-meta {
+  font-size: 0.78rem;
+  color: var(--avie-text-muted);
+}
+
+.admin-spotlight-cta {
+  display: block;
+  margin-top: 0.875rem;
+  text-align: center;
+  background: var(--avie-gold);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 0;
+  border-radius: 9px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.admin-opp-item {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  padding: 0.4rem 0;
+  font-size: 0.82rem;
+}
+
+.admin-opp-num {
+  font-weight: 700;
+  color: var(--avie-navy);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+/* Card "frase do dia" — mesma fonte de frases (DAILY_QUOTES) já usada na
+   home da cliente, só reaproveitada aqui pro lado do staff. */
+.admin-inspire {
+  position: relative;
+  overflow: hidden;
+  color: #f4f2ec;
+  border: none;
+  background: linear-gradient(155deg, #2a3348 0%, var(--avie-navy-deep) 55%, #171c26 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.admin-inspire::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% -10%, rgba(245, 216, 134, 0.22), transparent 60%);
+}
+
+.admin-inspire-eyebrow {
+  position: relative;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--avie-gold-light);
+  font-weight: 700;
+  margin-bottom: 0.625rem;
+}
+
+.admin-inspire-quote {
+  position: relative;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* ---- Hub da cliente (client_detail.html): timeline horizontal + abas no
+   lugar da grade de 6 cards antiga. .journey-grid/.journey-card continuam
+   intactos acima — ainda usados pela área da cliente ("Minha assinatura
+   visual"), só não são mais usados aqui. ---- */
+.admin-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-hub-person {
+  display: flex;
+  gap: 0.875rem;
+  align-items: center;
+}
+
+.admin-hub-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--avie-navy) 0%, var(--avie-navy-deep) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--avie-gold-light);
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.admin-hub-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--avie-navy);
+  margin: 0;
+}
+
+.admin-hub-meta {
+  font-size: 0.8rem;
+  color: var(--avie-text-muted);
+  margin-top: 0.2rem;
+}
+
+.admin-timeline {
+  display: flex;
+  align-items: center;
+  margin: 0 0 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: 16px;
+  box-shadow: var(--avie-shadow);
+  overflow-x: auto;
+}
+
+.admin-tl-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 1;
+  min-width: 88px;
+  position: relative;
+}
+
+/* No celular, 6 passos a 88px cada não cabem numa tela de 390px — reduz
+   o mínimo de cada passo pra caber o máximo possível sem rolagem
+   horizontal (a rolagem continua funcionando pro que não couber). */
+@media (max-width: 575.98px) {
+  .admin-timeline {
+    padding: 1rem 0.85rem;
+  }
+
+  .admin-tl-step {
+    min-width: 58px;
+    gap: 0.4rem;
+  }
+
+  .admin-tl-label {
+    font-size: 0.66rem;
+  }
+}
+
+.admin-tl-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--avie-border);
+  background: #fff;
+  z-index: 1;
+}
+
+.admin-tl-step.is-filled .admin-tl-dot {
+  background: var(--avie-gold);
+  border-color: var(--avie-gold);
+}
+
+.admin-tl-line {
+  position: absolute;
+  top: 11px;
+  left: calc(-50% + 12px);
+  width: calc(100% - 24px);
+  height: 2px;
+  background: var(--avie-border);
+  z-index: 0;
+}
+
+.admin-tl-step.is-filled .admin-tl-line {
+  background: var(--avie-gold);
+}
+
+.admin-tl-step:first-child .admin-tl-line {
+  display: none;
+}
+
+.admin-tl-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--avie-text-muted);
+  text-align: center;
+}
+
+.admin-tl-step.is-filled .admin-tl-label {
+  color: var(--avie-navy);
+}
+
+.admin-hub-tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--avie-border);
+  margin-bottom: 1.35rem;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+.admin-hub-tabs a {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--avie-text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.admin-hub-tabs a.is-active {
+  color: var(--avie-navy);
+  border-color: var(--avie-gold);
+  font-weight: 700;
+}
+
+.admin-hub-info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  .admin-hub-info-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-hub-info-card h3 {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--avie-gold);
+  margin: 0 0 0.55rem;
+  font-weight: 700;
+}
+
+.admin-hub-info-card p {
+  font-size: 0.86rem;
+  color: var(--avie-text);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Citação "foco atual" — reaproveita Client.foco_atual, o mesmo texto que
+   já aparece pra cliente em client_area_evolucao.html. */
+.admin-hub-quote {
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+  color: #f4f2ec;
+  border: none;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(155deg, #2a3348 0%, var(--avie-navy-deep) 60%, #171c26 100%);
+}
+
+.admin-hub-quote::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 90% -10%, rgba(245, 216, 134, 0.2), transparent 55%);
+}
+
+.admin-hub-quote-eyebrow {
+  position: relative;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--avie-gold-light);
+  font-weight: 700;
+  margin-bottom: 0.625rem;
+}
+
+.admin-hub-quote p {
+  position: relative;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  margin: 0 0 0.5rem;
+}
+
+.admin-hub-quote cite {
+  position: relative;
+  display: block;
+  font-style: normal;
+  font-size: 0.78rem;
+  color: var(--avie-gold-light);
+  font-weight: 600;
+}
+
 .section-back-link {
   display: inline-flex;
   align-items: center;

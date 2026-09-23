@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}{{ label }} — {{ client.full_name }}{% endblock %}
-{% block content %}
+{% block admin_content %}
 <div class="mb-4">
   <a href="{{ url_for('clients.dossie', client_id=client.id) }}" class="text-muted small text-decoration-none">&larr; Voltar pro dossiê</a>
   <h1 class="h4 mb-0 mt-2">{{ label }}</h1>
