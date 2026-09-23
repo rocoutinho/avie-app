@@ -7,6 +7,7 @@ from flask_login import current_user, login_required
 from blueprints.auth import require_staff
 from extensions import db
 from forms import BlogPostForm, BlogPostReviewForm
+from image_upload import upload_image
 from models import BlogPost
 
 blog_bp = Blueprint("blog", __name__, url_prefix="/painel/blog")
@@ -44,7 +45,7 @@ def new_post():
             slug=slug,
             title=form.title.data.strip(),
             excerpt=form.excerpt.data.strip(),
-            cover_image_url=(form.cover_image_url.data or "").strip() or None,
+            cover_image_url=upload_image(form.cover_image_file.data) or (form.cover_image_url.data or "").strip() or None,
             author_name=form.author_name.data.strip(),
             body_markdown=form.body_markdown.data,
             status="rascunho",
@@ -80,7 +81,7 @@ def edit_post(post_id):
         post.slug = slug
         post.title = form.title.data.strip()
         post.excerpt = form.excerpt.data.strip()
-        post.cover_image_url = (form.cover_image_url.data or "").strip() or None
+        post.cover_image_url = upload_image(form.cover_image_file.data) or (form.cover_image_url.data or "").strip() or None
         post.author_name = form.author_name.data.strip()
         post.body_markdown = form.body_markdown.data
 

@@ -261,6 +261,10 @@ class BlogPostForm(FlaskForm):
         "URL da imagem de capa (opcional — cole o link de uma imagem já publicada)",
         validators=[Optional(), Length(max=500)],
     )
+    cover_image_file = FileField(
+        "...ou envie um arquivo (substitui o link acima, se preenchido)",
+        validators=[Optional(), FileAllowed(IMAGE_EXTENSIONS, "Apenas imagens.")],
+    )
     author_name = StringField(
         "Assinatura (nome exibido como autora do artigo)",
         validators=[DataRequired(), Length(max=150)],

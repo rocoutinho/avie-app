@@ -11,13 +11,14 @@
       alteração aqui volta o status para rascunho e ele precisará ser enviado para revisão de novo.
     </div>
     {% endif %}
-    <form method="post" novalidate>
+    <form method="post" enctype="multipart/form-data" novalidate>
       {{ form.hidden_tag() }}
       {{ render_field(form.title) }}
       {{ render_field(form.slug) }}
       <p class="text-muted small mt-n2 mb-3">Quando publicado, fica em <code>/blog/{{ form.slug.data or "seu-slug" }}</code></p>
       {{ render_field(form.excerpt) }}
       {{ render_field(form.cover_image_url) }}
+      {{ render_field(form.cover_image_file) }}
       {{ render_field(form.author_name) }}
       {{ render_field(form.body_markdown) }}
       <button type="submit" class="btn btn-brand w-100 mt-2">{{ form.submit.label.text }}</button>
