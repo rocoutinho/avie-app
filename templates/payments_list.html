@@ -1,26 +1,43 @@
 {% extends "admin_base.html" %}
 {% block title %}Pagamentos{% endblock %}
 {% block admin_content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-  <h1 class="h3 mb-0">Pagamentos</h1>
+<div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-3">
+  <div>
+    <p class="admin-hub-meta mb-1">{{ counts['all'] }} pagamento{{ "s" if counts['all'] != 1 else "" }}</p>
+    <h1 class="h3 mb-0">Pagamentos</h1>
+  </div>
 </div>
 
-<ul class="nav nav-pills mb-4 flex-wrap gap-2">
-  <li class="nav-item">
-    <a class="nav-link {% if not active_status %}active{% endif %}" href="{{ url_for('payments.list_payments') }}">
-      Todos <span class="badge bg-light text-dark">{{ counts['all'] }}</span>
-    </a>
-  </li>
+<div class="admin-hub-tabs mt-3">
+  <a href="{{ url_for('payments.list_payments') }}"{% if not active_status %} class="is-active"{% endif %}>Todos <span class="text-muted">{{ counts['all'] }}</span></a>
   {% for key, label in PAYMENT_STATUSES %}
-  <li class="nav-item">
-    <a class="nav-link {% if active_status == key %}active{% endif %}" href="{{ url_for('payments.list_payments', status=key) }}">
-      {{ label }} <span class="badge bg-light text-dark">{{ counts[key] }}</span>
-    </a>
-  </li>
+  {% if counts[key] %}
+  <a href="{{ url_for('payments.list_payments', status=key) }}"{% if active_status == key %} class="is-active"{% endif %}>{{ label }} <span class="text-muted">{{ counts[key] }}</span></a>
+  {% endif %}
   {% endfor %}
-</ul>
+</div>
 
-<div class="table-responsive">
+{% if not payments %}
+<div class="admin-card text-center py-5">
+  <p class="mb-0 fw-semibold">Nenhum pagamento encontrado.</p>
+</div>
+{% else %}
+
+<div class="d-lg-none">
+  {% for p in payments %}
+  <a href="{{ url_for('clients.detail', client_id=p.client_id) }}" class="admin-client-card">
+    <div class="admin-client-card-name">{{ p.client.full_name }}</div>
+    <div class="admin-client-card-service">{{ p.description }}</div>
+    <span class="admin-spotlight-badge" style="margin:0;">{{ label_for(PAYMENT_STATUSES, p.status) }}</span>
+    <div class="admin-client-card-foot">
+      <span>R$ {{ "%.2f"|format(p.amount)|replace(".", ",") }}</span>
+      <span>{{ p.due_date.strftime('%d/%m/%Y') if p.due_date else "sem vencimento" }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<div class="table-responsive d-none d-lg-block">
   <table class="table bg-white">
     <thead>
       <tr>
@@ -36,14 +53,13 @@
       <tr class="cursor-pointer" onclick="window.location='{{ url_for('clients.detail', client_id=p.client_id) }}'" style="cursor:pointer;">
         <td>{{ p.client.full_name }}</td>
         <td>{{ p.description }}</td>
-        <td>R$ {{ "%.2f"|format(p.amount) }}</td>
+        <td>R$ {{ "%.2f"|format(p.amount)|replace(".", ",") }}</td>
         <td>{{ p.due_date.strftime('%d/%m/%Y') if p.due_date else "—" }}</td>
-        <td>{{ label_for(PAYMENT_STATUSES, p.status) }}</td>
+        <td><span class="admin-spotlight-badge" style="margin:0;">{{ label_for(PAYMENT_STATUSES, p.status) }}</span></td>
       </tr>
-      {% else %}
-      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum pagamento encontrado.</td></tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+{% endif %}
 {% endblock %}

@@ -451,11 +451,14 @@ def test_payments_list_shows_all_payments_with_status_filter(app, logged_in_clie
     response = logged_in_client.get("/painel/pagamentos/")
     assert response.status_code == 200
     assert b"Elisa Payments" in response.data
-    assert response.data.count(b"Elisa Payments") == 2
+    # Cada pagamento renderiza duas vezes (card mobile + linha de tabela
+    # desktop, uma delas escondida por CSS conforme a largura de tela —
+    # mesmo padrão de clients_list.html), então 2 pagamentos = 4 ocorrências.
+    assert response.data.count(b"Elisa Payments") == 4
 
     response = logged_in_client.get("/painel/pagamentos/?status=pago")
     assert response.status_code == 200
-    assert response.data.count(b"Elisa Payments") == 1
+    assert response.data.count(b"Elisa Payments") == 2
 
     # Cliente (não-staff) não acessa a listagem interna.
     with app.app_context():
