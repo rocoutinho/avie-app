@@ -28,7 +28,22 @@ def owner_required(view):
 @login_required
 def list_posts():
     posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
-    return render_template("blog_admin_list.html", posts=posts)
+    in_production = sorted(
+        (p for p in posts if p.status in ("rascunho", "em_revisao")),
+        key=lambda p: p.updated_at or p.created_at,
+        reverse=True,
+    )
+    published = [p for p in posts if p.status == "publicado"]
+    archived = [p for p in posts if p.status == "arquivado"]
+    featured = in_production[0] if in_production else None
+    return render_template(
+        "blog_admin_list.html",
+        posts=posts,
+        featured=featured,
+        in_production=in_production[1:] if featured else in_production,
+        published=published,
+        archived=archived,
+    )
 
 
 @blog_bp.route("/novo", methods=["GET", "POST"])

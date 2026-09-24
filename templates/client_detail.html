@@ -15,10 +15,6 @@
   ("Personal Shopper", url_for('clients.personal_shopper', client_id=client.id), client.shopping_list_items|length > 0, request.endpoint == 'clients.personal_shopper'),
   ("Dados pessoais", url_for('clients.dados_pessoais', client_id=client.id), (has_personal_data or client.password_hash) and true, request.endpoint == 'clients.dados_pessoais'),
 ] %}
-{% set ns = namespace(next_step=none) %}
-{% for title, href, filled, _is_current in timeline_steps %}
-  {% if not filled and ns.next_step is none %}{% set ns.next_step = (title, href) %}{% endif %}
-{% endfor %}
 
 <div class="admin-hub-header">
   <div>
@@ -41,17 +37,21 @@
       </span>
     </div>
   </div>
+  <div class="admin-hub-actions">
+    {% if whatsapp_link %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Mensagem</a>
+    {% else %}
+    <button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Cadastre um telefone pra habilitar">Mensagem</button>
+    {% endif %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.new_consultation', client_id=client.id) }}">Agendar</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_client', client_id=client.id) }}#notes">Registrar nota</a>
+  </div>
 </div>
 
 <details class="manage-disclosure">
-  <summary>Gerenciar</summary>
+  <summary>Mais</summary>
   <div class="manage-actions">
     <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clients.edit_client', client_id=client.id) }}">Editar dados</a>
-    {% if whatsapp_link %}
-    <a class="btn btn-sm btn-outline-secondary" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Contato (WhatsApp)</a>
-    {% else %}
-    <button class="btn btn-sm btn-outline-secondary" type="button" disabled title="Cadastre um telefone pra habilitar">Contato (WhatsApp)</button>
-    {% endif %}
     <form method="post" action="{{ url_for('clients.update_status', client_id=client.id) }}" class="d-flex gap-2">
       <select name="status" class="form-select form-select-sm">
         {% for key, label in CLIENT_STATUSES %}
@@ -63,6 +63,7 @@
   </div>
 </details>
 
+<p class="admin-hub-meta mt-4 mb-1">Jornada Versa</p>
 <div class="admin-timeline">
   {% for title, href, filled, _is_current in timeline_steps %}
   <div class="admin-tl-step{% if filled %} is-filled{% endif %}">
@@ -73,6 +74,18 @@
   {% endfor %}
 </div>
 
+{% if next_action %}
+<div class="admin-next-action">
+  <div>
+    <p class="admin-next-action-label">Próxima ação</p>
+    <p class="admin-next-action-title">{{ next_action.title }}</p>
+  </div>
+  {% if next_action.deadline %}
+  <span class="text-muted small">Prazo: {{ next_action.deadline }}</span>
+  {% endif %}
+</div>
+{% endif %}
+
 <div class="admin-hub-tabs">
   <a class="is-active" href="{{ url_for('clients.detail', client_id=client.id) }}">Visão geral</a>
   {% for title, href, filled, is_current in timeline_steps %}
@@ -82,14 +95,6 @@
 
 <div class="admin-hub-info-row mb-4">
   <div class="admin-card admin-hub-info-card">
-    <h3>Próximo passo</h3>
-    {% if ns.next_step %}
-    <p>Completar <a href="{{ ns.next_step[1] }}">{{ ns.next_step[0] }}</a> — ainda não preenchido.</p>
-    {% else %}
-    <p>Jornada em dia — todas as etapas têm conteúdo registrado.</p>
-    {% endif %}
-  </div>
-  <div class="admin-card admin-hub-info-card">
     <h3>Objetivo da cliente</h3>
     <p>{{ client.identidade_objetivo or "Ainda não registrado." }}</p>
   </div>
@@ -97,6 +102,23 @@
     <h3>Canais de atendimento</h3>
     <p>{{ client.phone or "sem telefone" }} · {{ client.email }}</p>
   </div>
+</div>
+
+<div class="admin-card mb-4">
+  <div class="admin-card-head"><h2>Linha do tempo</h2></div>
+  <ul class="admin-events">
+    {% for event in timeline %}
+    <li class="admin-event">
+      <span class="admin-event-time">{{ event.time.strftime('%d/%m, %H:%M') }}</span>
+      <span>
+        <span class="admin-event-channel{% if event.channel == 'Portal' %} is-portal{% endif %}">{{ event.channel }}</span>
+        {{ event.text }}
+      </span>
+    </li>
+    {% else %}
+    <li class="text-muted small">Nenhum evento registrado ainda.</li>
+    {% endfor %}
+  </ul>
 </div>
 
 <div class="row g-4">

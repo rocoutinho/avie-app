@@ -18,6 +18,7 @@ from flask_wtf.csrf import ValidationError, validate_csrf
 from emails import send_diagnostic_confirmation, send_ebook_email
 from extensions import db, limiter
 from forms import DiagnosticForm, EbookDownloadForm
+from metodo_versa_content import METODO_VERSA_STEPS
 from models import LEAD_SOURCES, BlogPost, Client, Ebook, StyleProfile
 
 public_bp = Blueprint("public", __name__)
@@ -91,7 +92,7 @@ def privacy():
 
 @public_bp.route("/metodo-versa")
 def metodo_versa():
-    return render_template("metodo_versa.html")
+    return render_template("metodo_versa.html", steps=METODO_VERSA_STEPS)
 
 
 @public_bp.route("/blog")

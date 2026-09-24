@@ -2,7 +2,10 @@
 {% block title %}Clientes{% endblock %}
 {% block admin_content %}
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-  <h1 class="h3 mb-0">Clientes</h1>
+  <div>
+    <p class="admin-hub-meta mb-1">{{ clients|length }} cliente{{ "s" if clients|length != 1 else "" }}</p>
+    <h1 class="h3 mb-0">Clientes</h1>
+  </div>
   <div class="d-flex flex-wrap gap-2">
     <a href="{{ url_for('clients.new_client_with_dossie') }}" class="btn btn-outline-brand btn-sm d-inline-flex align-items-center gap-2">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
@@ -15,34 +18,59 @@
   </div>
 </div>
 
-<form method="get" class="mb-4">
+<form method="get" class="admin-search mb-4">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
   <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar por nome ou e-mail...">
 </form>
 
-<div class="table-responsive">
+{% if not clients %}
+<div class="admin-card text-center py-5">
+  <p class="mb-2 fw-semibold">{{ "Nenhum cliente encontrado pra “" ~ q ~ "”." if q else "Nenhum cliente cadastrado ainda." }}</p>
+  <p class="text-muted small mb-3">{{ "Tente outro nome ou e-mail." if q else "Comece cadastrando o primeiro lead ou cliente." }}</p>
+  {% if not q %}
+  <a href="{{ url_for('clients.new_client') }}" class="btn btn-brand btn-sm">+ Novo cliente</a>
+  {% endif %}
+</div>
+{% else %}
+
+<div class="d-lg-none">
+  {% for c in clients %}
+  <a href="{{ url_for('clients.detail', client_id=c.id) }}" class="admin-client-card">
+    <div class="admin-client-card-name">{{ c.full_name }}</div>
+    <div class="admin-client-card-service">{{ c.email }}</div>
+    <span class="admin-spotlight-badge" style="margin:0;">{{ label_for(CLIENT_STATUSES, c.status) }}</span>
+    <div class="admin-client-card-foot">
+      <span>{{ next_actions[c.id] or "Sem próxima ação" }}</span>
+      <span>desde {{ c.created_at.strftime('%d/%m/%Y') }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<div class="table-responsive d-none d-lg-block">
   <table class="table bg-white">
     <thead>
       <tr>
         <th>Nome</th>
-        <th>E-mail</th>
-        <th>Status</th>
-        <th>Origem</th>
+        <th>Etapa</th>
+        <th>Próxima ação</th>
         <th>Desde</th>
       </tr>
     </thead>
     <tbody>
       {% for c in clients %}
       <tr class="cursor-pointer" onclick="window.location='{{ url_for('clients.detail', client_id=c.id) }}'" style="cursor:pointer;">
-        <td>{{ c.full_name }}</td>
-        <td>{{ c.email }}</td>
-        <td>{{ label_for(CLIENT_STATUSES, c.status) }}</td>
-        <td>{{ label_for(LEAD_SOURCES, c.source) }}</td>
+        <td>
+          <div class="fw-semibold">{{ c.full_name }}</div>
+          <div class="text-muted small">{{ c.email }}</div>
+        </td>
+        <td><span class="admin-spotlight-badge" style="margin:0;">{{ label_for(CLIENT_STATUSES, c.status) }}</span></td>
+        <td>{{ next_actions[c.id] or "—" }}</td>
         <td>{{ c.created_at.strftime('%d/%m/%Y') }}</td>
       </tr>
-      {% else %}
-      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum cliente encontrado.</td></tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+{% endif %}
 {% endblock %}
