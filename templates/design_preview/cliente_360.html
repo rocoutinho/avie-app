@@ -1,0 +1,61 @@
+{% extends "design_preview/_base.html" %}
+{% block title %}{{ client.full_name }}{% endblock %}
+{% set channel_class = {"Online": "is-online", "Presencial": "is-presencial", "WhatsApp": "is-whatsapp", "Portal": "is-portal", "Admin": "is-admin"} %}
+{% block vp_content %}
+<p class="vp-page-eyebrow"><a href="{{ url_for('design_preview.clientes') }}" class="text-reset text-decoration-none">← Clientes</a></p>
+
+<div class="vp-360-header">
+  <div class="vp-360-person">
+    <span class="vp-360-photo">{{ client.initials }}</span>
+    <span>
+      <p class="vp-360-name">{{ client.full_name }}</p>
+      <p class="vp-page-sub" style="margin-top: 0.1rem;">{{ client.service }}</p>
+      <p class="vp-360-meta">
+        <span>Cliente desde {{ detail.since.strftime('%d/%m/%Y') }}</span>
+        <span>Última interação {{ detail.last_interaction.strftime('%d/%m, %H:%M') }}</span>
+        <span>Próximo encontro {{ detail.next_meeting.strftime('%d/%m, %H:%M') }}</span>
+      </p>
+    </span>
+  </div>
+  <div class="vp-360-actions">
+    <a href="#" class="vp-btn">Mensagem</a>
+    <a href="#" class="vp-btn">Agendar</a>
+    <a href="#" class="vp-btn">Registrar nota</a>
+    <a href="#" class="vp-btn">Mais</a>
+  </div>
+</div>
+
+<div class="vp-page-eyebrow" style="margin-top: 0.5rem;">Jornada VERSA</div>
+<div class="vp-journey">
+  {% for step in detail.journey %}
+  <div class="vp-journey-step {{ 'is-done' if step.status == 'done' else ('is-current' if step.status == 'current' else '') }}">
+    <span class="vp-journey-dot"></span>
+    <span class="vp-journey-line"></span>
+    <span class="vp-journey-label">{{ step.label }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="vp-next-action">
+  <div>
+    <p class="vp-next-action-label">Próxima ação</p>
+    <p class="vp-next-action-title">{{ detail.next_action.title }}</p>
+  </div>
+  <div class="d-flex align-items-center gap-3">
+    <span class="vp-next-action-deadline">Prazo: {{ detail.next_action.deadline }}</span>
+    <a href="#" class="vp-btn vp-btn-gold">Continuar Dossiê</a>
+  </div>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Linha do tempo</h2></div>
+  <div class="vp-timeline">
+    {% for event in detail.timeline %}
+    <div class="vp-timeline-item">
+      <div class="vp-timeline-day">{{ event.time.strftime('%d/%m, %H:%M') }} · <span class="vp-channel-tag {{ channel_class.get(event.channel, '') }}">{{ event.channel }}</span></div>
+      <div class="vp-timeline-text">{{ event.text }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

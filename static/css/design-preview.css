@@ -1,0 +1,303 @@
+/* ==========================================================================
+   Laboratório visual — /admin/design-preview
+   Isolado de static/css/style.css de propósito: nada aqui deve vazar pras
+   páginas reais até o redesign ser aprovado tela a tela. Reaproveita os
+   valores de cor já usados na marca (mesmos hex de --avie-*), mas com
+   nomenclatura própria (--versa-*) pra deixar claro que é uma iteração,
+   não um sistema paralelo definitivo.
+   ========================================================================== */
+
+:root {
+  /* Cor */
+  --versa-navy: #1f2733;
+  --versa-navy-text: #323955;
+  --versa-offwhite: #faf8f4;
+  --versa-beige: #f1ece0;
+  --versa-gold: #bd9750;
+  --versa-gold-light: #f5d886;
+  --versa-text: #2a3145;
+  --versa-muted: #6b7186;
+  --versa-border: #e7e2d8;
+  --versa-success: #5f8f66;
+  --versa-warning: #b9812f;
+  --versa-danger: #ad5347;
+  --versa-white: #ffffff;
+
+  /* Espaço */
+  --versa-space-1: 0.25rem;
+  --versa-space-2: 0.5rem;
+  --versa-space-3: 0.75rem;
+  --versa-space-4: 1rem;
+  --versa-space-5: 1.5rem;
+  --versa-space-6: 2rem;
+  --versa-space-8: 3rem;
+
+  /* Forma */
+  --versa-radius-sm: 8px;
+  --versa-radius: 14px;
+  --versa-radius-lg: 20px;
+  --versa-shadow-sm: 0 2px 8px rgba(31, 39, 51, 0.05);
+  --versa-shadow: 0 10px 28px rgba(31, 39, 51, 0.07);
+  --versa-transition: 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+.vp-body {
+  margin: 0;
+  background: var(--versa-offwhite);
+  color: var(--versa-text);
+  font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.vp-serif { font-family: "Cormorant Garamond", serif; }
+
+.vp-banner {
+  background: var(--versa-navy);
+  color: var(--versa-gold-light);
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem;
+}
+
+.vp-banner a { color: var(--versa-gold-light); text-decoration: underline; }
+
+/* ---- shell ---- */
+.vp-shell { display: flex; align-items: stretch; min-height: calc(100vh - 34px); }
+
+.vp-sidebar {
+  width: 244px;
+  flex-shrink: 0;
+  background: var(--versa-navy);
+  padding: var(--versa-space-5) var(--versa-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--versa-space-5);
+}
+
+.vp-sidebar-brand { display: flex; align-items: center; gap: 0.6rem; padding: 0 0.5rem; }
+.vp-sidebar-brand img { width: 28px; height: 28px; }
+.vp-sidebar-brand-name { font-family: "Cormorant Garamond", serif; font-weight: 700; color: var(--versa-gold-light); font-size: 1rem; display: block; }
+.vp-sidebar-brand-tag { color: rgba(241, 239, 233, 0.5); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+
+.vp-sidebar-nav { display: flex; flex-direction: column; gap: 0.15rem; }
+.vp-sidebar-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.6rem 0.7rem; border-radius: 9px;
+  color: rgba(241, 239, 233, 0.65); text-decoration: none;
+  font-size: 0.86rem; font-weight: 600;
+}
+.vp-sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+.vp-sidebar-link:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.vp-sidebar-link.is-active { background: var(--versa-gold); color: var(--versa-navy); }
+.vp-sidebar-link.is-placeholder { opacity: 0.55; }
+.vp-sidebar-note { font-size: 0.66rem; color: rgba(241, 239, 233, 0.4); padding: 0 0.7rem; margin-top: -0.3rem; }
+
+.vp-sidebar-foot {
+  margin-top: auto; display: flex; align-items: center; gap: 0.6rem;
+  padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.vp-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: var(--versa-navy-text); color: var(--versa-gold-light);
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 0.72rem;
+}
+.vp-sidebar-foot-name { color: #fff; font-size: 0.8rem; font-weight: 600; display: block; }
+.vp-sidebar-foot-role { color: rgba(241, 239, 233, 0.5); font-size: 0.7rem; }
+.vp-sidebar-foot-role a { color: rgba(241, 239, 233, 0.75); }
+
+.vp-main { flex: 1; min-width: 0; padding: 1.75rem clamp(1.25rem, 3.5vw, 2.5rem) 3rem; }
+
+.vp-tabbar {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1030;
+  background: var(--versa-navy); border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: space-around; padding: 0.5rem 0 0.6rem;
+}
+.vp-tabbar-link { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; background: none; border: none; color: rgba(241, 239, 233, 0.55); text-decoration: none; font-size: 0.62rem; font-weight: 600; }
+.vp-tabbar-link svg { width: 19px; height: 19px; }
+.vp-tabbar-link.is-active { color: var(--versa-gold-light); }
+
+.vp-more-offcanvas { background: var(--versa-navy); }
+.vp-more-offcanvas .btn-close { filter: invert(1); margin-left: auto; }
+
+@media (max-width: 767.98px) {
+  .vp-shell { flex-direction: column; min-height: auto; }
+  .vp-tabbar { display: flex; }
+  .vp-main { padding: 1.25rem 1rem 5.5rem; }
+}
+
+/* ---- page head ---- */
+.vp-page-eyebrow { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--versa-gold); font-weight: 700; margin: 0 0 0.2rem; }
+.vp-page-title { font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 1.75rem; margin: 0 0 0.15rem; color: var(--versa-navy-text); }
+.vp-page-sub { color: var(--versa-muted); font-size: 0.88rem; margin: 0; }
+
+/* ---- section: heading + divider + list (preferido a cards) ---- */
+.vp-section { margin-top: var(--versa-space-6); }
+.vp-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; border-bottom: 1px solid var(--versa-border); padding-bottom: 0.6rem; margin-bottom: 0.9rem; }
+.vp-section-head h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; color: var(--versa-navy-text); margin: 0; }
+.vp-section-head a { font-size: 0.78rem; color: var(--versa-gold); font-weight: 700; text-decoration: none; }
+
+.vp-list { list-style: none; margin: 0; padding: 0; }
+.vp-list-row {
+  display: flex; align-items: flex-start; gap: 0.8rem;
+  padding: 0.85rem 0; border-top: 1px solid var(--versa-border);
+  text-decoration: none; color: inherit;
+}
+.vp-list-row:first-child { border-top: none; padding-top: 0; }
+.vp-list a.vp-list-row:hover { background: rgba(189, 151, 80, 0.04); margin: 0 -0.6rem; padding-inline: 0.6rem; border-radius: 8px; }
+
+.vp-list-time { font-family: "Cormorant Garamond", serif; font-weight: 700; color: var(--versa-gold); font-size: 1rem; width: 46px; flex-shrink: 0; }
+.vp-list-body { flex: 1; min-width: 0; }
+.vp-list-title { font-weight: 600; color: var(--versa-navy-text); font-size: 0.92rem; }
+.vp-list-meta { color: var(--versa-muted); font-size: 0.8rem; margin-top: 0.1rem; }
+
+.vp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--versa-gold); flex-shrink: 0; margin-top: 0.5rem; }
+
+/* ---- cards: só pra unidades que merecem destaque ---- */
+.vp-card { background: #fff; border: 1px solid var(--versa-border); border-radius: var(--versa-radius); padding: 1.25rem 1.4rem; box-shadow: var(--versa-shadow-sm); }
+
+.vp-hero-card {
+  background: linear-gradient(155deg, #2a3348 0%, var(--versa-navy) 55%, #171c26 100%);
+  color: #f4f2ec; border: none; border-radius: var(--versa-radius-lg);
+  padding: 1.6rem 1.7rem; position: relative; overflow: hidden;
+}
+.vp-hero-card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 88% -10%, rgba(245, 216, 134, 0.18), transparent 55%); }
+.vp-hero-eyebrow { position: relative; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--versa-gold-light); font-weight: 700; margin-bottom: 0.5rem; }
+.vp-hero-time { position: relative; font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 1.6rem; margin: 0; }
+.vp-hero-title { position: relative; font-size: 1.05rem; font-weight: 700; margin: 0.15rem 0 0.15rem; }
+.vp-hero-meta { position: relative; font-size: 0.84rem; color: rgba(244, 242, 236, 0.72); }
+.vp-hero-checks { position: relative; display: flex; flex-direction: column; gap: 0.4rem; margin: 1rem 0; font-size: 0.82rem; }
+.vp-hero-checks span { display: flex; align-items: center; gap: 0.5rem; }
+.vp-check-yes { color: var(--versa-gold-light); }
+.vp-check-no { color: rgba(244, 242, 236, 0.45); }
+.vp-hero-cta {
+  position: relative; display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--versa-gold); color: #fff; border: none; border-radius: 999px;
+  padding: 0.6rem 1.25rem; font-size: 0.84rem; font-weight: 700; text-decoration: none;
+}
+
+/* ---- badges de estado / canal ---- */
+.vp-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.15rem 0.55rem; border-radius: 100px; }
+.vp-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.vp-badge-gold { background: rgba(189, 151, 80, 0.14); color: var(--versa-gold); }
+.vp-badge-success { background: rgba(95, 143, 102, 0.14); color: var(--versa-success); }
+.vp-badge-warning { background: rgba(185, 129, 47, 0.14); color: var(--versa-warning); }
+.vp-badge-muted { background: rgba(107, 113, 134, 0.12); color: var(--versa-muted); }
+
+.vp-channel-tag { display: inline-flex; align-items: center; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.12rem 0.5rem; border-radius: 100px; border: 1px solid var(--versa-border); color: var(--versa-muted); }
+.vp-channel-tag.is-online { border-color: rgba(189, 151, 80, 0.4); color: var(--versa-gold); }
+.vp-channel-tag.is-presencial { border-color: rgba(95, 143, 102, 0.4); color: var(--versa-success); }
+.vp-channel-tag.is-whatsapp { border-color: rgba(95, 143, 102, 0.4); color: var(--versa-success); }
+.vp-channel-tag.is-portal { border-color: rgba(50, 57, 85, 0.35); color: var(--versa-navy-text); }
+.vp-channel-tag.is-admin { border-color: var(--versa-border); color: var(--versa-muted); }
+
+/* ---- linha de negócio compacta (Hoje) ---- */
+.vp-business-line { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; align-items: baseline; font-size: 0.86rem; color: var(--versa-text); }
+.vp-business-line strong { font-family: "Cormorant Garamond", serif; font-weight: 700; color: var(--versa-navy-text); font-size: 1rem; }
+
+/* ---- clientes: lista mobile / tabela desktop ---- */
+.vp-client-row { display: block; background: #fff; border: 1px solid var(--versa-border); border-radius: var(--versa-radius); padding: 1rem 1.1rem; text-decoration: none; color: inherit; margin-bottom: 0.75rem; }
+.vp-client-row-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+.vp-client-name { font-weight: 700; color: var(--versa-navy-text); font-size: 0.96rem; }
+.vp-client-service { color: var(--versa-muted); font-size: 0.78rem; }
+.vp-client-stage { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.6rem; font-size: 0.82rem; }
+.vp-client-next { margin-top: 0.5rem; font-size: 0.8rem; color: var(--versa-muted); }
+.vp-client-next strong { color: var(--versa-navy-text); }
+.vp-client-cta { display: inline-block; margin-top: 0.7rem; font-size: 0.78rem; font-weight: 700; color: var(--versa-gold); }
+
+.vp-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--versa-radius); overflow: hidden; box-shadow: var(--versa-shadow-sm); }
+.vp-table th { text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--versa-muted); padding: 0.8rem 1rem; border-bottom: 1px solid var(--versa-border); }
+.vp-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--versa-border); font-size: 0.88rem; vertical-align: middle; }
+.vp-table tr:last-child td { border-bottom: none; }
+.vp-table tr { cursor: pointer; }
+.vp-table tr:hover td { background: rgba(189, 151, 80, 0.04); }
+
+.vp-search { position: relative; margin-bottom: 1.25rem; }
+.vp-search input { width: 100%; border: 1px solid var(--versa-border); border-radius: 999px; padding: 0.65rem 1rem 0.65rem 2.4rem; font-size: 0.88rem; background: #fff; }
+.vp-search svg { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--versa-muted); }
+
+/* ---- cliente 360 ---- */
+.vp-360-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+.vp-360-person { display: flex; gap: 0.9rem; align-items: center; }
+.vp-360-photo { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg, var(--versa-navy-text), var(--versa-navy)); color: var(--versa-gold-light); display: flex; align-items: center; justify-content: center; font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 1.3rem; flex-shrink: 0; }
+.vp-360-name { font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 1.35rem; margin: 0; color: var(--versa-navy-text); }
+.vp-360-meta { display: flex; flex-wrap: wrap; gap: 0.15rem 1rem; font-size: 0.8rem; color: var(--versa-muted); margin-top: 0.25rem; }
+.vp-360-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.vp-btn { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--versa-border); background: #fff; border-radius: 999px; padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 700; color: var(--versa-navy-text); text-decoration: none; }
+.vp-btn-gold { background: var(--versa-gold); border-color: var(--versa-gold); color: #fff; }
+
+.vp-journey { display: flex; align-items: center; background: #fff; border: 1px solid var(--versa-border); border-radius: var(--versa-radius); padding: 1.1rem 1.3rem; box-shadow: var(--versa-shadow-sm); margin-bottom: 1.5rem; overflow-x: auto; }
+.vp-journey-step { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; flex: 1; min-width: 78px; position: relative; }
+.vp-journey-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--versa-border); background: #fff; z-index: 1; }
+.vp-journey-step.is-done .vp-journey-dot { background: var(--versa-gold); border-color: var(--versa-gold); }
+.vp-journey-step.is-current .vp-journey-dot { border-color: var(--versa-gold); box-shadow: 0 0 0 4px rgba(189, 151, 80, 0.15); }
+.vp-journey-line { position: absolute; top: 10px; left: calc(-50% + 11px); width: calc(100% - 22px); height: 2px; background: var(--versa-border); z-index: 0; }
+.vp-journey-step.is-done .vp-journey-line { background: var(--versa-gold); }
+.vp-journey-step:first-child .vp-journey-line { display: none; }
+.vp-journey-label { font-size: 0.72rem; font-weight: 600; color: var(--versa-muted); text-align: center; }
+.vp-journey-step.is-done .vp-journey-label, .vp-journey-step.is-current .vp-journey-label { color: var(--versa-navy-text); }
+
+.vp-next-action { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: var(--versa-beige); border-radius: var(--versa-radius); padding: 1rem 1.3rem; margin-bottom: 1.75rem; }
+.vp-next-action-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--versa-gold); font-weight: 700; margin: 0 0 0.2rem; }
+.vp-next-action-title { font-weight: 700; color: var(--versa-navy-text); font-size: 1rem; margin: 0; }
+.vp-next-action-deadline { font-size: 0.8rem; color: var(--versa-muted); }
+
+.vp-timeline { position: relative; padding-left: 1.5rem; }
+.vp-timeline::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: var(--versa-border); }
+.vp-timeline-item { position: relative; padding-bottom: 1.25rem; }
+.vp-timeline-item::before { content: ""; position: absolute; left: -1.5rem; top: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--versa-gold); }
+.vp-timeline-item:last-child { padding-bottom: 0; }
+.vp-timeline-day { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--versa-muted); font-weight: 700; margin-bottom: 0.3rem; }
+.vp-timeline-text { font-size: 0.88rem; color: var(--versa-text); }
+
+/* ---- empty states ---- */
+.vp-empty { text-align: center; padding: 2.5rem 1rem; color: var(--versa-muted); }
+.vp-empty p { margin: 0 0 1rem; font-size: 0.9rem; }
+
+/* ---- método versa ---- */
+.vp-tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--versa-border); margin-bottom: 1.5rem; flex-wrap: wrap; overflow-x: auto; }
+.vp-tabs a { padding: 0.6rem 0.9rem; font-size: 0.84rem; font-weight: 600; color: var(--versa-muted); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+.vp-tabs a.is-active { color: var(--versa-navy-text); border-color: var(--versa-gold); font-weight: 700; }
+
+.vp-step-row { display: flex; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--versa-border); }
+.vp-step-row:first-child { border-top: none; padding-top: 0; }
+.vp-step-num { font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 1.3rem; color: var(--versa-gold); width: 28px; flex-shrink: 0; }
+.vp-step-title { font-weight: 700; color: var(--versa-navy-text); margin: 0 0 0.2rem; }
+.vp-step-desc { color: var(--versa-muted); font-size: 0.86rem; margin: 0; }
+
+.vp-tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+.vp-tool-chip { background: #fff; border: 1px solid var(--versa-border); border-radius: var(--versa-radius-sm); padding: 0.9rem 1rem; font-weight: 600; font-size: 0.85rem; color: var(--versa-navy-text); text-align: center; }
+
+.vp-insight-card { background: #fff; border: 1px solid var(--versa-border); border-radius: var(--versa-radius); padding: 1.1rem 1.3rem; margin-bottom: 1rem; }
+.vp-insight-text { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 1.02rem; color: var(--versa-navy-text); margin: 0 0 0.6rem; }
+.vp-insight-origin { font-size: 0.76rem; color: var(--versa-muted); }
+
+/* No celular, 6 passos a 78px cada não cabem numa tela de 390px — reduz
+   o mínimo de cada passo pra caber o máximo possível sem depender só da
+   rolagem horizontal pra descobrir que há mais (mesmo ajuste já feito em
+   .admin-tl-step, ver CLAUDE.md). */
+@media (max-width: 575.98px) {
+  .vp-journey { padding: 1rem 0.85rem; }
+  .vp-journey-step { min-width: 58px; gap: 0.4rem; }
+  .vp-journey-label { font-size: 0.66rem; }
+}
+
+/* ---- utilidades ----
+   Quebra em 991.98px, não 767.98: a tabela de Clientes ficava
+   espremida (nome/etapa quebrando em 2-3 linhas) no tablet — o cartão
+   por cliente já usado no mobile funciona melhor até ~992px, tablet
+   reaproveita esse layout em vez de ganhar uma 3ª versão só sua. */
+.vp-mt-0 { margin-top: 0 !important; }
+@media (max-width: 991.98px) {
+  .vp-desktop-only { display: none !important; }
+}
+@media (min-width: 992px) {
+  .vp-mobile-only { display: none !important; }
+}

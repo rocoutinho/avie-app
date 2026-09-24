@@ -1,0 +1,81 @@
+{% extends "design_preview/_base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block vp_content %}
+{% set stage_class = {
+  "lead": "vp-badge-muted", "proposta_enviada": "vp-badge-warning",
+  "diagnostico_agendado": "vp-badge-warning", "dossie": "vp-badge-gold",
+  "evolucao": "vp-badge-success",
+} %}
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-1">
+  <div>
+    <p class="vp-page-eyebrow">{{ clients|length }} clientes</p>
+    <h1 class="vp-page-title">Clientes</h1>
+  </div>
+  <a href="{{ url_for('clients.new_client') }}" class="vp-btn vp-btn-gold">+ Nova cliente</a>
+</div>
+
+<div class="vp-search mt-4">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+  <input type="text" id="vpClientSearch" placeholder="Buscar por nome, serviço, etapa ou próxima ação...">
+</div>
+
+<div id="vpClientList">
+  <!-- Mobile: unidade operacional por cliente -->
+  <div class="vp-mobile-only">
+    {% for c in clients %}
+    <a href="{{ url_for('design_preview.cliente_360', client_id=c.id) }}" class="vp-client-row" data-search="{{ (c.full_name ~ ' ' ~ c.service ~ ' ' ~ c.stage_label ~ ' ' ~ (c.next_action or ''))|lower }}">
+      <div class="vp-client-row-top">
+        <span>
+          <span class="vp-client-name">{{ c.full_name }}</span><br>
+          <span class="vp-client-service">{{ c.service }}</span>
+        </span>
+      </div>
+      <div class="vp-client-stage">
+        <span class="vp-badge {{ stage_class.get(c.stage, 'vp-badge-muted') }}">{{ c.stage_label }}</span>
+      </div>
+      {% if c.next_action %}
+      <div class="vp-client-next">Próximo: <strong>{{ c.next_action }}</strong> · {{ c.next_action_date.strftime('%d/%m') }}</div>
+      <span class="vp-client-cta">Abrir jornada →</span>
+      {% elif c.last_contact %}
+      <div class="vp-client-next">Último contato: {{ c.last_contact }}</div>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Desktop: tabela, mas com as mesmas colunas operacionais (não e-mail) -->
+  <div class="vp-desktop-only">
+    <table class="vp-table">
+      <thead>
+        <tr><th>Cliente</th><th>Etapa</th><th>Próxima ação</th><th>Desde</th></tr>
+      </thead>
+      <tbody>
+        {% for c in clients %}
+        <tr onclick="window.location='{{ url_for('design_preview.cliente_360', client_id=c.id) }}'" data-search="{{ (c.full_name ~ ' ' ~ c.service ~ ' ' ~ c.stage_label ~ ' ' ~ (c.next_action or ''))|lower }}">
+          <td>
+            <span class="vp-client-name">{{ c.full_name }}</span><br>
+            <span class="vp-client-service">{{ c.service }}</span>
+          </td>
+          <td><span class="vp-badge {{ stage_class.get(c.stage, 'vp-badge-muted') }}">{{ c.stage_label }}</span></td>
+          <td>
+            {% if c.next_action %}{{ c.next_action }} · {{ c.next_action_date.strftime('%d/%m') }}
+            {% elif c.last_contact %}<span class="vp-client-service">Último contato: {{ c.last_contact }}</span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="vp-client-service">{{ c.since.strftime('%d/%m/%Y') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.getElementById('vpClientSearch').addEventListener('input', function (e) {
+    var q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('#vpClientList [data-search]').forEach(function (el) {
+      el.style.display = el.getAttribute('data-search').includes(q) ? '' : 'none';
+    });
+  });
+</script>
+{% endblock %}

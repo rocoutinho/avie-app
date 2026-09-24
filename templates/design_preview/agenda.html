@@ -1,0 +1,53 @@
+{% extends "design_preview/_base.html" %}
+{% block title %}Agenda{% endblock %}
+{% set status_class = {"agendada": "vp-badge-warning", "confirmada": "vp-badge-gold", "realizada": "vp-badge-success", "cancelada": "vp-badge-muted"} %}
+{% set status_label = {"agendada": "Agendada", "confirmada": "Confirmada", "realizada": "Realizada", "cancelada": "Cancelada"} %}
+{% block vp_content %}
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-2">
+  <div>
+    <p class="vp-page-eyebrow">{{ today_label }}</p>
+    <h1 class="vp-page-title">Agenda</h1>
+  </div>
+  <div class="vp-tabs" style="border-bottom: none; margin-bottom: 0;">
+    <a href="#" class="is-active">Hoje</a>
+    <a href="#">Semana</a>
+    <a href="#">Mês</a>
+  </div>
+</div>
+
+<div class="vp-section vp-mt-0" style="margin-top: 1.25rem;">
+  <ul class="vp-list">
+    {% for item in today_agenda %}
+    <li>
+      <a href="{{ url_for('design_preview.cliente_360', client_id=1) }}" class="vp-list-row">
+        <span class="vp-list-time">{{ item.time.strftime('%H:%M') }}</span>
+        <span class="vp-list-body">
+          <span class="vp-list-title">{{ item.title }}</span><br>
+          <span class="vp-list-meta">{{ item.client_name }}</span>
+          <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+            <span class="vp-channel-tag {{ 'is-online' if item.mode == 'online' else 'is-presencial' }}">{{ "Online" if item.mode == "online" else "Presencial" }}</span>
+            <span class="vp-client-service">{{ item.duration }} min</span>
+            <span class="vp-badge {{ status_class.get(item.status) }}">{{ status_label.get(item.status) }}</span>
+            {% if item.mode == "presencial" and item.location %}<span class="vp-client-service">{{ item.location }}</span>{% endif %}
+          </div>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Próximos dias</h2></div>
+  <ul class="vp-list">
+    {% for day in upcoming_days %}
+    <li class="vp-list-row" style="text-decoration:none;">
+      <span class="vp-list-body">
+        <span class="vp-list-title">{{ day.label }}</span>
+        <span class="vp-list-meta">{{ day.count }} atendimento{{ "s" if day.count != 1 else "" }}</span>
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

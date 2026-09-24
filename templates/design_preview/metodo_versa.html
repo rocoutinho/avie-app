@@ -1,0 +1,51 @@
+{% extends "design_preview/_base.html" %}
+{% block title %}Método VERSA{% endblock %}
+{% block vp_content %}
+<p class="vp-page-eyebrow">Propriedade intelectual</p>
+<h1 class="vp-page-title">Método VERSA</h1>
+<p class="vp-page-sub">A metodologia própria da Fabiana Montemor para transformar imagem em posicionamento — do diagnóstico ao acompanhamento contínuo.</p>
+
+<div class="vp-tabs" style="margin-top: 1.5rem;">
+  <a href="#" class="is-active">Visão geral</a>
+  <a href="#">Estrutura</a>
+  <a href="#">Ferramentas</a>
+  <a href="#">Materiais</a>
+  <a href="#">Insights</a>
+</div>
+
+<div class="vp-section vp-mt-0">
+  <div class="vp-section-head"><h2>Estrutura</h2></div>
+  <div>
+    {% for step in structure %}
+    <div class="vp-step-row">
+      <span class="vp-step-num">{{ "%02d"|format(step.n) }}</span>
+      <div>
+        <p class="vp-step-title">{{ step.title }}</p>
+        <p class="vp-step-desc">{{ step.desc }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="vp-list-meta" style="margin-top: 0.75rem;">Reaproveitado literalmente do cronograma já publicado em <code>/metodo-versa</code> — nenhum pilar novo foi inventado aqui.</p>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Ferramentas</h2></div>
+  <div class="vp-tool-grid">
+    {% for tool in tools %}
+    <div class="vp-tool-chip">{{ tool }}</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Insights para analisar</h2></div>
+  <p class="vp-list-meta" style="margin-top: -0.4rem; margin-bottom: 1rem;">Conceitual — reconhecimento de padrão entre atendimentos ainda não existe no sistema; ilustrado aqui pra validar se faz sentido como direção futura.</p>
+  {% for insight in insights %}
+  <div class="vp-insight-card">
+    <p class="vp-insight-text">"{{ insight.text }}"</p>
+    <p class="vp-insight-origin">Origem: {{ insight.origin }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

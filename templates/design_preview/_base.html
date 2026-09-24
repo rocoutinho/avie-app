@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Laboratório{% endblock %} · Redesign do Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/fonts.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/design-preview.css') }}" rel="stylesheet">
+</head>
+<body class="vp-body">
+  <div class="vp-banner">
+    Laboratório visual — protótipo isolado, dado fictício, nenhuma página real foi alterada ·
+    <a href="{{ url_for('dashboard.index') }}">Voltar pro admin atual</a>
+  </div>
+
+  <div class="vp-shell">
+    <aside class="vp-sidebar d-none d-md-flex">
+      {% include "design_preview/_sidebar.html" %}
+    </aside>
+
+    {% include "design_preview/_tabbar.html" %}
+
+    <div class="offcanvas offcanvas-bottom vp-more-offcanvas" tabindex="-1" id="vpMoreOffcanvas" style="height: 75vh;">
+      <div class="offcanvas-header">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column">
+        {% include "design_preview/_sidebar.html" %}
+      </div>
+    </div>
+
+    <main class="vp-main">
+      {% block vp_content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
