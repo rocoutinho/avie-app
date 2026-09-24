@@ -1688,6 +1688,8 @@ h1, h2, h3, .font-serif {
    direto; isso só sobrescreve a cor azul padrão do Bootstrap. */
 .admin-bs-tabs {
   border-bottom: 1px solid var(--avie-border);
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .admin-bs-tabs .nav-link {
@@ -1699,6 +1701,7 @@ h1, h2, h3, .font-serif {
   font-weight: 600;
   color: var(--avie-text-muted);
   background: transparent;
+  white-space: nowrap;
 }
 
 .admin-bs-tabs .nav-link:hover {
