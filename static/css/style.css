@@ -1570,7 +1570,7 @@ h1, h2, h3, .font-serif {
 
 .admin-timeline {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin: 0 0 1.5rem;
   padding: 1.25rem 1.5rem;
   background: #fff;
@@ -1580,26 +1580,31 @@ h1, h2, h3, .font-serif {
   overflow-x: auto;
 }
 
+/* Largura fixa (não flex:1) de propósito: com flex:1, um rótulo de 2
+   linhas ("Personal Shopper") deixava aquele passo mais alto que os
+   outros e, centralizado verticalmente, puxava o ponto pra fora da linha
+   dos demais — e a largura variável de cada passo desalinhava a conexão
+   calculada em % entre um passo e o próximo. Largura igual pra todos
+   garante ponto e linha sempre alinhados; o que não couber, a tela rola
+   (overflow-x acima), como pedido. */
 .admin-tl-step {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.55rem;
-  flex: 1;
-  min-width: 88px;
+  flex: 0 0 88px;
+  width: 88px;
   position: relative;
 }
 
-/* No celular, 6 passos a 88px cada não cabem numa tela de 390px — reduz
-   o mínimo de cada passo pra caber o máximo possível sem rolagem
-   horizontal (a rolagem continua funcionando pro que não couber). */
 @media (max-width: 575.98px) {
   .admin-timeline {
     padding: 1rem 0.85rem;
   }
 
   .admin-tl-step {
-    min-width: 58px;
+    flex-basis: 68px;
+    width: 68px;
     gap: 0.4rem;
   }
 
