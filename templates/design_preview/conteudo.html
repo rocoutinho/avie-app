@@ -1,0 +1,55 @@
+{% extends "design_preview/_base.html" %}
+{% block title %}Conteúdo{% endblock %}
+{% block vp_content %}
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-2">
+  <div>
+    <p class="vp-page-eyebrow">{{ content.in_review_count }} em revisão</p>
+    <h1 class="vp-page-title">Conteúdo</h1>
+  </div>
+</div>
+
+<div class="vp-tabs" style="margin-top: 1.25rem;">
+  <a href="#">Ideias</a>
+  <a href="#" class="is-active">Produção</a>
+  <a href="#">Calendário</a>
+  <a href="#">Biblioteca</a>
+</div>
+
+<div class="vp-page-eyebrow">Destaque</div>
+<div class="vp-hero-card" style="margin-bottom: 0;">
+  <p class="vp-hero-eyebrow">Artigo-mãe</p>
+  <p class="vp-hero-title" style="font-size: 1.3rem; font-family: 'Cormorant Garamond', serif; white-space: pre-line;">{{ content.featured.title }}</p>
+  <p class="vp-hero-meta">{{ content.featured.status }} · Objetivo: {{ content.featured.objective }}</p>
+  <p class="vp-hero-meta" style="margin-top: 0.3rem;">Atualizado {{ content.featured.updated }}</p>
+  <a href="{{ url_for('blog.list_posts') }}" class="vp-hero-cta" style="margin-top: 1rem;">Continuar →</a>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Derivações</h2></div>
+  <ul class="vp-list">
+    {% for d in content.derivations %}
+    <li>
+      <a href="#" class="vp-list-row">
+        <span class="vp-dot" style="{{ 'background: var(--versa-border);' if not d.done }}"></span>
+        <span class="vp-list-body">
+          <span class="vp-list-title">{{ d.channel }}</span>
+          <span class="vp-list-meta">{{ d.status }}</span>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Próximos</h2></div>
+  <ul class="vp-list">
+    {% for item in content.upcoming %}
+    <li class="vp-list-row" style="text-decoration:none;">
+      <span class="vp-list-time" style="width: 56px;">{{ item.date }}</span>
+      <span class="vp-list-body"><span class="vp-list-title">{{ item.label }}</span></span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

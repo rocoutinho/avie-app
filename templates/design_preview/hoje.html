@@ -1,0 +1,77 @@
+{% extends "design_preview/_base.html" %}
+{% block title %}Hoje{% endblock %}
+{% block vp_content %}
+<p class="vp-page-eyebrow">{{ today_label }}</p>
+<h1 class="vp-page-title">Bom dia, Fabiana.</h1>
+<p class="vp-page-sub">{{ needs_attention|length }} coisas precisam da sua atenção hoje.</p>
+
+<div class="vp-section vp-mt-0" style="margin-top: 1.5rem;">
+  <div class="vp-hero-card">
+    <p class="vp-hero-eyebrow">Próxima atividade</p>
+    <p class="vp-hero-time">{{ next_activity.time.strftime('%H:%M') }}</p>
+    <p class="vp-hero-title">{{ next_activity.title }}</p>
+    <p class="vp-hero-meta">{{ next_activity.client_name }} · {{ "Online" if next_activity.mode == "online" else "Presencial" }}</p>
+    <div class="vp-hero-checks">
+      <span class="{{ 'vp-check-yes' if next_activity.prep_ready else 'vp-check-no' }}">{{ "✓" if next_activity.prep_ready else "○" }} Preparação {{ "concluída" if next_activity.prep_ready else "pendente" }}</span>
+      <span class="{{ 'vp-check-yes' if next_activity.questionnaire_received else 'vp-check-no' }}">{{ "✓" if next_activity.questionnaire_received else "○" }} Questionário {{ "recebido" if next_activity.questionnaire_received else "pendente" }}</span>
+      {% if next_activity.ai_notes %}
+      <span class="vp-check-yes">✓ {{ next_activity.ai_notes }} observações da IA</span>
+      {% endif %}
+    </div>
+    <a href="{{ url_for('design_preview.cliente_360', client_id=next_activity.client_id) }}" class="vp-hero-cta">Preparar atendimento →</a>
+  </div>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Hoje</h2></div>
+  <ul class="vp-list">
+    {% for item in today_agenda %}
+    <li>
+      <a href="{{ url_for('design_preview.cliente_360', client_id=item.client_id) }}" class="vp-list-row">
+        <span class="vp-list-time">{{ item.time.strftime('%H:%M') }}</span>
+        <span class="vp-list-body">
+          <span class="vp-list-title">{{ item.title }} · {{ item.client_name }}</span>
+          <span class="vp-list-meta">
+            <span class="vp-channel-tag {{ 'is-online' if item.mode == 'online' else 'is-presencial' }}">{{ "Online" if item.mode == "online" else "Presencial" }}</span>
+            {{ item.duration }} min
+          </span>
+        </span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Precisa da sua atenção</h2></div>
+  <ul class="vp-list">
+    {% for item in needs_attention %}
+    <li>
+      <a href="{{ url_for('design_preview.cliente_360', client_id=item.href_client_id) }}" class="vp-list-row">
+        <span class="vp-dot"></span>
+        <span class="vp-list-body"><span class="vp-list-title">{{ item.text }}</span></span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Continuar de onde parei</h2></div>
+  <a href="{{ url_for('design_preview.cliente_360', client_id=continue_item.id) }}" class="vp-card" style="display: block; text-decoration: none; color: inherit;">
+    <p class="vp-list-title" style="margin-bottom: 0.2rem;">Dossiê estratégico</p>
+    <p class="vp-list-meta" style="margin-bottom: 0.6rem;">{{ continue_item.full_name }}</p>
+    <p class="vp-list-meta" style="margin-bottom: 0;">Última edição ontem, 18:42</p>
+  </a>
+</div>
+
+<div class="vp-section">
+  <div class="vp-section-head"><h2>Negócio</h2><a href="{{ url_for('payments.list_payments') }}">Ver negócio →</a></div>
+  <p class="vp-business-line">
+    <span><strong>{{ business.active_clients }}</strong> clientes ativas</span>
+    <span><strong>R$ {{ business.contracted_value }}</strong> contratados</span>
+    <span><strong>{{ business.leads_deciding }}</strong> leads em decisão</span>
+    <span><strong>{{ business.followups_this_week }}</strong> pós-consultorias esta semana</span>
+  </p>
+</div>
+{% endblock %}
