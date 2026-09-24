@@ -14,7 +14,15 @@ def index():
     # Contagem de clientes por status já aparece nas colunas do Kanban do
     # Painel — não repetida aqui, pra Analytics só mostrar o que não existe
     # em nenhum outro lugar do painel (ver revisão de navegação Estúdio/Negócio).
-    clients_by_source = {key: Client.query.filter_by(source=key).count() for key, _label in LEAD_SOURCES}
+    sources_with_leads = [
+        (label, count)
+        for key, label in LEAD_SOURCES
+        if (count := Client.query.filter_by(source=key).count())
+    ]
+    # Origem com mais leads primeiro — a lista existe pra responder "de onde
+    # vêm meus leads", então o que mais pesa deve aparecer no topo, não na
+    # ordem arbitrária em que LEAD_SOURCES está declarado.
+    sources_with_leads.sort(key=lambda pair: pair[1], reverse=True)
 
     revenue_paid = sum(p.amount for p in Payment.query.filter_by(status="pago").all())
     revenue_pending = sum(p.amount for p in Payment.query.filter_by(status="pendente").all())
@@ -25,7 +33,7 @@ def index():
     return render_template(
         "analytics.html",
         total_clients=Client.query.count(),
-        clients_by_source=clients_by_source,
+        sources_with_leads=sources_with_leads,
         revenue_paid=revenue_paid,
         revenue_pending=revenue_pending,
         revenue_overdue=revenue_overdue,

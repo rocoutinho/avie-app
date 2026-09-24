@@ -1681,6 +1681,49 @@ h1, h2, h3, .font-serif {
   font-weight: 700;
 }
 
+/* Restyle das abas Bootstrap (.nav-tabs) pro mesmo visual de
+   .admin-hub-tabs, sem trocar o componente — Conteúdo usa a troca de aba
+   via JS do próprio Bootstrap (data-bs-toggle="tab"), não navegação por
+   link como o hub do cliente, então não dá pra reaproveitar aquela classe
+   direto; isso só sobrescreve a cor azul padrão do Bootstrap. */
+.admin-bs-tabs {
+  border-bottom: 1px solid var(--avie-border);
+}
+
+.admin-bs-tabs .nav-link {
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--avie-text-muted);
+  background: transparent;
+}
+
+.admin-bs-tabs .nav-link:hover {
+  border-color: var(--avie-border);
+  color: var(--avie-navy);
+}
+
+.admin-bs-tabs .nav-link.active {
+  color: var(--avie-navy);
+  background: transparent;
+  border-color: var(--avie-gold);
+  font-weight: 700;
+}
+
+.admin-bs-tabs .badge {
+  background: var(--avie-border) !important;
+  color: var(--avie-text-muted) !important;
+  font-weight: 600;
+}
+
+.admin-bs-tabs .nav-link.active .badge {
+  background: rgba(189, 151, 80, 0.16) !important;
+  color: var(--avie-gold) !important;
+}
+
 .admin-hub-info-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

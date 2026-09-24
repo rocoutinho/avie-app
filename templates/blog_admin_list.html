@@ -9,7 +9,7 @@
   <a href="{{ url_for('blog.new_post') }}" class="btn btn-brand btn-sm">+ Novo artigo</a>
 </div>
 
-<ul class="nav nav-tabs mb-4" id="conteudoTabs" role="tablist">
+<ul class="nav nav-tabs admin-bs-tabs mb-4" id="conteudoTabs" role="tablist">
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="producao-tab" data-bs-toggle="tab" data-bs-target="#producao-pane" type="button" role="tab">Em produção <span class="badge bg-light text-dark">{{ in_production|length + (1 if featured else 0) }}</span></button>
   </li>
