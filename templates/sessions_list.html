@@ -6,29 +6,24 @@
     <p class="admin-hub-meta mb-1">{{ today_label }}</p>
     <h1 class="h3 mb-0">Agenda</h1>
   </div>
-  <ul class="nav nav-pills gap-2">
-    {% for key, label in period_labels.items() %}
-    <li class="nav-item">
-      <a class="nav-link {% if active_periodo == key %}active{% endif %}" href="{{ url_for('sessions.list_sessions', periodo=key, status=active_status) }}">{{ label }}</a>
-    </li>
-    {% endfor %}
-  </ul>
+  <form method="get" class="d-flex align-items-center gap-2">
+    {% if active_status %}<input type="hidden" name="status" value="{{ active_status }}">{% endif %}
+    <select name="periodo" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+      {% for key, label in period_labels.items() %}
+      <option value="{{ key }}" {% if active_periodo == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
 </div>
 
-<ul class="nav nav-pills mb-4 mt-3 flex-wrap gap-2">
-  <li class="nav-item">
-    <a class="nav-link {% if not active_status %}active{% endif %}" href="{{ url_for('sessions.list_sessions', periodo=active_periodo) }}">
-      Todas <span class="badge bg-light text-dark">{{ counts['all'] }}</span>
-    </a>
-  </li>
+<div class="admin-hub-tabs mt-3">
+  <a href="{{ url_for('sessions.list_sessions', periodo=active_periodo) }}"{% if not active_status %} class="is-active"{% endif %}>Todas <span class="text-muted">{{ counts['all'] }}</span></a>
   {% for key, label in CONSULTATION_STATUSES %}
-  <li class="nav-item">
-    <a class="nav-link {% if active_status == key %}active{% endif %}" href="{{ url_for('sessions.list_sessions', periodo=active_periodo, status=key) }}">
-      {{ label }} <span class="badge bg-light text-dark">{{ counts[key] }}</span>
-    </a>
-  </li>
+  {% if counts[key] %}
+  <a href="{{ url_for('sessions.list_sessions', periodo=active_periodo, status=key) }}"{% if active_status == key %} class="is-active"{% endif %}>{{ label }} <span class="text-muted">{{ counts[key] }}</span></a>
+  {% endif %}
   {% endfor %}
-</ul>
+</div>
 
 <div class="admin-card">
   <ul class="admin-events">
