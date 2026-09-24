@@ -18,7 +18,7 @@
       <span class="vp-check-yes">✓ {{ next_activity.ai_notes }} observações da IA</span>
       {% endif %}
     </div>
-    <a href="{{ url_for('design_preview.cliente_360', client_id=1) }}" class="vp-hero-cta">Preparar atendimento →</a>
+    <a href="{{ url_for('design_preview.cliente_360', client_id=next_activity.client_id) }}" class="vp-hero-cta">Preparar atendimento →</a>
   </div>
 </div>
 
@@ -27,7 +27,7 @@
   <ul class="vp-list">
     {% for item in today_agenda %}
     <li>
-      <a href="{{ url_for('design_preview.cliente_360', client_id=1) }}" class="vp-list-row">
+      <a href="{{ url_for('design_preview.cliente_360', client_id=item.client_id) }}" class="vp-list-row">
         <span class="vp-list-time">{{ item.time.strftime('%H:%M') }}</span>
         <span class="vp-list-body">
           <span class="vp-list-title">{{ item.title }} · {{ item.client_name }}</span>

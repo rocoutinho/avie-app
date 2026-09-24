@@ -98,32 +98,142 @@ MOCK_CLIENTS = [
     },
 ]
 
-MOCK_CLIENT_DETAIL = {
-    "full_name": "Mariana Alves",
-    "initials": "MA",
-    "service": "Consultoria VERSA Completa",
-    "since": _at(days=-38),
-    "last_interaction": _at(days=0, hours=-11, minutes=-15),
-    "next_meeting": _at(days=2, hours=1, minutes=45),
-    "journey": [
-        {"key": "identidade", "label": "Identidade", "status": "done"},
-        {"key": "diagnostico", "label": "Diagnóstico", "status": "done"},
-        {"key": "dossie", "label": "Dossiê", "status": "current"},
-        {"key": "looks", "label": "Assinatura Visual", "status": "pending"},
-        {"key": "evolucao", "label": "Evolução", "status": "pending"},
-    ],
-    "next_action": {
-        "title": "Finalizar Dossiê Estratégico",
-        "deadline": "amanhã",
+MOCK_CLIENT_DETAILS = {
+    1: {  # Mariana Alves — dossiê em desenvolvimento
+        "since": _at(days=-38),
+        "last_interaction": _at(days=0, hours=-2, minutes=-5),
+        "next_meeting": _at(days=2, hours=1, minutes=45),
+        "journey": [
+            {"key": "identidade", "label": "Identidade", "status": "done"},
+            {"key": "diagnostico", "label": "Diagnóstico", "status": "done"},
+            {"key": "dossie", "label": "Dossiê", "status": "current"},
+            {"key": "looks", "label": "Assinatura Visual", "status": "pending"},
+            {"key": "evolucao", "label": "Evolução", "status": "pending"},
+        ],
+        "next_action": {
+            "title": "Preparar sessão de Assinatura Visual",
+            "deadline": "em 2 dias",
+            "cta": "Continuar Dossiê",
+        },
+        "timeline": [
+            {"time": _at(days=0, hours=-2, minutes=-5), "text": "Fotos recebidas para o dossiê", "channel": "Portal"},
+            {"time": _at(days=-1), "text": "Sessão presencial realizada — closet + provas", "channel": "Presencial"},
+            {"time": _at(days=-3), "text": "Mensagem: dúvida sobre paleta de cores", "channel": "WhatsApp"},
+            {"time": _at(days=-6), "text": "Questionário de diagnóstico concluído", "channel": "Portal"},
+            {"time": _at(days=-9), "text": "Fabiana registrou observação sobre objetivo de carreira", "channel": "Admin"},
+            {"time": _at(days=-38), "text": "Consultoria contratada", "channel": "Admin"},
+        ],
     },
-    "timeline": [
-        {"time": _at(days=0, hours=-2, minutes=-5), "text": "Fotos recebidas para o dossiê", "channel": "Portal"},
-        {"time": _at(days=-1), "text": "Sessão presencial realizada — closet + provas", "channel": "Presencial"},
-        {"time": _at(days=-3), "text": "Mensagem: dúvida sobre paleta de cores", "channel": "WhatsApp"},
-        {"time": _at(days=-6), "text": "Questionário de diagnóstico concluído", "channel": "Portal"},
-        {"time": _at(days=-9), "text": "Fabiana registrou observação sobre objetivo de carreira", "channel": "Admin"},
-        {"time": _at(days=-38), "text": "Consultoria contratada", "channel": "Admin"},
-    ],
+    2: {  # Juliana Costa — aguardando diagnóstico
+        "since": _at(days=-4),
+        "last_interaction": _at(days=-1),
+        "next_meeting": _at(days=0, hours=5, minutes=15),
+        "journey": [
+            {"key": "identidade", "label": "Identidade", "status": "done"},
+            {"key": "diagnostico", "label": "Diagnóstico", "status": "current"},
+            {"key": "dossie", "label": "Dossiê", "status": "pending"},
+            {"key": "looks", "label": "Assinatura Visual", "status": "pending"},
+            {"key": "evolucao", "label": "Evolução", "status": "pending"},
+        ],
+        "next_action": {
+            "title": "Concluir questionário de diagnóstico",
+            "deadline": "amanhã",
+            "cta": "Ver Diagnóstico",
+        },
+        "timeline": [
+            {"time": _at(days=-1), "text": "Respondeu ao primeiro contato via WhatsApp", "channel": "WhatsApp"},
+            {"time": _at(days=-2), "text": "Closet Estratégico agendado", "channel": "Admin"},
+            {"time": _at(days=-4), "text": "Lead cadastrada — formulário do site", "channel": "Portal"},
+        ],
+    },
+    3: {  # Renata Lima — em acompanhamento
+        "since": _at(days=-120),
+        "last_interaction": _at(days=-5),
+        "next_meeting": _at(days=0, hours=7, minutes=45),
+        "journey": [
+            {"key": "identidade", "label": "Identidade", "status": "done"},
+            {"key": "diagnostico", "label": "Diagnóstico", "status": "done"},
+            {"key": "dossie", "label": "Dossiê", "status": "done"},
+            {"key": "looks", "label": "Assinatura Visual", "status": "done"},
+            {"key": "evolucao", "label": "Evolução", "status": "current"},
+        ],
+        "next_action": {
+            "title": "Follow-up de acompanhamento",
+            "deadline": "hoje, 17:00",
+            "cta": "Ver Evolução",
+        },
+        "timeline": [
+            {"time": _at(days=-5), "text": "Provou looks selecionados na sessão de Assinatura Visual", "channel": "Presencial"},
+            {"time": _at(days=-20), "text": "Dossiê finalizado e entregue", "channel": "Admin"},
+            {"time": _at(days=-45), "text": "Consultoria de coloração realizada", "channel": "Presencial"},
+            {"time": _at(days=-120), "text": "Consultoria contratada", "channel": "Admin"},
+        ],
+    },
+    4: {  # Carolina Mendes — dossiê estratégico em revisão
+        "since": _at(days=-61),
+        "last_interaction": _at(days=-2),
+        "next_meeting": _at(days=3, hours=1),
+        "journey": [
+            {"key": "identidade", "label": "Identidade", "status": "done"},
+            {"key": "diagnostico", "label": "Diagnóstico", "status": "done"},
+            {"key": "dossie", "label": "Dossiê", "status": "current"},
+            {"key": "looks", "label": "Assinatura Visual", "status": "pending"},
+            {"key": "evolucao", "label": "Evolução", "status": "pending"},
+        ],
+        "next_action": {
+            "title": "Finalizar Dossiê Estratégico",
+            "deadline": "amanhã",
+            "cta": "Continuar Dossiê",
+        },
+        "timeline": [
+            {"time": _at(days=-2), "text": "Mensagem: dúvida sobre prazo de entrega do dossiê", "channel": "WhatsApp"},
+            {"time": _at(days=-5), "text": "Fabiana revisou rascunho do dossiê", "channel": "Admin"},
+            {"time": _at(days=-18), "text": "Sessão presencial — closet e provas", "channel": "Presencial"},
+            {"time": _at(days=-61), "text": "Consultoria contratada", "channel": "Admin"},
+        ],
+    },
+    5: {  # Ana Beatriz Souza — proposta enviada, sem resposta
+        "since": _at(days=-9),
+        "last_interaction": _at(days=-5),
+        "next_meeting": _at(days=1, hours=3),
+        "journey": [
+            {"key": "identidade", "label": "Identidade", "status": "current"},
+            {"key": "diagnostico", "label": "Diagnóstico", "status": "pending"},
+            {"key": "dossie", "label": "Dossiê", "status": "pending"},
+            {"key": "looks", "label": "Assinatura Visual", "status": "pending"},
+            {"key": "evolucao", "label": "Evolução", "status": "pending"},
+        ],
+        "next_action": {
+            "title": "Fazer follow-up da proposta",
+            "deadline": "hoje",
+            "cta": "Registrar contato",
+        },
+        "timeline": [
+            {"time": _at(days=-5), "text": "Proposta enviada por e-mail", "channel": "Admin"},
+            {"time": _at(days=-7), "text": "Diagnóstico preliminar realizado", "channel": "Presencial"},
+            {"time": _at(days=-9), "text": "Lead cadastrada — indicação", "channel": "Admin"},
+        ],
+    },
+    6: {  # Fernanda Ribeiro — novo lead, aguardando contato
+        "since": _at(days=-1),
+        "last_interaction": _at(days=-1),
+        "next_meeting": _at(days=1, hours=2),
+        "journey": [
+            {"key": "identidade", "label": "Identidade", "status": "current"},
+            {"key": "diagnostico", "label": "Diagnóstico", "status": "pending"},
+            {"key": "dossie", "label": "Dossiê", "status": "pending"},
+            {"key": "looks", "label": "Assinatura Visual", "status": "pending"},
+            {"key": "evolucao", "label": "Evolução", "status": "pending"},
+        ],
+        "next_action": {
+            "title": "Fazer primeiro contato",
+            "deadline": "hoje",
+            "cta": "Registrar contato",
+        },
+        "timeline": [
+            {"time": _at(days=-1), "text": "Lead cadastrada — formulário do site", "channel": "Portal"},
+        ],
+    },
 }
 
 MOCK_TODAY_AGENDA = [
@@ -131,6 +241,7 @@ MOCK_TODAY_AGENDA = [
         "time": _at(days=0, hours=1, minutes=-15),
         "title": "Diagnóstico VERSA",
         "client_name": "Mariana Alves",
+        "client_id": 1,
         "mode": "online",
         "duration": 60,
         "status": "confirmada",
@@ -142,6 +253,7 @@ MOCK_TODAY_AGENDA = [
         "time": _at(days=0, hours=5, minutes=15),
         "title": "Closet Estratégico",
         "client_name": "Juliana Costa",
+        "client_id": 2,
         "mode": "presencial",
         "location": "Jardins, São Paulo",
         "duration": 90,
@@ -154,6 +266,7 @@ MOCK_TODAY_AGENDA = [
         "time": _at(days=0, hours=7, minutes=45),
         "title": "Follow-up",
         "client_name": "Renata Lima",
+        "client_id": 3,
         "mode": "online",
         "duration": 30,
         "status": "agendada",
@@ -163,10 +276,17 @@ MOCK_TODAY_AGENDA = [
     },
 ]
 
+
+def _upcoming_day_label(days_ahead, is_tomorrow=False):
+    day = _at(days=days_ahead)
+    prefix = "Amanhã" if is_tomorrow else _PT_WEEKDAYS[day.weekday()]
+    return f"{prefix}, {day.day:02d} set"
+
+
 MOCK_UPCOMING_DAYS = [
-    {"label": "Amanhã, 25 set", "count": 2},
-    {"label": "Sexta, 26 set", "count": 1},
-    {"label": "Segunda, 29 set", "count": 3},
+    {"label": _upcoming_day_label(1, is_tomorrow=True), "count": 2},
+    {"label": _upcoming_day_label(2), "count": 1},
+    {"label": _upcoming_day_label(5), "count": 3},
 ]
 
 MOCK_NEEDS_ATTENTION = [
@@ -261,12 +381,13 @@ def clientes():
 @login_required
 def cliente_360(client_id):
     client = _find_client(client_id)
-    if client is None:
+    detail = MOCK_CLIENT_DETAILS.get(client_id)
+    if client is None or detail is None:
         abort(404)
     return render_template(
         "design_preview/cliente_360.html",
         client=client,
-        detail=MOCK_CLIENT_DETAIL,
+        detail=detail,
         now=_NOW,
     )
 
