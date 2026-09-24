@@ -7,7 +7,56 @@
 </div>
 <div class="admin-greeting mb-4">
   <h1>{{ greeting }}, {{ current_user.name.split(' ')[0] }}.</h1>
-  <p class="text-muted mb-0">Direção hoje. Resultados amanhã.</p>
+  <p class="text-muted mb-0">
+    {% if attention_count %}{{ attention_count }} coisa{{ "s" if attention_count != 1 else "" }} precisa{{ "m" if attention_count != 1 else "" }} da sua atenção hoje.{% else %}Direção hoje. Resultados amanhã.{% endif %}
+  </p>
+</div>
+
+{% if next_consultation %}
+<div class="admin-card admin-hub-quote mb-4">
+  <p class="admin-hub-quote-eyebrow">Próxima atividade</p>
+  <p style="font-size: 1.3rem;">{{ next_consultation.scheduled_at.strftime('%H:%M') }} · {{ label_for(CONSULTATION_TYPES, next_consultation.tipo) }}</p>
+  <p class="mb-3" style="font-family: 'Inter', sans-serif; font-style: normal; font-size: 0.9rem; color: #cfd3e0;">{{ next_consultation.client.full_name }} · {{ next_consultation.scheduled_at.strftime('%d/%m') }}</p>
+  <a class="admin-spotlight-cta" style="display:inline-block; padding-inline: 1.5rem;" href="{{ url_for('clients.detail', client_id=next_consultation.client_id) }}">Abrir jornada →</a>
+</div>
+{% endif %}
+
+<div class="admin-card-row">
+  <div class="admin-card">
+    <div class="admin-card-head"><h2>Agenda de hoje</h2><a href="{{ url_for('sessions.list_sessions', periodo='hoje') }}">Ver agenda →</a></div>
+    {% for con in agenda_today %}
+    <div class="admin-agenda-item">
+      <span class="admin-agenda-time">{{ con.scheduled_at.strftime('%H:%M') }}</span>
+      <span><a href="{{ url_for('clients.detail', client_id=con.client_id) }}" class="text-reset text-decoration-none fw-semibold">{{ label_for(CONSULTATION_TYPES, con.tipo) }}</a><br><span class="text-muted">{{ con.client.full_name }}</span></span>
+    </div>
+    {% else %}
+    <p class="text-muted small mb-0">Nenhuma consulta hoje.</p>
+    {% endfor %}
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-head"><h2>Precisa da sua atenção</h2></div>
+    <ul class="admin-list-simple">
+      {% for p in pending_payments[:3] %}
+      <li>
+        <a href="{{ url_for('clients.detail', client_id=p.client_id) }}">Pagamento de {{ p.client.full_name }}</a>
+        <span class="text-muted">{% if p.due_date %}vence {{ p.due_date.strftime('%d/%m') }}{% else %}sem vencimento{% endif %}</span>
+      </li>
+      {% endfor %}
+      {% if posts_in_review %}
+      <li>
+        <a href="{{ url_for('blog.list_posts') }}">{{ posts_in_review }} artigo{{ "s" if posts_in_review != 1 else "" }} em revisão</a>
+        <span class="text-muted">aguardando aprovação</span>
+      </li>
+      {% endif %}
+      {% if not pending_payments and not posts_in_review %}
+      <li class="text-muted">Nada pendente — dia livre.</li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="admin-card admin-inspire">
+    <p class="admin-inspire-eyebrow">Frase do dia</p>
+    <p class="admin-inspire-quote">&ldquo;{{ quote }}&rdquo;</p>
+  </div>
 </div>
 
 <div class="admin-stat-row">
@@ -34,10 +83,6 @@
 </div>
 
 <div class="admin-card-row">
-  <div class="admin-card admin-inspire">
-    <p class="admin-inspire-eyebrow">Frase do dia</p>
-    <p class="admin-inspire-quote">&ldquo;{{ quote }}&rdquo;</p>
-  </div>
   <div class="admin-card">
     <div class="admin-card-head"><h2>Pipeline</h2><a href="#pipeline-kanban">Ver Kanban completo →</a></div>
     <div class="admin-pipe-row">
@@ -48,49 +93,6 @@
       </div>
       {% endfor %}
     </div>
-  </div>
-  <div class="admin-card">
-    <div class="admin-card-head"><h2>Pagamentos pendentes</h2><a href="{{ url_for('payments.list_payments') }}">Ver todos →</a></div>
-    <ul class="admin-list-simple">
-      {% for p in pending_payments[:4] %}
-      <li>
-        <a href="{{ url_for('clients.detail', client_id=p.client_id) }}">{{ p.client.full_name }}</a>
-        <span class="text-muted">R$ {{ "%.2f"|format(p.amount)|replace(".", ",") }}{% if p.due_date %} · vence {{ p.due_date.strftime('%d/%m') }}{% endif %}</span>
-      </li>
-      {% else %}
-      <li class="text-muted">Nenhum pagamento pendente.</li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-
-<div class="admin-card-row">
-  <div class="admin-card">
-    <div class="admin-card-head"><h2>Agenda de hoje</h2><a href="{{ url_for('sessions.list_sessions') }}">Ver agenda →</a></div>
-    {% for con in agenda_today %}
-    <div class="admin-agenda-item">
-      <span class="admin-agenda-time">{{ con.scheduled_at.strftime('%H:%M') }}</span>
-      <span><a href="{{ url_for('clients.detail', client_id=con.client_id) }}" class="text-reset text-decoration-none fw-semibold">{{ label_for(CONSULTATION_TYPES, con.tipo) }}</a><br><span class="text-muted">{{ con.client.full_name }}</span></span>
-    </div>
-    {% else %}
-    <p class="text-muted small mb-0">Nenhuma consulta hoje.</p>
-    {% endfor %}
-  </div>
-  <div class="admin-card">
-    <div class="admin-card-head"><h2>Próxima cliente</h2></div>
-    {% if next_consultation %}
-    <div class="admin-spotlight">
-      <span class="admin-spotlight-photo">{{ next_consultation.client.full_name[:2]|upper }}</span>
-      <span>
-        <div class="admin-spotlight-name">{{ next_consultation.client.full_name }}</div>
-        <span class="admin-spotlight-badge">{{ label_for(CLIENT_STATUSES, next_consultation.client.status) }}</span>
-        <div class="admin-spotlight-meta">{{ next_consultation.scheduled_at.strftime('%H:%M · %d/%m') }} · {{ label_for(CONSULTATION_TYPES, next_consultation.tipo) }}</div>
-      </span>
-    </div>
-    <a class="admin-spotlight-cta" href="{{ url_for('clients.detail', client_id=next_consultation.client_id) }}">Abrir jornada</a>
-    {% else %}
-    <p class="text-muted small mb-0">Nenhuma consultoria agendada no momento.</p>
-    {% endif %}
   </div>
   <div class="admin-card">
     <div class="admin-card-head"><h2>Oportunidades</h2><a href="{{ url_for('clients.list_clients') }}">Ver clientes →</a></div>

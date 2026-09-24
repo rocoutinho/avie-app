@@ -1,35 +1,87 @@
 {% extends "admin_base.html" %}
-{% block title %}Blog{% endblock %}
+{% block title %}Conteúdo{% endblock %}
 {% block admin_content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-  <h1 class="h3 mb-0">Artigos do blog</h1>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <div>
+    <p class="admin-hub-meta mb-1">{{ in_production|length + (1 if featured else 0) }} em produção</p>
+    <h1 class="h3 mb-0">Conteúdo</h1>
+  </div>
   <a href="{{ url_for('blog.new_post') }}" class="btn btn-brand btn-sm">+ Novo artigo</a>
 </div>
 
-<div class="table-responsive">
-  <table class="table bg-white">
-    <thead>
-      <tr>
-        <th>Título</th>
-        <th>URL</th>
-        <th>Status</th>
-        <th>Criado por</th>
-        <th>Atualizado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for post in posts %}
-      <tr class="cursor-pointer" onclick="window.location='{{ url_for('blog.detail', post_id=post.id) }}'" style="cursor:pointer;">
-        <td>{{ post.title }}</td>
-        <td><code>/blog/{{ post.slug }}</code></td>
-        <td>{{ label_for(BLOG_POST_STATUSES, post.status) }}</td>
-        <td>{{ post.created_by.name if post.created_by else "—" }}</td>
-        <td>{{ post.updated_at.strftime('%d/%m/%Y %H:%M') if post.updated_at else "—" }}</td>
-      </tr>
-      {% else %}
-      <tr><td colspan="5" class="text-muted text-center py-4">Nenhum artigo cadastrado ainda.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<ul class="nav nav-tabs mb-4" id="conteudoTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="producao-tab" data-bs-toggle="tab" data-bs-target="#producao-pane" type="button" role="tab">Em produção <span class="badge bg-light text-dark">{{ in_production|length + (1 if featured else 0) }}</span></button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="publicados-tab" data-bs-toggle="tab" data-bs-target="#publicados-pane" type="button" role="tab">Publicados <span class="badge bg-light text-dark">{{ published|length }}</span></button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="arquivados-tab" data-bs-toggle="tab" data-bs-target="#arquivados-pane" type="button" role="tab">Arquivados <span class="badge bg-light text-dark">{{ archived|length }}</span></button>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="producao-pane" role="tabpanel">
+    {% if featured %}
+    <p class="admin-hub-meta mb-1">Destaque</p>
+    <a href="{{ url_for('blog.detail', post_id=featured.id) }}" class="admin-card admin-hub-quote d-block mb-4" style="text-decoration:none;">
+      <p class="admin-hub-quote-eyebrow">{{ label_for(BLOG_POST_STATUSES, featured.status) }}</p>
+      <p style="font-size: 1.25rem;">{{ featured.title }}</p>
+      <p class="mb-0" style="font-family: 'Inter', sans-serif; font-style: normal; font-size: 0.85rem; color: #cfd3e0;">
+        Atualizado {{ (featured.updated_at or featured.created_at).strftime('%d/%m/%Y %H:%M') }}
+      </p>
+    </a>
+    {% endif %}
+
+    {% if in_production %}
+    <div class="admin-card">
+      <ul class="admin-list-simple">
+        {% for post in in_production %}
+        <li>
+          <a href="{{ url_for('blog.detail', post_id=post.id) }}">{{ post.title }}</a>
+          <span class="text-muted">{{ label_for(BLOG_POST_STATUSES, post.status) }} · {{ (post.updated_at or post.created_at).strftime('%d/%m/%Y') }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% elif not featured %}
+    <div class="admin-card text-center py-5">
+      <p class="mb-2 fw-semibold">Nada em produção agora.</p>
+      <p class="text-muted small mb-3">Comece um novo artigo quando quiser.</p>
+      <a href="{{ url_for('blog.new_post') }}" class="btn btn-brand btn-sm">+ Novo artigo</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="tab-pane fade" id="publicados-pane" role="tabpanel">
+    <div class="admin-card">
+      <ul class="admin-list-simple">
+        {% for post in published %}
+        <li>
+          <a href="{{ url_for('blog.detail', post_id=post.id) }}">{{ post.title }}</a>
+          <span class="text-muted">/blog/{{ post.slug }}</span>
+        </li>
+        {% else %}
+        <li class="text-muted">Nenhum artigo publicado ainda.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="arquivados-pane" role="tabpanel">
+    <div class="admin-card">
+      <ul class="admin-list-simple">
+        {% for post in archived %}
+        <li>
+          <a href="{{ url_for('blog.detail', post_id=post.id) }}">{{ post.title }}</a>
+          <span class="text-muted">arquivado</span>
+        </li>
+        {% else %}
+        <li class="text-muted">Nenhum artigo arquivado.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 </div>
 {% endblock %}

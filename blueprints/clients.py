@@ -27,6 +27,8 @@ from forms import (
 )
 from models import (
     CLIENT_STATUSES,
+    CONSULTATION_STATUSES,
+    CONSULTATION_TYPES,
     PERSONAL_SHOPPER_STATUSES,
     Client,
     ClosetItem,
@@ -85,6 +87,56 @@ def _apply_dossie_services(report, services):
     report.arquetipos = services["Arquétipos"] or None
 
 
+_JOURNEY_STEP_LABELS = ["Diagnóstico", "Dossiê", "Looks", "Closet", "Personal Shopper", "Dados pessoais"]
+
+
+def _next_incomplete_step_label(client):
+    """Mesma lógica de preenchimento usada pelo dot-tracker de
+    client_detail.html (timeline_steps), só que sem os hrefs — usada aqui
+    pra dar um rótulo de "próxima ação" na listagem quando não há consulta
+    futura agendada. Duplicada de propósito (booleans simples, baixo risco
+    de divergir) em vez de fazer o template de detail depender de Python
+    pra algo que já funciona lá."""
+    has_personal_data = bool(
+        client.notes
+        or client.style_notes
+        or client.identidade_rotina
+        or client.identidade_objetivo
+        or client.identidade_estilo
+        or client.idade
+        or client.profissao
+        or client.cidade
+    )
+    filled = [
+        bool(client.profile or client.style_assessment or client.other_reports),
+        client.dossie_report is not None,
+        len(client.looks) > 0,
+        len(client.closet_items) > 0,
+        len(client.shopping_list_items) > 0,
+        bool(has_personal_data or client.password_hash),
+    ]
+    for label, is_filled in zip(_JOURNEY_STEP_LABELS, filled):
+        if not is_filled:
+            return label
+    return None
+
+
+def _next_action_for_client(client, now):
+    """Próxima ação mostrada na listagem: uma consulta futura já agendada
+    (o dado mais concreto que existe) ou, na falta dela, a próxima etapa da
+    jornada ainda sem conteúdo. Nunca inventa uma ação — só lê o que já
+    está no cadastro."""
+    upcoming = [c for c in client.consultations if c.status == "agendada" and c.scheduled_at >= now]
+    if upcoming:
+        next_consultation = min(upcoming, key=lambda c: c.scheduled_at)
+        tipo_label = dict(CONSULTATION_TYPES).get(next_consultation.tipo, next_consultation.tipo)
+        return f"{tipo_label} · {next_consultation.scheduled_at.strftime('%d/%m')}"
+    step = _next_incomplete_step_label(client)
+    if step:
+        return f"Completar {step}"
+    return None
+
+
 @clients_bp.route("/")
 @login_required
 def list_clients():
@@ -94,7 +146,9 @@ def list_clients():
         like = f"%{q}%"
         query = query.filter(db.or_(Client.full_name.ilike(like), Client.email.ilike(like)))
     clients = query.order_by(Client.created_at.desc()).all()
-    return render_template("clients_list.html", clients=clients, q=q)
+    now = datetime.utcnow()
+    next_actions = {c.id: _next_action_for_client(c, now) for c in clients}
+    return render_template("clients_list.html", clients=clients, q=q, next_actions=next_actions)
 
 
 @clients_bp.route("/novo", methods=["GET", "POST"])
@@ -235,18 +289,80 @@ def edit_dossie(client_id):
     return render_template("client_dossie_edit.html", form=form, client=client)
 
 
+def _next_action_banner(client, now):
+    """Igual a _next_action_for_client, mas devolve título + prazo
+    separados pra faixa de destaque do hub (client_detail.html), em vez de
+    uma única string pra célula de tabela."""
+    upcoming = [c for c in client.consultations if c.status == "agendada" and c.scheduled_at >= now]
+    if upcoming:
+        next_consultation = min(upcoming, key=lambda c: c.scheduled_at)
+        tipo_label = dict(CONSULTATION_TYPES).get(next_consultation.tipo, next_consultation.tipo)
+        return {
+            "title": f"Preparar {tipo_label}",
+            "deadline": next_consultation.scheduled_at.strftime("%d/%m, %H:%M"),
+        }
+    step = _next_incomplete_step_label(client)
+    if step:
+        return {"title": f"Completar {step}", "deadline": None}
+    return None
+
+
+def _client_timeline(client):
+    """Linha do tempo unificada de client_detail.html — eventos reais de
+    Consulta/Pagamento/Dossiê/acesso ao portal/diagnóstico público, cada um
+    com a etiqueta de onde nasceu (Admin/Portal). Não existe um log de
+    canal de atendimento (WhatsApp/presencial) no banco, então a etiqueta
+    reflete só isso: quem gerou o registro, staff ou a própria cliente pelo
+    portal — não o meio de conversa usado. Ver CLAUDE.md."""
+    events = []
+    if client.created_at:
+        events.append({"time": client.created_at, "text": "Cliente cadastrada", "channel": "Admin"})
+    if client.profile and client.profile.created_at:
+        events.append(
+            {"time": client.profile.created_at, "text": "Diagnóstico público preenchido", "channel": "Portal"}
+        )
+    for con in client.consultations:
+        tipo_label = dict(CONSULTATION_TYPES).get(con.tipo, con.tipo)
+        status_label = dict(CONSULTATION_STATUSES).get(con.status, con.status)
+        events.append({"time": con.scheduled_at, "text": f"{tipo_label} — {status_label}", "channel": "Admin"})
+    for p in client.payments:
+        if p.created_at:
+            events.append({"time": p.created_at, "text": f"Cobrança registrada: {p.description}", "channel": "Admin"})
+        if p.paid_at:
+            events.append({"time": p.paid_at, "text": f"Pagamento recebido: {p.description}", "channel": "Admin"})
+    dossie = client.dossie_report
+    if dossie:
+        if dossie.sent_at:
+            events.append({"time": dossie.sent_at, "text": "Dossiê enviado", "channel": "Admin"})
+        elif dossie.created_at:
+            events.append({"time": dossie.created_at, "text": "Dossiê criado", "channel": "Admin"})
+    if client.last_login_at:
+        events.append({"time": client.last_login_at, "text": "Acessou a área da cliente", "channel": "Portal"})
+
+    events.sort(key=lambda e: e["time"], reverse=True)
+    return events[:10]
+
+
 @clients_bp.route("/<int:client_id>")
 @login_required
 def detail(client_id):
-    """Hub da cliente — cabeçalho + ações rápidas (atrás do disclosure
-    "Gerenciar") + grade de cards da jornada (Diagnóstico, Dossiê, Looks,
-    Closet, Personal Shopper, Dados pessoais), cada um levando pra sua
-    própria tela de detalhe. Consultas e Pagamentos continuam aqui direto
-    (são dado operacional/financeiro, não uma etapa da jornada de estilo)."""
+    """Hub da cliente — cabeçalho + ações rápidas + jornada + próxima ação
+    em destaque + linha do tempo unificada, seguida da grade de cards da
+    jornada (Diagnóstico, Dossiê, Looks, Closet, Personal Shopper, Dados
+    pessoais), cada um levando pra sua própria tela de detalhe. Consultas e
+    Pagamentos continuam aqui direto (são dado operacional/financeiro, não
+    uma etapa da jornada de estilo)."""
     client = Client.query.get_or_404(client_id)
     contact_message = f"Olá, {client.full_name.split(' ')[0]}!"
     whatsapp_link = _whatsapp_link(client.phone, contact_message) if client.phone else None
-    return render_template("client_detail.html", client=client, whatsapp_link=whatsapp_link)
+    now = datetime.utcnow()
+    return render_template(
+        "client_detail.html",
+        client=client,
+        whatsapp_link=whatsapp_link,
+        next_action=_next_action_banner(client, now),
+        timeline=_client_timeline(client),
+    )
 
 
 @clients_bp.route("/<int:client_id>/diagnostico")

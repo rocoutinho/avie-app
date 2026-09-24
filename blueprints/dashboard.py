@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 from blog_engine import format_date_pt
 from blueprints.auth import require_staff
 from blueprints.client_area import _quote_of_the_day
+from metodo_versa_content import METODO_VERSA_STEPS
 from models import CLIENT_STATUSES, BlogPost, Client, Consultation, Payment
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/painel")
@@ -97,5 +98,12 @@ def index():
         new_leads_count=len(clients_by_status["lead"]),
         proposals_sent_count=len(clients_by_status["proposta_enviada"]),
         diagnostico_concluido_count=len(clients_by_status["diagnostico_concluido"]),
+        attention_count=min(len(pending_payments), 3) + (1 if posts_in_review else 0),
         quote=_quote_of_the_day(),
     )
+
+
+@dashboard_bp.route("/metodo-versa")
+@login_required
+def metodo_versa():
+    return render_template("metodo_versa_admin.html", steps=METODO_VERSA_STEPS)

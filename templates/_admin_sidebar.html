@@ -10,6 +10,7 @@
   ("clients.list_clients", "clientes", "Clientes", ep.startswith("clients.") or ep.startswith("reports.")),
   ("sessions.list_sessions", "agenda", "Agenda", ep.startswith("sessions.")),
   ("blog.list_posts", "conteudo", "Conteúdo", ep.startswith("blog.")),
+  ("dashboard.metodo_versa", "metodo-versa", "Método Versa", ep == "dashboard.metodo_versa"),
   ("payments.list_payments", "pagamentos", "Pagamentos", ep.startswith("payments.")),
   ("analytics.index", "analytics", "Analytics", ep.startswith("analytics.")),
   ("ebooks.list_ebooks", "ebooks", "Ebooks", ep.startswith("ebooks.")),
@@ -39,6 +40,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V10"/><path d="M11 19V4"/><path d="M18 19v-7"/></svg>
       {% elif icon_key == "ebooks" %}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h16v13H4z"/><path d="M4 6.5 12 13l8-6.5"/></svg>
+      {% elif icon_key == "metodo-versa" %}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a1.5 1.5 0 1 1 1.5 1.5c-.7 0-1.5.5-1.5 1.5v1"/><path d="M12 7l8.5 6.2c1 .8.4 2.3-.8 2.3H4.3c-1.2 0-1.8-1.5-.8-2.3L12 7Z"/></svg>
       {% endif %}
     </span>
     <span>{{ label }}</span>

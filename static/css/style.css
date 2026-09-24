@@ -1753,6 +1753,195 @@ h1, h2, h3, .font-serif {
   font-weight: 600;
 }
 
+/* Ações rápidas no topo do hub do cliente (client_detail.html) —
+   WhatsApp/Agendar/Registrar nota visíveis, em vez de escondidas atrás do
+   disclosure "Gerenciar" (que fica só com o que é raro: editar dados,
+   mudar status). */
+.admin-hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+/* Banner de "próxima ação" — promovido de um card entre 3 iguais
+   (admin-hub-info-row) pra uma faixa de destaque logo abaixo da jornada,
+   mesma lógica de prioridade visual do protótipo /admin/design-preview. */
+.admin-next-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(189, 151, 80, 0.1);
+  border: 1px solid rgba(189, 151, 80, 0.3);
+  border-radius: 16px;
+  padding: 1.1rem 1.35rem;
+  margin: 1.25rem 0;
+}
+
+.admin-next-action-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--avie-gold);
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+
+.admin-next-action-title {
+  font-weight: 700;
+  color: var(--avie-navy);
+  margin: 0;
+}
+
+/* Linha do tempo unificada do cliente — eventos reais (consultas,
+   pagamentos, dossiê, acesso ao portal) numa lista só, cada um com a
+   etiqueta de onde o registro nasceu (Admin/Portal). Não é um log de
+   canal de atendimento real (não existe WhatsApp/presencial rastreado no
+   banco) — ver CLAUDE.md pra essa distinção. Nome diferente de
+   .admin-timeline (o dot-tracker da jornada) de propósito, são coisas
+   diferentes. */
+.admin-events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-event {
+  display: flex;
+  gap: 0.9rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--avie-border);
+  font-size: 0.85rem;
+}
+
+.admin-event:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.admin-event-time {
+  color: var(--avie-text-muted);
+  font-size: 0.76rem;
+  width: 92px;
+  flex-shrink: 0;
+  padding-top: 0.15rem;
+}
+
+.admin-event-channel {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 100px;
+  margin-right: 0.5rem;
+  background: var(--avie-border);
+  color: var(--avie-text-muted);
+}
+
+.admin-event-channel.is-portal {
+  background: rgba(107, 143, 113, 0.16);
+  color: #4f7a5c;
+}
+
+/* Estrutura do Método Versa (admin) — mesmos 4 passos do /metodo-versa
+   público, reaproveitados como dado (ver metodo_versa_content.py) em vez
+   de duplicar o texto solto no template. */
+.admin-versa-step {
+  display: flex;
+  gap: 1.1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--avie-border);
+}
+
+.admin-versa-step:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.admin-versa-step-n {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--avie-gold);
+  width: 2.2rem;
+  flex-shrink: 0;
+}
+
+.admin-versa-step h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--avie-navy);
+  margin: 0 0 0.25rem;
+}
+
+.admin-versa-step p {
+  font-size: 0.85rem;
+  color: var(--avie-text-muted);
+  margin: 0;
+}
+
+/* Clientes: busca + cartão mobile (a tabela vira cartão abaixo de 992px,
+   mesmo breakpoint já validado no protótipo — 768px deixava a tabela
+   apertada). */
+.admin-search {
+  position: relative;
+}
+
+.admin-search input {
+  padding-left: 2.5rem;
+}
+
+.admin-search svg {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  stroke: var(--avie-text-muted);
+  pointer-events: none;
+}
+
+.admin-client-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--avie-border);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--avie-shadow);
+}
+
+.admin-client-card-name {
+  font-weight: 700;
+  color: var(--avie-navy);
+  margin-bottom: 0.2rem;
+}
+
+.admin-client-card-service {
+  font-size: 0.8rem;
+  color: var(--avie-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.admin-client-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--avie-text-muted);
+  margin-top: 0.5rem;
+}
+
 /* Formulários */
 .form-label {
   font-size: 0.85rem;

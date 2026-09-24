@@ -14,18 +14,11 @@
 
     <h2 class="h6 text-uppercase text-muted mt-5 mb-3">Cronograma (provisório)</h2>
     <ul class="list-group mb-4">
+      {% for step in steps %}
       <li class="list-group-item">
-        <strong>1. Diagnóstico</strong> — mapeamento da sua imagem atual, seu momento de carreira e seus objetivos.
+        <strong>{{ step.n }}. {{ step.title }}</strong> — {{ step.description }}
       </li>
-      <li class="list-group-item">
-        <strong>2. Estratégia</strong> — definição do posicionamento de imagem alinhado à sua identidade e aos seus objetivos profissionais.
-      </li>
-      <li class="list-group-item">
-        <strong>3. Transformação</strong> — aplicação prática: estilo, coloração, visagismo e guarda-roupa estratégico.
-      </li>
-      <li class="list-group-item">
-        <strong>4. Acompanhamento</strong> — consolidação dos resultados e ajustes contínuos ao longo da sua jornada.
-      </li>
+      {% endfor %}
     </ul>
     <p class="text-muted small">
       Este cronograma é uma prévia do conceito e pode mudar até o lançamento completo.
