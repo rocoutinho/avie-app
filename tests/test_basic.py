@@ -1477,8 +1477,10 @@ def test_analytics_aggregates_clients_payments_and_sessions(app, logged_in_clien
 
     response = logged_in_client.get("/painel/analytics/")
     assert response.status_code == 200
-    assert "R$ 1000.00".encode() in response.data
-    assert "R$ 250.00".encode() in response.data  # 200 pendente + 50 atrasado
+    # Mesmo formato de moeda usado no resto do admin (vírgula decimal) —
+    # ver blueprints/analytics.py.
+    assert "R$ 1000,00".encode() in response.data
+    assert "R$ 250,00".encode() in response.data  # 200 pendente + 50 atrasado
 
     # Cliente (não-staff) não acessa a listagem interna.
     with app.app_context():
